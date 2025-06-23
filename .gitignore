@@ -38,3 +38,10 @@ out/
 
 ### Mac OS ###
 .DS_Store
+
+### 숨김 파일 ###
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
