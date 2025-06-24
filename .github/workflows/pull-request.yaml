@@ -22,9 +22,10 @@ jobs:
           POSTGRES_DB: mople
         options: >-
           --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+          --network host
 
     steps:
       - name: Checkout the code
@@ -41,6 +42,22 @@ jobs:
 
       - name: Grant execution permission for wait-for-it.sh
         run: chmod +x wait-for-it.sh
+
+      - name: Test PostgreSQL Connection Directly
+        run: |
+          # 1. psql 클라이언트 설치 (PostgreSQL 이미지는 대부분 포함)
+          # apt-get update && apt-get install -y postgresql-client # 이미지는 대부분 포함되어 있어 필요 없을 수 있음
+          
+          # 2. 간단한 psql 명령으로 연결 테스트
+          # wait-for-it.sh 가 타임아웃 되므로 이 명령은 wait-for-it.sh 이전에는 실행될 수 없음
+          # 하지만 wait-for-it.sh 이후에 여전히 문제가 발생한다면 이 명령을 사용하여 직접 연결 테스트 가능
+          echo "Attempting direct psql connection..."
+          PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h postgres -p 5432 -U mople_user -d mople -c "\conninfo" || { echo "psql connection failed!"; exit 1; }
+          echo "psql connection successful!"
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mople
+          SPRING_DATASOURCE_USERNAME: mople_user
+          SPRING_DATASOURCE_PASSWORD: mople_1234
 
       - name: Build with Gradle
         env:
