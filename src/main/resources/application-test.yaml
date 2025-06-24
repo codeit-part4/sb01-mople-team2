@@ -1,0 +1,11 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:6543/mople
+    username: mople_user
+    password: mople_1234
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
