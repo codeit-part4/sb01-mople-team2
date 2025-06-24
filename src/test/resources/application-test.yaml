@@ -14,3 +14,5 @@ logging:
   level:
     org.springframework.core.env: DEBUG
     org.springframework.boot.context.config: DEBUG
+    org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
+    org.springframework.jdbc.datasource: DEBUG
