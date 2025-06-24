@@ -1,4 +1,4 @@
-package com.sprint.mople.follow.entity;
+package com.sprint.mople.domain.follow.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

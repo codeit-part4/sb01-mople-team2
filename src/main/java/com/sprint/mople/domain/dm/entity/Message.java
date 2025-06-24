@@ -1,4 +1,4 @@
-package com.sprint.mople.dm.entity;
+package com.sprint.mople.domain.dm.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

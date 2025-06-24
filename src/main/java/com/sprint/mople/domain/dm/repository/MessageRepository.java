@@ -1,6 +1,6 @@
-package com.sprint.mople.dm.repository;
+package com.sprint.mople.domain.dm.repository;
 
-import com.sprint.mople.dm.entity.Message;
+import com.sprint.mople.domain.dm.entity.Message;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
