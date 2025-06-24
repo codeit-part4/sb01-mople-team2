@@ -48,7 +48,8 @@ jobs:
           SPRING_DATASOURCE_USERNAME: mople_user
           SPRING_DATASOURCE_PASSWORD: mople_1234
         run: |
-          ./wait-for-it.sh postgres:5432 -- ./gradlew clean build -Dspring.profiles.active=test
+          sleep 10
+          ./wait-for-it.sh postgres:5432 -t 90 -- ./gradlew clean build -Dspring.profiles.active=test
 
       - name: Check application-test.yml exists
         if: always()
