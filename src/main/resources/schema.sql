@@ -52,8 +52,8 @@ CREATE TABLE contents (
     summary     TEXT,
     category    VARCHAR(25),
     poster_url  VARCHAR(500),
-    genres      TEXT[],
-    released_at DATE,
+    genres      JSONB,
+    released_at TIMESTAMP WITH TIME ZONE,
     created_at  TIMESTAMP WITH TIME ZONE,
     updated_at  TIMESTAMP WITH TIME ZONE,
     rating      INTEGER
@@ -72,9 +72,9 @@ CREATE TABLE subscribes (
 );
 
 CREATE TABLE chatrooms_users (
-    chat_room_id UUID,
-    user_id      UUID,
-    PRIMARY KEY (chat_room_id, user_id)
+    chatroom_user_id UUID PRIMARY KEY,
+    chat_room_id UUID NOT NULL,
+    user_id      UUID NOT NULL
 );
 
 CREATE TABLE chat_rooms (

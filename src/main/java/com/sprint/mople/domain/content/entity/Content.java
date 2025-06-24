@@ -50,7 +50,7 @@ public class Content {
   @Convert(converter = StringSetConverter.class)
   private Set<String> genres;
 
-  @Column(name = "released_at")
+  @Column(name = "released_at", columnDefinition = "timestamp with time zone")
   private Instant releasedAt;
 
   @Column(name = "created_at", columnDefinition = "timestamp with time zone")
