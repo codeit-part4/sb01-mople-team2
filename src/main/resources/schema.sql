@@ -1,0 +1,252 @@
+CREATE TABLE watch_comments (
+    comment_id UUID PRIMARY KEY,
+    session_id UUID NOT NULL,
+    user_id    UUID NOT NULL,
+    content    VARCHAR(500),
+    created_at TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE users (
+    user_id                UUID PRIMARY KEY,
+    user_name              VARCHAR(25),
+    email                  VARCHAR(50),
+    password               VARCHAR(100),
+    role                   VARCHAR(25),
+    user_source            VARCHAR(25),
+    is_locked              BOOLEAN,
+    is_using_temp_password BOOLEAN,
+    create_at              TIMESTAMP WITH TIME ZONE,
+    update_at              TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE watch_session_participants (
+    participant_id UUID PRIMARY KEY,
+    session_id     UUID NOT NULL,
+    user_id        UUID NOT NULL,
+    joined_at      TIMESTAMP WITH TIME ZONE,
+    left_at        TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE playlists_contents (
+    playlist_content_id UUID,
+    playlist_id         UUID,
+    content_id          UUID,
+    PRIMARY KEY (playlist_content_id, playlist_id)
+);
+
+CREATE TABLE notifications (
+    notification_id UUID,
+    user_id         UUID,
+    type            VARCHAR(50),
+    content         VARCHAR(50),
+    is_read         BOOLEAN,
+    created_at      TIMESTAMP WITH TIME ZONE,
+    PRIMARY KEY (notification_id, user_id)
+);
+
+CREATE TABLE contents (
+    content_id  UUID PRIMARY KEY,
+    external_id VARCHAR(100),
+    source      VARCHAR(25),
+    title       VARCHAR(255),
+    summary     TEXT,
+    category    VARCHAR(25),
+    poster_url  VARCHAR(500),
+    genres      TEXT[],
+    released_at DATE,
+    created_at  TIMESTAMP WITH TIME ZONE,
+    updated_at  TIMESTAMP WITH TIME ZONE,
+    rating      INTEGER
+);
+
+CREATE TABLE follows (
+    follow_id   UUID PRIMARY KEY,
+    follower_id UUID NOT NULL,
+    followee_id UUID NOT NULL
+);
+
+CREATE TABLE subscribes (
+    subscribe_id  UUID PRIMARY KEY,
+    user_id       UUID NOT NULL,
+    subscribed_at TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE chatrooms_users (
+    chat_room_id UUID,
+    user_id      UUID,
+    PRIMARY KEY (chat_room_id, user_id)
+);
+
+CREATE TABLE chat_rooms (
+    chat_room_id UUID PRIMARY KEY
+);
+
+CREATE TABLE watch_sessions (
+    session_id UUID PRIMARY KEY,
+    content_id UUID NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE,
+    is_active  BOOLEAN
+);
+
+CREATE TABLE messages (
+    message_id   UUID,
+    chat_room_id UUID,
+    created_at   TIMESTAMP WITH TIME ZONE NOT NULL,
+    user_id      UUID                     NOT NULL,
+    content      VARCHAR(200),
+    PRIMARY KEY (message_id, chat_room_id)
+);
+
+CREATE TABLE reviews (
+    review_id  UUID PRIMARY KEY,
+    content_id UUID NOT NULL,
+    user_id    UUID NOT NULL,
+    rating     INTEGER,
+    comment    VARCHAR(1000),
+    created_at TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE playlists (
+    playlist_id  UUID PRIMARY KEY,
+    user_id      UUID NOT NULL,
+    subscribe_id UUID NOT NULL,
+    title        VARCHAR(255),
+    description  VARCHAR(1000),
+    is_public    BOOLEAN,
+    created_at   TIMESTAMP WITH TIME ZONE,
+    updated_at   TIMESTAMP WITH TIME ZONE
+);
+
+-- WatchComment (N) -> WatchSession (1)
+ALTER TABLE watch_comments
+    ADD CONSTRAINT fk_watch_comment_session
+        FOREIGN KEY (session_id)
+            REFERENCES watch_sessions (session_id)
+            ON DELETE CASCADE;
+
+-- WatchComment (N) -> User (1)
+ALTER TABLE watch_comments
+    ADD CONSTRAINT fk_watch_comment_user
+        FOREIGN KEY (user_id)
+            REFERENCES users (user_id)
+            ON DELETE CASCADE;
+
+-- WatchSessionParticipant (N) -> WatchSession (1)
+ALTER TABLE watch_session_participants
+    ADD CONSTRAINT fk_watch_session_participant_session
+        FOREIGN KEY (session_id)
+            REFERENCES watch_sessions (session_id)
+            ON DELETE CASCADE;
+
+-- WatchSessionParticipant (N) -> User (1)
+ALTER TABLE watch_session_participants
+    ADD CONSTRAINT fk_watch_session_participant_user
+        FOREIGN KEY (user_id)
+            REFERENCES users (user_id)
+            ON DELETE CASCADE;
+
+-- PlaylistContent (N) -> Playlist (1)
+ALTER TABLE playlists_contents
+    ADD CONSTRAINT fk_playlist_content_playlist
+        FOREIGN KEY (playlist_id)
+            REFERENCES playlists (playlist_id)
+            ON DELETE CASCADE;
+
+-- PlaylistContent (N) -> Content (1)
+ALTER TABLE playlists_contents
+    ADD CONSTRAINT fk_playlist_content_content
+        FOREIGN KEY (content_id)
+            REFERENCES contents (content_id)
+            ON DELETE CASCADE;
+
+-- Notification (N) -> User (1)
+ALTER TABLE notifications
+    ADD CONSTRAINT fk_notification_user
+        FOREIGN KEY (user_id)
+            REFERENCES users (user_id)
+            ON DELETE CASCADE;
+
+-- Follow (N) -> User (1) [Follower]
+ALTER TABLE follows
+    ADD CONSTRAINT fk_follow_follower
+        FOREIGN KEY (follower_id)
+            REFERENCES users (user_id)
+            ON DELETE CASCADE;
+
+-- Follow (N) -> User (1) [Followee]
+ALTER TABLE follows
+    ADD CONSTRAINT fk_follow_followee
+        FOREIGN KEY (followee_id)
+            REFERENCES users (user_id)
+            ON DELETE CASCADE;
+
+-- Subscribe (N) -> User (1)
+ALTER TABLE subscribes
+    ADD CONSTRAINT fk_subscribe_user
+        FOREIGN KEY (user_id)
+            REFERENCES users (user_id)
+            ON DELETE CASCADE;
+
+-- ChatroomUser (N) -> ChatRoom (1)
+ALTER TABLE chatrooms_users
+    ADD CONSTRAINT fk_chatroom_user_chatroom
+        FOREIGN KEY (chat_room_id)
+            REFERENCES chat_rooms (chat_room_id)
+            ON DELETE CASCADE;
+
+-- ChatroomUser (N) -> User (1)
+ALTER TABLE chatrooms_users
+    ADD CONSTRAINT fk_chatroom_user_user
+        FOREIGN KEY (user_id)
+            REFERENCES users (user_id)
+            ON DELETE CASCADE;
+
+-- WatchSession (N) -> Content (1)
+ALTER TABLE watch_sessions
+    ADD CONSTRAINT fk_watch_session_content
+        FOREIGN KEY (content_id)
+            REFERENCES contents (content_id)
+            ON DELETE CASCADE;
+
+-- Message (N) -> ChatRoom (1)
+ALTER TABLE messages
+    ADD CONSTRAINT fk_message_chatroom
+        FOREIGN KEY (chat_room_id)
+            REFERENCES chat_rooms (chat_room_id)
+            ON DELETE CASCADE;
+
+-- Message (N) -> User (1)
+ALTER TABLE messages
+    ADD CONSTRAINT fk_message_user
+        FOREIGN KEY (user_id)
+            REFERENCES users (user_id)
+            ON DELETE SET NULL;
+
+-- Review (N) -> Content (1)
+ALTER TABLE reviews
+    ADD CONSTRAINT fk_review_content
+        FOREIGN KEY (content_id)
+            REFERENCES contents (content_id)
+            ON DELETE CASCADE;
+
+-- Review (N) -> User (1)
+ALTER TABLE reviews
+    ADD CONSTRAINT fk_review_user
+        FOREIGN KEY (user_id)
+            REFERENCES users (user_id)
+            ON DELETE SET NULL;
+
+-- Playlist (N) -> User (1)
+ALTER TABLE playlists
+    ADD CONSTRAINT fk_playlist_user
+        FOREIGN KEY (user_id)
+            REFERENCES users (user_id)
+            ON DELETE CASCADE;
+
+-- Playlist (N) -> Subscribe (1)
+ALTER TABLE playlists
+    ADD CONSTRAINT fk_playlist_subscribe
+        FOREIGN KEY (subscribe_id)
+            REFERENCES subscribes (subscribe_id)
+            ON DELETE SET NULL;
+
