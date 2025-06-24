@@ -41,7 +41,7 @@ jobs:
 
       - name: Build with Gradle
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mople
+          SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/mople
           SPRING_DATASOURCE_USERNAME: mople_user
           SPRING_DATASOURCE_PASSWORD: mople_1234
         run: ./gradlew clean build -Dspring.profiles.active=test
