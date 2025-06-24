@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/mople
+      SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:5432/mople
       SPRING_DATASOURCE_USERNAME: mople_user
       SPRING_DATASOURCE_PASSWORD: mople_1234
     permissions:
@@ -46,29 +46,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-
         run: ./gradlew clean build -Dspring.profiles.active=test
-
-      - name: Check application-test.yml exists
-        if: always()
-        run: ls -R src/test/resources
-
-      - name: Print Spring active profile
-        if: always()
-        run: |
-          echo "SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE"
-          ./gradlew properties | grep -i spring
-
-      - name: Test PostgreSQL Connection Directly
-        if: always()
-        run: |
-          # 1. psql 클라이언트 설치 (PostgreSQL 이미지는 대부분 포함)
-          apt-get update && apt-get install -y postgresql-client # 이미지는 대부분 포함되어 있어 필요 없을 수 있음
-
-          # 2. 간단한 psql 명령으로 연결 테스트
-          echo "Attempting direct psql connection..."
-          PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h postgres -p 5432 -U mople_user -d mople -c "\conninfo" || { echo "psql connection failed!"; exit 1; }
-          echo "psql connection successful!"
 
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2
