@@ -39,12 +39,16 @@ jobs:
       - name: Grant execution permission for gradle
         run: chmod +x gradlew
 
+      - name: Grant execution permission for wait-for-it.sh
+        run: chmod +x wait-for-it.sh
+
       - name: Build with Gradle
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mople
           SPRING_DATASOURCE_USERNAME: mople_user
           SPRING_DATASOURCE_PASSWORD: mople_1234
-        run: ./gradlew clean build -Dspring.profiles.active=test
+        run: |
+          ./wait-for-it.sh postgres:5432 -- ./gradlew clean build -Dspring.profiles.active=test
 
       - name: Check application-test.yml exists
         run: ls -R src/test/resources
