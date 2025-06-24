@@ -46,7 +46,7 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:6543/testdb
           SPRING_DATASOURCE_USERNAME: mople_user
           SPRING_DATASOURCE_PASSWORD: mople_1234
-        run: ./gradlew clean build
+        run: ./gradlew clean build -Dspring.profiles.active=test
 
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2
