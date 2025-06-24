@@ -46,6 +46,7 @@ public class User {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "user_source", length = 25)
+  @Setter
   private UserSource userSource;
 
   @Column(name = "is_locked")
