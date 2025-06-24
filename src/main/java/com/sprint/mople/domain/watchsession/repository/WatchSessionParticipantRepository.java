@@ -9,12 +9,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface WatchSessionParticipantRepository extends
     JpaRepository<WatchSessionParticipant, UUID> {
 
-    List<WatchSessionParticipant> findAllBySessionId(UUID sessionId);
+  List<WatchSessionParticipant> findAllBySessionId(UUID sessionId);
 
-    Optional<WatchSessionParticipant> findBySessionIdAndUserId(UUID sessionId, UUID userId);
+  Optional<WatchSessionParticipant> findBySessionIdAndUserId(UUID sessionId, UUID userId);
 
-    boolean existsBySessionIdAndUserId(UUID sessionId, UUID userId);
+  boolean existsBySessionIdAndUserId(UUID sessionId, UUID userId);
 
-    void deleteAllBySessionId(UUID sessionId);
+  void deleteAllBySessionId(UUID sessionId);
 
 }

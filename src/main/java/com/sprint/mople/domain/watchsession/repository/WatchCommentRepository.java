@@ -6,5 +6,6 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WatchCommentRepository extends JpaRepository<WatchComment, UUID> {
-    List<WatchComment> findAllBySessionIdOrderBySentAtAsc(UUID sessionId);
+
+  List<WatchComment> findAllBySessionIdOrderBySentAtAsc(UUID sessionId);
 }

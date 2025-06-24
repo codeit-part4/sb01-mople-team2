@@ -6,7 +6,8 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WatchSessionRepository extends JpaRepository<WatchSession, UUID> {
-    Optional<WatchSession> findByContentId(UUID contentId);
 
-    boolean existsByContentId(UUID contentId);
+  Optional<WatchSession> findByContentId(UUID contentId);
+
+  boolean existsByContentId(UUID contentId);
 }
