@@ -20,73 +20,69 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "contents",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"external_id", "source"})
-)
+@Table(name = "contents", uniqueConstraints = @UniqueConstraint(columnNames = {"external_id",
+    "source"}))
 @Getter
 @NoArgsConstructor
 public class Content {
 
-    @Id
-    @Column(name = "content_id", columnDefinition = "uuid")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @Column(name = "content_id", columnDefinition = "uuid")
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(name = "external_id")
-    private String externalId;
+  @Column(name = "external_id")
+  private String externalId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 25)
-    private Source source;
+  @Enumerated(EnumType.STRING)
+  @Column(length = 25)
+  private Source source;
 
-    @Column
-    private String title;
+  @Column
+  private String title;
 
-    @Column(columnDefinition = "TEXT")
-    private String summary;
+  @Column(columnDefinition = "TEXT")
+  private String summary;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 25)
-    private Category category;
+  @Enumerated(EnumType.STRING)
+  @Column(length = 25)
+  private Category category;
 
-    @Column(name = "poster_url")
-    private String posterUrl;
+  @Column(name = "poster_url")
+  private String posterUrl;
 
-    @Column(name = "genres", columnDefinition = "jsonb")
-    @Convert(converter = StringSetConverter.class)
-    private Set<String> genres;
+  @Column(name = "genres", columnDefinition = "jsonb")
+  @Convert(converter = StringSetConverter.class)
+  private Set<String> genres;
 
-    @Column(name = "released_at", columnDefinition = "timestamp with time zone")
-    private Instant releasedAt;
+  @Column(name = "released_at", columnDefinition = "timestamp with time zone")
+  private Instant releasedAt;
 
-    @Column(name = "created_at", columnDefinition = "timestamp with time zone")
-    private Instant createdAt;
+  @Column(name = "created_at", columnDefinition = "timestamp with time zone")
+  private Instant createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "timestamp with time zone")
-    private Instant updatedAt;
+  @Column(name = "updated_at", columnDefinition = "timestamp with time zone")
+  private Instant updatedAt;
 
-    @Column
-    private Integer rating;
+  @Column
+  private Integer rating;
 
-    public enum Source {
-        TMDB,
-        THE_SPORTS_DB
-    }
+  public enum Source {
+    TMDB, THE_SPORTS_DB
+  }
 
-    public enum Category {
-        MOVIE,
-        TV,
-        SPORTS
-    }
+  public enum Category {
+    MOVIE, TV, SPORTS
+  }
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-    }
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = Instant.now();
+    this.updatedAt = Instant.now();
+  }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = Instant.now();
-    }
+  @PreUpdate
+  protected void onUpdate() {
+    this.updatedAt = Instant.now();
+  }
 }

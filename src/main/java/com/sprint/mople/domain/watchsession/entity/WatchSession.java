@@ -22,30 +22,31 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class WatchSession {
-    @Id
-    @Column(name = "session_id", columnDefinition = "uuid")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "content_id", nullable = false)
-    private Content content;
+  @Id
+  @Column(name = "session_id", columnDefinition = "uuid")
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(name = "created_at", columnDefinition = "timestamp with time zone")
-    private Instant createdAt;
+  @OneToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "content_id", nullable = false)
+  private Content content;
 
-    @Column(name = "updated_at", columnDefinition = "timestamp with time zone")
-    private Instant updatedAt;
+  @Column(name = "created_at", columnDefinition = "timestamp with time zone")
+  private Instant createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        Instant now = Instant.now();
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
+  @Column(name = "updated_at", columnDefinition = "timestamp with time zone")
+  private Instant updatedAt;
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = Instant.now();
-    }
+  @PrePersist
+  protected void onCreate() {
+    Instant now = Instant.now();
+    this.createdAt = now;
+    this.updatedAt = now;
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    this.updatedAt = Instant.now();
+  }
 }

@@ -21,27 +21,28 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class WatchComment {
-    @Id
-    @Column(name = "comment_id", columnDefinition = "uuid")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "session_id", nullable = false)
-    private WatchSession session;
+  @Id
+  @Column(name = "comment_id", columnDefinition = "uuid")
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "session_id", nullable = false)
+  private WatchSession session;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String message;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @Column(name = "sent_at", columnDefinition = "timestamp with time zone", nullable = false)
-    private Instant sentAt;
+  @Column(columnDefinition = "TEXT", nullable = false)
+  private String message;
 
-    @PrePersist
-    protected void onSend() {
-        this.sentAt = Instant.now();
-    }
+  @Column(name = "sent_at", columnDefinition = "timestamp with time zone", nullable = false)
+  private Instant sentAt;
+
+  @PrePersist
+  protected void onSend() {
+    this.sentAt = Instant.now();
+  }
 }

@@ -27,24 +27,25 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class WatchSessionParticipant {
-    @Id
-    @Column(name = "participant_id", columnDefinition = "uuid")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "session_id", nullable = false)
-    private WatchSession session;
+  @Id
+  @Column(name = "participant_id", columnDefinition = "uuid")
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "session_id", nullable = false)
+  private WatchSession session;
 
-    @Column(name = "joined_at", columnDefinition = "timestamp with time zone", nullable = false)
-    private Instant joinedAt;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @PrePersist
-    protected void onJoin() {
-        this.joinedAt = Instant.now();
-    }
+  @Column(name = "joined_at", columnDefinition = "timestamp with time zone", nullable = false)
+  private Instant joinedAt;
+
+  @PrePersist
+  protected void onJoin() {
+    this.joinedAt = Instant.now();
+  }
 }
