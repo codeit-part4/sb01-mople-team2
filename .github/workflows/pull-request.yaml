@@ -9,10 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:5432/mople
-      SPRING_DATASOURCE_USERNAME: mople_user
-      SPRING_DATASOURCE_PASSWORD: mople_1234
     permissions:
       pull-requests: write
       contents: write
@@ -44,6 +40,9 @@ jobs:
 
       - name: Grant execution permission for gradle
         run: chmod +x gradlew
+
+      - name: Write .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: Build with Gradle
         run: ./gradlew clean build -Dspring.profiles.active=test
