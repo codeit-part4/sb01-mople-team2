@@ -44,4 +44,20 @@ public class UserRegisterTest {
     assertEquals("모두의 플리", response.getName());
     assertEquals("modu@gmail.com", response.getEmail());
   }
+
+  @Test
+  void 이메일_중복예외() {
+    // given
+    UserRegisterRequestDto request = new UserRegisterRequestDto("모두의 플리", "modu@gmail.com", "password123");
+
+    // 이미 이메일이 존재한다고 가정
+    when(userRepository.existsByEmail("modu@gmail.com")).thenReturn(true);
+
+    // when & then
+    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+      userService.registerUser(request);
+    });
+
+    assertEquals("이미 존재하는 이메일입니다.", exception.getMessage());
+  }
 }
