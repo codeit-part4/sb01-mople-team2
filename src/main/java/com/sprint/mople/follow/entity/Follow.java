@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class Follow {
 
   @Id
-  @Column(name = "follow_id", nullable = false)
+  @Column(name = "follow_id")
   @GeneratedValue(strategy = GenerationType.AUTO)
   private UUID id;
 
