@@ -13,6 +13,20 @@ jobs:
       pull-requests: write
       contents: write
       checks: write
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 6543:5432
+        env:
+          POSTGRES_USER: mople_user
+          POSTGRES_PASSWORD: mople_1234
+          POSTGRES_DB: mople
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout the code
@@ -28,6 +42,10 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:6543/testdb
+          SPRING_DATASOURCE_USERNAME: mople_user
+          SPRING_DATASOURCE_PASSWORD: mople_1234
         run: ./gradlew clean build
 
       - name: Publish unit test results
