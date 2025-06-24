@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -23,19 +24,24 @@ public class User {
   @Id
   @Column(name = "user_id", columnDefinition = "uuid")
   @GeneratedValue
+  @Setter
   private UUID id;
 
   @Column(name = "user_name", length = 25)
+  @Setter
   private String userName;
 
   @Column(length = 50)
+  @Setter
   private String email;
 
   @Column(length = 25)
+  @Setter
   private String password;
 
   @Enumerated(EnumType.STRING)
   @Column(length = 25)
+  @Setter
   private Role role;
 
   @Enumerated(EnumType.STRING)
@@ -43,9 +49,11 @@ public class User {
   private UserSource userSource;
 
   @Column(name = "is_locked")
+  @Setter
   private Boolean isLocked;
 
   @Column(name = "is_using_temp_password")
+  @Setter
   private Boolean isUsingTempPassword;
 
   @CreationTimestamp
@@ -54,6 +62,7 @@ public class User {
 
   @UpdateTimestamp
   @Column(name = "update_at", columnDefinition = "timestamp with time zone")
+  @Setter
   private Instant updateAt;
 
 }
