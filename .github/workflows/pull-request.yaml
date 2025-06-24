@@ -44,7 +44,15 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mople
           SPRING_DATASOURCE_USERNAME: mople_user
           SPRING_DATASOURCE_PASSWORD: mople_1234
-        run: ./gradlew clean build -Dspring.profiles.active=test
+        run: ./gradlew clean build --debug -Dspring.profiles.active=test
+
+      - name: Check application-test.yml exists
+        run: ls -R src/test/resources
+
+      - name: Print Spring active profile
+        run: |
+          echo "SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE"
+          ./gradlew properties | grep -i spring
 
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2
