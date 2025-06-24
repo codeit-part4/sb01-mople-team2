@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mople
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/mople
       SPRING_DATASOURCE_USERNAME: mople_user
       SPRING_DATASOURCE_PASSWORD: mople_1234
     permissions:
@@ -63,7 +63,7 @@ jobs:
         if: always()
         run: |
           # 1. psql 클라이언트 설치 (PostgreSQL 이미지는 대부분 포함)
-          # apt-get update && apt-get install -y postgresql-client # 이미지는 대부분 포함되어 있어 필요 없을 수 있음
+          apt-get update && apt-get install -y postgresql-client # 이미지는 대부분 포함되어 있어 필요 없을 수 있음
 
           # 2. 간단한 psql 명령으로 연결 테스트
           echo "Attempting direct psql connection..."
