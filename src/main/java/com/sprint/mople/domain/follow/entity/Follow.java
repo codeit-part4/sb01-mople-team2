@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.follow.entity;
 
+import com.sprint.mople.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

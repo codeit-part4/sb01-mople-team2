@@ -17,6 +17,7 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import com.sprint.mople.domain.user.entity.User;
 
 @Entity
 @Table(name = "chat_rooms")
