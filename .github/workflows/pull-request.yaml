@@ -25,7 +25,6 @@ jobs:
           --health-interval 5s
           --health-timeout 3s
           --health-retries 10
-          --network host
 
     steps:
       - name: Checkout the code
