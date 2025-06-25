@@ -5,11 +5,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtProvider {
@@ -19,6 +18,7 @@ public class JwtProvider {
 
   private Key key;
   private final long expirationMillis = 1000 * 60 * 60; // 1시간
+  private final long refreshExpirationMillis = 1000 * 60 * 60 * 24 * 7; // 7일
 
   @PostConstruct
   public void init() {
@@ -45,5 +45,22 @@ public class JwtProvider {
   public long getExpirationSeconds() {
     return expirationMillis / 1000;
   }
+
+  public String createRefreshToken(String userId) {
+    Date now = new Date();
+    Date expiry = new Date(now.getTime() + refreshExpirationMillis);
+
+    return Jwts.builder()
+        .setSubject(userId)
+        .setIssuedAt(now)
+        .setExpiration(expiry)
+        .signWith(key, SignatureAlgorithm.HS256)
+        .compact();
+  }
+
+  public long getRefreshExpirationMillis() {
+    return refreshExpirationMillis;
+  }
+
 }
 

@@ -250,3 +250,13 @@ ALTER TABLE playlists
             REFERENCES subscribes (subscribe_id)
             ON DELETE SET NULL;
 
+CREATE TABLE refresh_tokens (
+    token_id UUID PRIMARY KEY,
+    user_id UUID NOT NULL UNIQUE,
+    token TEXT NOT NULL,
+    expiry_date TIMESTAMP NOT NULL,
+    CONSTRAINT fk_user
+        FOREIGN KEY (user_id)
+            REFERENCES users(user_id)
+            ON DELETE CASCADE
+);
