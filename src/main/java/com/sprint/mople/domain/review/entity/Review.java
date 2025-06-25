@@ -22,7 +22,7 @@ public class Review {
 
   @Id
   @Column(name = "review_id", nullable = false)
-  private UUID reviewId;
+  private UUID id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "content_id", nullable = false)
@@ -40,4 +40,17 @@ public class Review {
 
   @Column(name = "created_at")
   private Instant createdAt;
+
+  public Review(
+      Content content,
+      User user,
+      Integer rating,
+      String comment
+  )
+  {
+    this.content = content;
+    this.user = user;
+    this.rating = rating;
+    this.comment = comment;
+  }
 }
