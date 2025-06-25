@@ -250,3 +250,5 @@ ALTER TABLE playlists
             REFERENCES subscribes (subscribe_id)
             ON DELETE SET NULL;
 
+-- Indexes
+CREATE INDEX idx_follower_followee ON follows(follower_id, followee_id);
