@@ -4,6 +4,7 @@ import com.sprint.mople.domain.user.dto.UserRegisterResponseDto;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import com.sprint.mople.domain.user.service.UserService;
+import com.sprint.mople.domain.user.service.UserServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;

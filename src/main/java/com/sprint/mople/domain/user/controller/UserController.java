@@ -3,6 +3,7 @@ package com.sprint.mople.domain.user.controller;
 import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
 import com.sprint.mople.domain.user.dto.UserRegisterResponseDto;
 import com.sprint.mople.domain.user.service.UserService;
+import com.sprint.mople.domain.user.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
