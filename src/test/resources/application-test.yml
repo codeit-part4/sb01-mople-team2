@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    org.springframework.core.env: DEBUG
+    org.springframework.boot.context.config: DEBUG
+    org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
+    org.springframework.jdbc.datasource: DEBUG
