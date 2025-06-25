@@ -9,6 +9,7 @@ import com.sprint.mople.domain.user.dto.UserLoginResponseDto;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import com.sprint.mople.domain.user.service.UserServiceImpl;
+import com.sprint.mople.global.jwt.JwtProvider;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -29,30 +30,36 @@ public class UserLoginTest {
 
   @Mock
   private PasswordEncoder passwordEncoder;
+  @Mock
+  private JwtProvider jwtProvider;
 
   @Test
-  void 로그인_성공() {
+  void 로그인_성공_JWT_반환() {
     // given
     String email = "modu@gmail.com";
-    String rawPassword = "password123";
-    String encodedPassword = "$2a$10$ENCRYPTED";
+    String password = "password123";
+    UUID userId = UUID.randomUUID();
 
-    User user = new User();
-    user.setId(UUID.randomUUID());
-    user.setEmail(email);
-    user.setPassword(encodedPassword);
-    user.setUserName("모두의 플리");
+    User user = User.builder()
+        .id(userId)
+        .userName("모두의 플리")
+        .email(email)
+        .password("encodedPassword")
+        .build();
 
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-    when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(true);
+    when(passwordEncoder.matches(password, user.getPassword())).thenReturn(true);
+    when(jwtProvider.createToken(userId.toString(), email)).thenReturn("mock-jwt-token");
 
     // when
-    UserLoginResponseDto response = userService.login(email, rawPassword);
+    UserLoginResponseDto response = userService.login(email, password);
 
     // then
-    assertNotNull(response);
-    assertEquals("모두의 플리", response.getName());
+    assertEquals("mock-jwt-token", response.getAccessToken());
+    assertEquals("Bearer", response.getTokenType());
     assertEquals(email, response.getEmail());
+    assertEquals("모두의 플리", response.getName());
+    assertEquals(userId, response.getUserId());
   }
 
   @Test
