@@ -7,8 +7,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
@@ -16,14 +20,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "contents")
+@Table(name = "contents", uniqueConstraints = @UniqueConstraint(columnNames = {"external_id",
+    "source"}))
 @Getter
 @NoArgsConstructor
 public class Content {
 
   @Id
   @Column(name = "content_id", columnDefinition = "uuid")
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
   @Column(name = "external_id")
@@ -63,13 +68,21 @@ public class Content {
   private Integer rating;
 
   public enum Source {
-    TMDB,
-    THE_SPORTS_DB
+    TMDB, THE_SPORTS_DB
   }
 
   public enum Category {
-    MOVIE,
-    TV,
-    SPORTS
+    MOVIE, TV, SPORTS
+  }
+
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = Instant.now();
+    this.updatedAt = Instant.now();
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    this.updatedAt = Instant.now();
   }
 }
