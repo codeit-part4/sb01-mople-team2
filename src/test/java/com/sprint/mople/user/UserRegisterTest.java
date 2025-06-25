@@ -2,8 +2,8 @@ package com.sprint.mople.user;
 import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
 import com.sprint.mople.domain.user.dto.UserRegisterResponseDto;
 import com.sprint.mople.domain.user.entity.User;
+import com.sprint.mople.domain.user.exception.EmailAlreadyExistsException;
 import com.sprint.mople.domain.user.repository.UserRepository;
-import com.sprint.mople.domain.user.service.UserService;
 import com.sprint.mople.domain.user.service.UserServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import java.util.Set;
@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.UUID;
@@ -22,15 +24,19 @@ import java.util.UUID;
 public class UserRegisterTest {
 
   @InjectMocks
-  private UserService userService;
+  private UserServiceImpl userService;
 
   @Mock
   private UserRepository userRepository;
+  @Mock
+  private PasswordEncoder passwordEncoder;
+
   private final LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+
 
   @BeforeEach
   void setUp() {
-    validator.afterPropertiesSet();  // 반드시 초기화 필요
+    validator.afterPropertiesSet();
   }
 
   @Test
@@ -63,7 +69,7 @@ public class UserRegisterTest {
     when(userRepository.existsByEmail("modu@gmail.com")).thenReturn(true);
 
     // when & then
-    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+    EmailAlreadyExistsException exception = assertThrows(EmailAlreadyExistsException.class, () -> {
       userService.registerUser(request);
     });
 
