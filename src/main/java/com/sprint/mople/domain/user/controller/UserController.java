@@ -1,14 +1,13 @@
 package com.sprint.mople.domain.user.controller;
 
-import com.sprint.mople.domain.user.dto.UserEditRequestDto;
-import com.sprint.mople.domain.user.dto.UserEditResponse;
+import com.sprint.mople.domain.user.dto.PasswordUpdateRequestDto;
+import com.sprint.mople.domain.user.dto.RoleUpdateRequestDto;
+import com.sprint.mople.domain.user.dto.RoleUpdateResponseDto;
+import com.sprint.mople.domain.user.dto.UpdateUserLockRequestDto;
 import com.sprint.mople.domain.user.dto.UserListResponseDto;
-import com.sprint.mople.domain.user.dto.UserPasswordRequestDto;
 import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
 import com.sprint.mople.domain.user.dto.UserRegisterResponseDto;
-import com.sprint.mople.domain.user.entity.Role;
 import com.sprint.mople.domain.user.service.UserService;
-import com.sprint.mople.domain.user.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -55,21 +54,30 @@ public class UserController {
   }
 
   @PatchMapping("/{userId}/role")
-  public ResponseEntity<UserEditResponse> updateUserRole(
+  public ResponseEntity<RoleUpdateResponseDto> updateUserRole(
       @PathVariable UUID userId,
-      @RequestBody UserEditRequestDto request
+      @RequestBody RoleUpdateRequestDto request
   ) {
-    UserEditResponse response = userService.updateUserRole(userId, request.getRole());
+    RoleUpdateResponseDto response = userService.updateUserRole(userId, request.getRole());
     return ResponseEntity.ok(response);
   }
 
   @PatchMapping("/{userId}/password")
   public ResponseEntity<Void> updateUserPassword(
       @PathVariable UUID userId,
-      @RequestBody UserPasswordRequestDto request
+      @RequestBody PasswordUpdateRequestDto request
   ) {
     userService.updateUserPassword(userId, request.getPassword());
     return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{userId}/lock")
+  public ResponseEntity<UUID> updateLockStatus(
+      @PathVariable UUID userId,
+      @RequestBody UpdateUserLockRequestDto request
+  ) {
+    UUID result = userService.updateUserLockStatus(userId, request.getIsLocked());
+    return ResponseEntity.ok(result);
   }
 
 }

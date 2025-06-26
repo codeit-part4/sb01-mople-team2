@@ -1,6 +1,6 @@
 package com.sprint.mople.domain.user.service;
 
-import com.sprint.mople.domain.user.dto.UserEditResponse;
+import com.sprint.mople.domain.user.dto.RoleUpdateResponseDto;
 import com.sprint.mople.domain.user.dto.UserListResponseDto;
 import com.sprint.mople.domain.user.dto.UserLoginResponseDto;
 import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
@@ -18,7 +18,9 @@ public interface UserService {
 
   Page<UserListResponseDto> getUsers(String search, Pageable pageable);
 
-  UserEditResponse updateUserRole(UUID userId, Role newRole);
+  RoleUpdateResponseDto updateUserRole(UUID userId, Role newRole);
 
   void updateUserPassword(UUID userId, String newPassword);
+
+  UUID updateUserLockStatus(UUID userId, boolean locked);
 }
