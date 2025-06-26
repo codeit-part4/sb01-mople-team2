@@ -89,9 +89,9 @@ CREATE TABLE subscribes (
 );
 
 CREATE TABLE chatrooms_users (
-    chatroom_user_id UUID PRIMARY KEY,
     chat_room_id     UUID NOT NULL,
-    user_id          UUID NOT NULL
+    user_id          UUID NOT NULL,
+    PRIMARY KEY (chat_room_id, user_id)
 );
 
 CREATE TABLE chat_rooms (
