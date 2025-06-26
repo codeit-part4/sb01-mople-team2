@@ -32,7 +32,7 @@ public class ChatRoom {
 
   @ManyToMany
   @JoinTable(
-      name = "chatrooms-users",
+      name = "chatrooms_users",
       joinColumns = @JoinColumn(name = "chat_room_id"),
       inverseJoinColumns = @JoinColumn(name = "user_id")
   )
