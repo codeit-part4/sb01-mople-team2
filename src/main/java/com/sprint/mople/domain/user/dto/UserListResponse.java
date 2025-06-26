@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserListResponseDto {
+public class UserListResponse {
   private String userName;
   private String email;
   private Boolean isLocked;

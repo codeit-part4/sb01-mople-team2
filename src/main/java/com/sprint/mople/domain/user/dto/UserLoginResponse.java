@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class UserLoginResponseDto {
+public class UserLoginResponse {
   private String accessToken;
   private String tokenType; // "Bearer"
   private long expiresIn;   // 단위: 초

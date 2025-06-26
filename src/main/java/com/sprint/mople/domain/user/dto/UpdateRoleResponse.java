@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserEditResponse {
+public class UpdateRoleResponse {
   private UUID id;
   private Instant createdAt;
   private String email;

@@ -1,10 +1,10 @@
 package com.sprint.mople.domain.user.service;
 
-import com.sprint.mople.domain.user.dto.RoleUpdateResponseDto;
-import com.sprint.mople.domain.user.dto.UserListResponseDto;
-import com.sprint.mople.domain.user.dto.UserLoginResponseDto;
-import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
-import com.sprint.mople.domain.user.dto.UserRegisterResponseDto;
+import com.sprint.mople.domain.user.dto.UpdateRoleResponse;
+import com.sprint.mople.domain.user.dto.UserListResponse;
+import com.sprint.mople.domain.user.dto.UserLoginResponse;
+import com.sprint.mople.domain.user.dto.UserRegisterRequest;
+import com.sprint.mople.domain.user.dto.UserRegisterResponse;
 import com.sprint.mople.domain.user.entity.Role;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.entity.UserSource;
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
   private final JwtProvider jwtProvider;
 
   @Override
-  public UserRegisterResponseDto registerUser(UserRegisterRequestDto request) {
+  public UserRegisterResponse registerUser(UserRegisterRequest request) {
     if (userRepository.existsByEmail(request.getEmail())) {
       throw new EmailAlreadyExistsException("이미 존재하는 이메일입니다.");
     }
@@ -53,11 +53,11 @@ public class UserServiceImpl implements UserService {
 
     User saved = userRepository.save(user);
 
-    return new UserRegisterResponseDto(saved.getId(), saved.getUserName(), saved.getEmail());
+    return new UserRegisterResponse(saved.getId(), saved.getUserName(), saved.getEmail());
   }
 
   @Override
-  public UserLoginResponseDto login(String email, String password) {
+  public UserLoginResponse login(String email, String password) {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new LoginFailedException("이메일 또는 비밀번호가 일치하지 않습니다."));
 
@@ -65,13 +65,13 @@ public class UserServiceImpl implements UserService {
       throw new LoginFailedException("이메일 또는 비밀번호가 일치하지 않습니다.");
     }
 
-    if (user.getIsLocked()){
+    if (user.getIsLocked()) {
       throw new AccountLockedException("이 계정은 잠긴 계정입니다.");
     }
 
     String token = jwtProvider.createToken(user.getId().toString(), user.getEmail());
 
-    return UserLoginResponseDto.builder()
+    return UserLoginResponse.builder()
         .accessToken(token)
         .tokenType("Bearer")
         .expiresIn(jwtProvider.getExpirationSeconds())
@@ -82,11 +82,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Page<UserListResponseDto> getUsers(String search, Pageable pageable) {
+  public Page<UserListResponse> getUsers(String search, Pageable pageable) {
     Specification<User> spec = getUserSearchSpec(search);
 
     return userRepository.findAll(spec, pageable)
-        .map(user -> new UserListResponseDto(
+        .map(user -> new UserListResponse(
             user.getUserName(),
             user.getEmail(),
             user.getIsLocked(),
@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public RoleUpdateResponseDto updateUserRole(UUID userId, Role newRole) {
+  public UpdateRoleResponse updateUserRole(UUID userId, Role newRole) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
 
     userRepository.save(user);
 
-    return new RoleUpdateResponseDto(
+    return new UpdateRoleResponse(
         user.getId(),
         user.getCreateAt(),
         user.getEmail(),

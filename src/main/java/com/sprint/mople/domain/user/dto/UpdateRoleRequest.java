@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEditRequestDto {
+public class UpdateRoleRequest {
   private Role role;
 }

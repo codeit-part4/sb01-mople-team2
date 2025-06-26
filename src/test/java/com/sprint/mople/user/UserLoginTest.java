@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import com.sprint.mople.domain.user.dto.UserLoginResponseDto;
+import com.sprint.mople.domain.user.dto.UserLoginResponse;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.exception.LoginFailedException;
 import com.sprint.mople.domain.user.repository.UserRepository;
@@ -52,7 +52,7 @@ public class UserLoginTest {
     when(jwtProvider.createToken(userId.toString(), email)).thenReturn("mock-jwt-token");
 
     // when
-    UserLoginResponseDto response = userService.login(email, password);
+    UserLoginResponse response = userService.login(email, password);
 
     // then
     assertEquals("mock-jwt-token", response.getAccessToken());

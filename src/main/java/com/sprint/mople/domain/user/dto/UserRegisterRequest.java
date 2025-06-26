@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRegisterRequestDto {
+public class UserRegisterRequest {
 
   @NotBlank(message = "이름은 필수 입력값입니다.")
   private String name;
