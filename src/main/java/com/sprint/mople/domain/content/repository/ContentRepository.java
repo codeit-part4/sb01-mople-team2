@@ -8,6 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ContentRepository extends JpaRepository<Content, UUID> {
 
   Optional<Content> findByExternalIdAndSource(String externalId, Content.Source source);
-
-
 }
