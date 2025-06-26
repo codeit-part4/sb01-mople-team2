@@ -3,6 +3,7 @@ package com.sprint.mople.domain.user.controller;
 import com.sprint.mople.domain.user.dto.UserEditRequestDto;
 import com.sprint.mople.domain.user.dto.UserEditResponse;
 import com.sprint.mople.domain.user.dto.UserListResponseDto;
+import com.sprint.mople.domain.user.dto.UserPasswordRequestDto;
 import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
 import com.sprint.mople.domain.user.dto.UserRegisterResponseDto;
 import com.sprint.mople.domain.user.entity.Role;
@@ -61,4 +62,14 @@ public class UserController {
     UserEditResponse response = userService.updateUserRole(userId, request.getRole());
     return ResponseEntity.ok(response);
   }
+
+  @PatchMapping("/{userId}/password")
+  public ResponseEntity<Void> updateUserPassword(
+      @PathVariable UUID userId,
+      @RequestBody UserPasswordRequestDto request
+  ) {
+    userService.updateUserPassword(userId, request.getPassword());
+    return ResponseEntity.noContent().build();
+  }
+
 }

@@ -18,5 +18,7 @@ public interface UserService {
 
   Page<UserListResponseDto> getUsers(String search, Pageable pageable);
 
-  public UserEditResponse updateUserRole(UUID userId, Role newRole);
+  UserEditResponse updateUserRole(UUID userId, Role newRole);
+
+  void updateUserPassword(UUID userId, String newPassword);
 }

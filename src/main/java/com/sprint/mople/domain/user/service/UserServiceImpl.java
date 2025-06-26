@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -121,6 +122,21 @@ public class UserServiceImpl implements UserService {
         user.getUserSource(),
         Boolean.TRUE.equals(user.getIsLocked())
     );
+  }
+
+  @Override
+  @Transactional
+  public void updateUserPassword(UUID userId, String newPassword) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    //비밀번호 암호화
+    String encoded = passwordEncoder.encode(newPassword);
+
+    user.setPassword(encoded);
+    user.setUpdateAt(Instant.now());
+
+    userRepository.save(user);
   }
 
 }
