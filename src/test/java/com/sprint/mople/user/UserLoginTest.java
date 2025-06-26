@@ -1,12 +1,12 @@
 package com.sprint.mople.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.sprint.mople.domain.user.dto.UserLoginResponseDto;
 import com.sprint.mople.domain.user.entity.User;
+import com.sprint.mople.domain.user.exception.LoginFailedException;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import com.sprint.mople.domain.user.service.UserServiceImpl;
 import com.sprint.mople.global.jwt.JwtProvider;
@@ -69,7 +69,7 @@ public class UserLoginTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     // when & then
-    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+    LoginFailedException exception = assertThrows(LoginFailedException.class, () -> {
       userService.login(email, "anypass");
     });
 
@@ -91,7 +91,7 @@ public class UserLoginTest {
     when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(false);
 
     // when & then
-    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+    LoginFailedException exception = assertThrows(LoginFailedException.class, () -> {
       userService.login(email, rawPassword);
     });
 
