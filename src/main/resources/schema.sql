@@ -39,6 +39,7 @@ CREATE TABLE notifications (
     user_id         UUID,
     type            VARCHAR(50),
     content         VARCHAR(50),
+    related_url     VARCHAR(1000),
     is_read         BOOLEAN,
     created_at      TIMESTAMP WITH TIME ZONE,
     PRIMARY KEY (notification_id, user_id)
