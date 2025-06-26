@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
+  
   //이메일 중복 exception
   @ExceptionHandler(EmailAlreadyExistsException.class)
   public ResponseEntity<Object> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
@@ -45,5 +46,11 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.badRequest().body(body);
   }
-
+  
+  @ExceptionHandler(MopleException.class)
+  public ResponseEntity<ErrorResponse> handleMopleException(MopleException ex) {
+    ErrorCode ec = ex.getErrorCode();
+    ErrorResponse body = new ErrorResponse(ec.getStatus(), ec.getMessage(), ec.getCode(), Instant.now());
+    return ResponseEntity.status(ec.getStatus()).body(body);
+  }
 }

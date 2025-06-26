@@ -1,9 +1,25 @@
+DROP TABLE IF EXISTS watch_comments CASCADE;
+DROP TABLE IF EXISTS watch_session_participants CASCADE;
+DROP TABLE IF EXISTS playlists_contents CASCADE;
+DROP TABLE IF EXISTS notifications CASCADE;
+DROP TABLE IF EXISTS follows CASCADE;
+DROP TABLE IF EXISTS messages CASCADE;
+DROP TABLE IF EXISTS chatrooms_users CASCADE;
+DROP TABLE IF EXISTS playlists CASCADE;
+DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS subscribes CASCADE;
+DROP TABLE IF EXISTS watch_sessions CASCADE;
+DROP TABLE IF EXISTS chat_rooms CASCADE;
+DROP TABLE IF EXISTS contents CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
 CREATE TABLE watch_comments (
     comment_id UUID PRIMARY KEY,
     session_id UUID NOT NULL,
     user_id    UUID NOT NULL,
     content    VARCHAR(500),
-    created_at TIMESTAMP WITH TIME ZONE
+    sent_at    TIMESTAMP WITH TIME ZONE,
+    message    TEXT
 );
 
 CREATE TABLE users (
@@ -39,6 +55,7 @@ CREATE TABLE notifications (
     user_id         UUID,
     type            VARCHAR(50),
     content         VARCHAR(50),
+    related_url     VARCHAR(1000),
     is_read         BOOLEAN,
     created_at      TIMESTAMP WITH TIME ZONE,
     PRIMARY KEY (notification_id, user_id)
@@ -73,8 +90,8 @@ CREATE TABLE subscribes (
 
 CREATE TABLE chatrooms_users (
     chatroom_user_id UUID PRIMARY KEY,
-    chat_room_id UUID NOT NULL,
-    user_id      UUID NOT NULL
+    chat_room_id     UUID NOT NULL,
+    user_id          UUID NOT NULL
 );
 
 CREATE TABLE chat_rooms (
@@ -85,6 +102,7 @@ CREATE TABLE watch_sessions (
     session_id UUID PRIMARY KEY,
     content_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE,
+    updated_at TIMESTAMP WITH TIME ZONE,
     is_active  BOOLEAN
 );
 
@@ -260,3 +278,5 @@ CREATE TABLE refresh_tokens (
             REFERENCES users(user_id)
             ON DELETE CASCADE
 );
+
+CREATE INDEX idx_follower_followee ON follows(follower_id, followee_id);

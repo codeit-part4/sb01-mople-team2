@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +23,7 @@ public class Review {
 
   @Id
   @Column(name = "review_id", nullable = false)
-  private UUID reviewId;
+  private UUID id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "content_id", nullable = false)
@@ -40,4 +41,26 @@ public class Review {
 
   @Column(name = "created_at")
   private Instant createdAt;
+
+  @Builder
+  public Review(
+      Content content,
+      User user,
+      Integer rating,
+      String comment
+  )
+  {
+    this.content = content;
+    this.user = user;
+    this.rating = rating;
+    this.comment = comment;
+  }
+
+  public void updateComment(String comment) {
+    this.comment = comment;
+  }
+
+  public void updateRating(int rating) {
+    this.rating = rating;
+  }
 }
