@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.user.service;
 
+import com.sprint.mople.domain.user.dto.UserEditResponse;
 import com.sprint.mople.domain.user.dto.UserListResponseDto;
 import com.sprint.mople.domain.user.dto.UserLoginResponseDto;
 import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
@@ -11,6 +12,8 @@ import com.sprint.mople.domain.user.exception.EmailAlreadyExistsException;
 import com.sprint.mople.domain.user.exception.LoginFailedException;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import com.sprint.mople.global.jwt.JwtProvider;
+import java.time.Instant;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -97,6 +100,27 @@ public class UserServiceImpl implements UserService {
           cb.like(cb.lower(root.get("email")), like)
       );
     };
+  }
+
+  @Override
+  public UserEditResponse updateUserRole(UUID userId, Role newRole) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    user.setRole(newRole);
+    user.setUpdateAt(Instant.now());
+
+    userRepository.save(user);
+
+    return new UserEditResponse(
+        user.getId(),
+        user.getCreateAt(),
+        user.getEmail(),
+        user.getUserName(),
+        user.getRole(),
+        user.getUserSource(),
+        Boolean.TRUE.equals(user.getIsLocked())
+    );
   }
 
 }

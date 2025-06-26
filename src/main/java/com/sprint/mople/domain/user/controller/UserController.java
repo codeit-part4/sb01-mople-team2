@@ -1,11 +1,15 @@
 package com.sprint.mople.domain.user.controller;
 
+import com.sprint.mople.domain.user.dto.UserEditRequestDto;
+import com.sprint.mople.domain.user.dto.UserEditResponse;
 import com.sprint.mople.domain.user.dto.UserListResponseDto;
 import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
 import com.sprint.mople.domain.user.dto.UserRegisterResponseDto;
+import com.sprint.mople.domain.user.entity.Role;
 import com.sprint.mople.domain.user.service.UserService;
 import com.sprint.mople.domain.user.service.UserServiceImpl;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,5 +51,14 @@ public class UserController {
     Page<UserListResponseDto> result = userService.getUsers(search, pageable);
 
     return ResponseEntity.ok(result);
+  }
+
+  @PatchMapping("/{userId}/role")
+  public ResponseEntity<UserEditResponse> updateUserRole(
+      @PathVariable UUID userId,
+      @RequestBody UserEditRequestDto request
+  ) {
+    UserEditResponse response = userService.updateUserRole(userId, request.getRole());
+    return ResponseEntity.ok(response);
   }
 }
