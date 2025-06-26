@@ -90,8 +90,8 @@ CREATE TABLE subscribes (
 
 CREATE TABLE chatrooms_users (
     chatroom_user_id UUID PRIMARY KEY,
-    chat_room_id UUID NOT NULL,
-    user_id      UUID NOT NULL
+    chat_room_id     UUID NOT NULL,
+    user_id          UUID NOT NULL
 );
 
 CREATE TABLE chat_rooms (
@@ -102,6 +102,7 @@ CREATE TABLE watch_sessions (
     session_id UUID PRIMARY KEY,
     content_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE,
+    updated_at TIMESTAMP WITH TIME ZONE,
     is_active  BOOLEAN
 );
 
