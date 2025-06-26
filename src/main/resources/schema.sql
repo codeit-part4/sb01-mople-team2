@@ -18,7 +18,7 @@ CREATE TABLE watch_comments (
     session_id UUID NOT NULL,
     user_id    UUID NOT NULL,
     content    VARCHAR(500),
-    created_at TIMESTAMP WITH TIME ZONE,
+    sent_at    TIMESTAMP WITH TIME ZONE,
     message    TEXT
 );
 
