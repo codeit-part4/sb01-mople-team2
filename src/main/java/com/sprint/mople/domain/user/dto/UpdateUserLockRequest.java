@@ -1,8 +1,7 @@
 package com.sprint.mople.domain.user.dto;
 
-import lombok.Getter;
+public record UpdateUserLockRequest(
+    Boolean isLocked
+) {
 
-@Getter
-public class UpdateUserLockRequest {
-  private Boolean isLocked;
 }

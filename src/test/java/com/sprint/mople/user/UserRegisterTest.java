@@ -55,9 +55,9 @@ public class UserRegisterTest {
     UserRegisterResponse response = userService.registerUser(request);
 
     // then
-    assertNotNull(response.getId());
-    assertEquals("모두의 플리", response.getName());
-    assertEquals("modu@gmail.com", response.getEmail());
+    assertNotNull(response.id());
+    assertEquals("모두의 플리", response.name());
+    assertEquals("modu@gmail.com", response.email());
   }
 
   @Test
@@ -79,11 +79,12 @@ public class UserRegisterTest {
   @Test
   void 이메일형식_실패체크() {
     // given
-    UserRegisterRequest invalidRequest = UserRegisterRequest.builder()
-        .name("모두의 플리")
-        .email("invalid-email")
-        .password("password123")
-        .build();
+    UserRegisterRequest invalidRequest = new UserRegisterRequest(
+        "모두의 플리",
+        "invalid-email",
+        "password123"
+    );
+
 
     // when
     Set<ConstraintViolation<UserRegisterRequest>> violations = validator.validate(invalidRequest);

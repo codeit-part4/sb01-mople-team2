@@ -56,11 +56,11 @@ public class UserLoginTest {
     UserLoginResponse response = userService.login(email, password);
 
     // then
-    assertEquals("mock-jwt-token", response.getAccessToken());
-    assertEquals("Bearer", response.getTokenType());
-    assertEquals(email, response.getEmail());
-    assertEquals("모두의 플리", response.getName());
-    assertEquals(userId, response.getUserId());
+    assertEquals("mock-jwt-token", response.accessToken());
+    assertEquals("Bearer", response.tokenType());
+    assertEquals(email, response.email());
+    assertEquals("모두의 플리", response.name());
+    assertEquals(userId, response.userId());
   }
 
   @Test

@@ -33,16 +33,16 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserRegisterResponse registerUser(UserRegisterRequest request) {
-    if (userRepository.existsByEmail(request.getEmail())) {
+    if (userRepository.existsByEmail(request.email())) {
       throw new EmailAlreadyExistsException("이미 존재하는 이메일입니다.");
     }
 
     User user = new User();
-    user.setUserName(request.getName());
-    user.setEmail(request.getEmail());
+    user.setUserName(request.name());
+    user.setEmail(request.email());
 
     //비밀번호 BCrypt 암호화
-    String encoded = passwordEncoder.encode(request.getPassword());
+    String encoded = passwordEncoder.encode(request.password());
 
     //유저 기본값
     user.setPassword(encoded);
@@ -71,14 +71,15 @@ public class UserServiceImpl implements UserService {
 
     String token = jwtProvider.createToken(user.getId().toString(), user.getEmail());
 
-    return UserLoginResponse.builder()
-        .accessToken(token)
-        .tokenType("Bearer")
-        .expiresIn(jwtProvider.getExpirationSeconds())
-        .userId(user.getId())
-        .email(user.getEmail())
-        .name(user.getUserName())
-        .build();
+    return new UserLoginResponse(
+        token,
+        "Bearer",
+        jwtProvider.getExpirationSeconds(),
+        user.getId(),
+        user.getEmail(),
+        user.getUserName()
+    );
+
   }
 
   @Override

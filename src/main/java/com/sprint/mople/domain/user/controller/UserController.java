@@ -67,7 +67,7 @@ public class UserController {
       @PathVariable UUID userId,
       @RequestBody UpdateRoleRequest request
   ) {
-    UpdateRoleResponse response = userService.updateUserRole(userId, request.getRole());
+    UpdateRoleResponse response = userService.updateUserRole(userId, request.role());
     return ResponseEntity.ok(response);
   }
 
@@ -76,7 +76,7 @@ public class UserController {
       @PathVariable UUID userId,
       @RequestBody UpdatePasswordRequest request
   ) {
-    userService.updateUserPassword(userId, request.getPassword());
+    userService.updateUserPassword(userId, request.password());
     return ResponseEntity.noContent().build();
   }
 
@@ -85,7 +85,7 @@ public class UserController {
       @PathVariable UUID userId,
       @RequestBody UpdateUserLockRequest request
   ) {
-    UUID result = userService.updateUserLockStatus(userId, request.getIsLocked());
+    UUID result = userService.updateUserLockStatus(userId, request.isLocked());
     return ResponseEntity.ok(result);
   }
 
