@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.dm.entity;
 
+import com.sprint.mople.domain.user.entity.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "chat_rooms")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class ChatRoom {
 
   @Id
@@ -32,7 +33,7 @@ public class ChatRoom {
   @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Message> messages = new ArrayList<>();
 
-  public ChatRoom(List<ChatRoomUser> participants) {
-    this.participants = participants;
-  }
+  public ChatRoom(User user1, User user2) {
+    this.participants.add(new ChatRoomUser(this, user1));
+    this.participants.add(new ChatRoomUser(this, user2));  }
 }

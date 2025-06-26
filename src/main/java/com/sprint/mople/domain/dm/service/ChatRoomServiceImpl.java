@@ -30,7 +30,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
         .orElseThrow(() -> new IllegalArgumentException("요청 유저를 찾을 수 없습니다 - id: " + requestUserId));
     User targetUser = userRepository.findById(targetUserId)
         .orElseThrow(() -> new IllegalArgumentException("대상 유저를 찾을 수 없습니다 - id: " + targetUserId));
-    ChatRoom chatRoom = new ChatRoom(List.of(requestUser, targetUser));
+    ChatRoom chatRoom = new ChatRoom(requestUser, targetUser);
     chatRoomRepository.save(chatRoom);
     log.debug("DM 채팅방 생성 완료 - 채팅방 ID: {}", chatRoom.getId());
     return chatRoomMapper.toDto(chatRoom);

@@ -39,14 +39,15 @@ class ChatRoomServiceImplTest {
     UUID userId = UUID.randomUUID();
     when(userRepository.findById(requestUserId)).thenReturn(Optional.of(new User()));
     when(userRepository.findById(userId)).thenReturn(Optional.of(new User()));
-    when(chatRoomMapper.toDto(any())).thenReturn(new ChatRoomResponse(List.of(requestUserId, userId)));
+    when(chatRoomMapper.toDto(any())).thenReturn(
+        new ChatRoomResponse(UUID.randomUUID(), List.of(requestUserId, userId)));
 
     // When
     ChatRoomResponse response = chatRoomService.createChatRoom(requestUserId, userId);
 
     // Then
-    assert(response.participantIds().contains(requestUserId));
-    assert(response.participantIds().contains(userId));
+    assert (response.participantIds().contains(requestUserId));
+    assert (response.participantIds().contains(userId));
 
   }
 }
