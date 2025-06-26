@@ -1,10 +1,12 @@
 package com.sprint.mople.domain.dm.service;
 
 import com.sprint.mople.domain.dm.ChatRoomNotFoundException;
+import com.sprint.mople.domain.dm.dto.ChatRoomResponse;
 import com.sprint.mople.domain.dm.dto.MessageResponse;
 import com.sprint.mople.domain.dm.entity.ChatRoom;
 import com.sprint.mople.domain.dm.entity.Message;
 import com.sprint.mople.domain.dm.mapper.MessageMapper;
+import com.sprint.mople.domain.dm.repository.ChatRoomRepository;
 import com.sprint.mople.domain.dm.repository.ChatRoomUserRepository;
 import com.sprint.mople.domain.dm.repository.MessageRepository;
 import com.sprint.mople.domain.user.entity.User;
@@ -23,17 +25,23 @@ public class MessageServiceImpl implements MessageService{
 
   private final MessageRepository messageRepository;
   private final ChatRoomUserRepository chatRoomUserRepository;
+  private final ChatRoomRepository chatRoomRepository;
   private final UserRepository userRepository;
+  private final ChatRoomService chatRoomService;
   private final MessageMapper messageMapper;
 
   @Transactional
   @Override
   public MessageResponse create(UUID senderId, UUID receiverId, String content) {
     log.debug("메세지 생성 시작 - 보낸이: {}, 받는이: {}, 내용: {}", senderId, receiverId, content);
-    ChatRoom chatRoom = chatRoomUserRepository.findChatRoomByUserIds(senderId, receiverId)
-        .orElseThrow(ChatRoomNotFoundException::new);
     User sender = userRepository.findById(senderId)
-        .orElseThrow(() -> new IllegalArgumentException("보낸이 유저가 존재하지 않습니다."));
+        .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    ChatRoom chatRoom = chatRoomUserRepository.findChatRoomByUserIds(senderId, receiverId)
+        .orElseGet(()->  {
+          ChatRoomResponse chatRoomResponse = chatRoomService.createChatRoom(senderId, receiverId);
+          return chatRoomRepository.findById(chatRoomResponse.id())
+              .orElseThrow(ChatRoomNotFoundException::new);
+        });
     Message message = new Message(chatRoom, sender, content);
     messageRepository.save(message);
     log.debug("메세지 생성 완료 - 메세지 ID: {}", message.getId());

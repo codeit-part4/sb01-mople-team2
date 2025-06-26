@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.sprint.mople.domain.dm.dto.ChatRoomResponse;
 import com.sprint.mople.domain.dm.dto.MessageResponse;
 import com.sprint.mople.domain.dm.entity.ChatRoom;
 import com.sprint.mople.domain.dm.entity.Message;
@@ -39,13 +40,16 @@ class MessageServiceImplTest {
   UserRepository userRepository;
 
   @Mock
+  ChatRoomService chatRoomService;
+
+  @Mock
   MessageMapper messageMapper;
 
   @InjectMocks
   MessageServiceImpl messageService;
 
   @Test
-  void create() {
+  void 메세지_생성_성공() {
     // Given
     UUID senderId = UUID.randomUUID();
     UUID receiverId = UUID.randomUUID();
@@ -61,6 +65,36 @@ class MessageServiceImplTest {
     when(messageMapper.toDto(any(Message.class))).thenReturn(
         new MessageResponse(UUID.randomUUID(), UUID.randomUUID(), senderId, content,
             Instant.now()));
+
+    // When
+    MessageResponse response = messageService.create(senderId, receiverId, content);
+
+    // Then
+    assertNotNull(response);
+    assertEquals(senderId, response.senderId());
+    assertEquals(content, response.content());
+  }
+
+  @Test
+  void 메세지_생성_채팅방_존재하지_않는_경우_채팅방_생성() {
+    // Given
+    UUID senderId = UUID.randomUUID();
+    UUID receiverId = UUID.randomUUID();
+    String content = "Test Message";
+    User sender = new User();
+    ChatRoom chatRoom = new ChatRoom(new User(), new User());
+    Message message = new Message(chatRoom, sender, content);
+
+    when(chatRoomUserRepository.findChatRoomByUserIds(senderId, receiverId))
+        .thenReturn(Optional.empty());
+    when(userRepository.findById(any())).thenReturn(Optional.of(sender));
+    when(messageRepository.save(any(Message.class))).thenReturn(message);
+    when(messageMapper.toDto(any(Message.class))).thenReturn(
+        new MessageResponse(UUID.randomUUID(), UUID.randomUUID(), senderId, content,
+            Instant.now()));
+    when(chatRoomService.createChatRoom(senderId, receiverId)).thenReturn(
+        new ChatRoomResponse(UUID.randomUUID(), List.of(senderId, receiverId)));
+    when(chatRoomRepository.findById(any())).thenReturn(Optional.of(chatRoom));
 
     // When
     MessageResponse response = messageService.create(senderId, receiverId, content);
