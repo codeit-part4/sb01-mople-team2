@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.user.service;
 
+import com.sprint.mople.domain.user.dto.UserListResponseDto;
 import com.sprint.mople.domain.user.dto.UserLoginResponseDto;
 import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
 import com.sprint.mople.domain.user.dto.UserRegisterResponseDto;
@@ -10,24 +11,20 @@ import com.sprint.mople.domain.user.exception.EmailAlreadyExistsException;
 import com.sprint.mople.domain.user.exception.LoginFailedException;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import com.sprint.mople.global.jwt.JwtProvider;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService{
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtProvider jwtProvider;
-
-
-
-  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-      JwtProvider jwtProvider) {
-    this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.jwtProvider = jwtProvider;
-  }
 
   @Override
   public UserRegisterResponseDto registerUser(UserRegisterRequestDto request) {
@@ -73,6 +70,33 @@ public class UserServiceImpl implements UserService{
         .email(user.getEmail())
         .name(user.getUserName())
         .build();
+  }
+
+  @Override
+  public Page<UserListResponseDto> getUsers(String search, Pageable pageable) {
+    Specification<User> spec = getUserSearchSpec(search);
+
+    return userRepository.findAll(spec, pageable)
+        .map(user -> new UserListResponseDto(
+            user.getUserName(),
+            user.getEmail(),
+            user.getIsLocked(),
+            user.getCreateAt()
+        ));
+  }
+
+  private Specification<User> getUserSearchSpec(String search) {
+    return (root, query, cb) -> {
+      if (search == null || search.trim().isEmpty()) {
+        return cb.conjunction();
+      }
+
+      String like = "%" + search.toLowerCase() + "%";
+      return cb.or(
+          cb.like(cb.lower(root.get("userName")), like),
+          cb.like(cb.lower(root.get("email")), like)
+      );
+    };
   }
 
 }
