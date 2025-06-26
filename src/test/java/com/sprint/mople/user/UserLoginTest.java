@@ -44,6 +44,7 @@ public class UserLoginTest {
         .id(userId)
         .userName("모두의 플리")
         .email(email)
+        .isLocked(false)
         .password("encodedPassword")
         .build();
 
