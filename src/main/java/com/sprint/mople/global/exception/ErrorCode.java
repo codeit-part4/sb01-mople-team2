@@ -13,7 +13,9 @@ public enum ErrorCode {
 
   DUPLICATE_REVIEW(400, "R002", "이미 등록된 리뷰입니다."),
 
-  FOLLOW_NOT_FOUND(404, "F001", "팔로우 관계를 찾을 수 없습니다.");
+  FOLLOW_NOT_FOUND(404, "F001", "팔로우 관계를 찾을 수 없습니다."),
+
+  CHAT_ROOM_NOT_FOUND(404, "C001", "채팅방을 찾을 수 없습니다."),;
 
   private final int status;   // HTTP Status
   private final String code;     // 도메인 식별 코드

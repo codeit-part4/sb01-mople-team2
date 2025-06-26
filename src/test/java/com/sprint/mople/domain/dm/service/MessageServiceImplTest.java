@@ -12,7 +12,7 @@ import com.sprint.mople.domain.dm.repository.ChatRoomRepository;
 import com.sprint.mople.domain.dm.repository.ChatRoomUserRepository;
 import com.sprint.mople.domain.dm.repository.MessageRepository;
 import com.sprint.mople.domain.user.entity.User;
-import java.lang.reflect.Field;
+import com.sprint.mople.domain.user.repository.UserRepository;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +36,9 @@ class MessageServiceImplTest {
   ChatRoomUserRepository chatRoomUserRepository;
 
   @Mock
+  UserRepository userRepository;
+
+  @Mock
   MessageMapper messageMapper;
 
   @InjectMocks
@@ -45,19 +48,22 @@ class MessageServiceImplTest {
   void create() {
     // Given
     UUID senderId = UUID.randomUUID();
+    UUID receiverId = UUID.randomUUID();
     String content = "Test Message";
     User sender = new User();
     ChatRoom chatRoom = new ChatRoom(new User(), new User());
     Message message = new Message(chatRoom, sender, content);
 
+    when(chatRoomUserRepository.findChatRoomByUserIds(senderId, receiverId))
+        .thenReturn(Optional.of(chatRoom));
+    when(userRepository.findById(any())).thenReturn(Optional.of(sender));
     when(messageRepository.save(any(Message.class))).thenReturn(message);
-
     when(messageMapper.toDto(any(Message.class))).thenReturn(
         new MessageResponse(UUID.randomUUID(), UUID.randomUUID(), senderId, content,
             Instant.now()));
 
     // When
-    MessageResponse response = messageService.create(senderId, content);
+    MessageResponse response = messageService.create(senderId, receiverId, content);
 
     // Then
     assertNotNull(response);
@@ -75,16 +81,12 @@ class MessageServiceImplTest {
     User targetUser = new User();
     ChatRoom chatRoom = new ChatRoom(requestUser, targetUser);
 
-    Field idField = ChatRoom.class.getDeclaredField("id");
-    idField.setAccessible(true);
-    idField.set(chatRoom, chatRoomId);
-
     MessageResponse returnedResponse = new MessageResponse(UUID.randomUUID(), UUID.randomUUID(),
         requestUserId, "Test Message",
         Instant.now());
 
-    when(chatRoomUserRepository.findChatRoomIdByUserIds(requestUserId, targetUserId)).thenReturn(
-        Optional.of(chatRoomId));
+    when(chatRoomUserRepository.findChatRoomByUserIds(requestUserId, targetUserId)).thenReturn(
+        Optional.of(chatRoom));
     when(chatRoomRepository.findById(chatRoomId)).thenReturn(Optional.of(chatRoom));
 
     when(messageMapper.toDto(any())).thenReturn(returnedResponse);

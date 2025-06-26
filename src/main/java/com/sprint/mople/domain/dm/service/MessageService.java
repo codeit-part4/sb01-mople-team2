@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface MessageService {
 
-  MessageResponse create(UUID senderId, String content);
+  MessageResponse create(UUID senderId, UUID receiverId, String content);
 
   List<MessageResponse> findAll(UUID requestUserId, UUID targetUserId);
 
