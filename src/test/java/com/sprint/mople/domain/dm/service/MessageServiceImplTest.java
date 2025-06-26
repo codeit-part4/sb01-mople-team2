@@ -43,6 +43,26 @@ class MessageServiceImplTest {
 
   @Test
   void create() {
+    // Given
+    UUID senderId = UUID.randomUUID();
+    String content = "Test Message";
+    User sender = new User();
+    ChatRoom chatRoom = new ChatRoom(new User(), new User());
+    Message message = new Message(chatRoom, sender, content);
+
+    when(messageRepository.save(any(Message.class))).thenReturn(message);
+
+    when(messageMapper.toDto(any(Message.class))).thenReturn(
+        new MessageResponse(UUID.randomUUID(), UUID.randomUUID(), senderId, content,
+            Instant.now()));
+
+    // When
+    MessageResponse response = messageService.create(senderId, content);
+
+    // Then
+    assertNotNull(response);
+    assertEquals(senderId, response.senderId());
+    assertEquals(content, response.content());
   }
 
   @Test
@@ -68,14 +88,14 @@ class MessageServiceImplTest {
     when(chatRoomRepository.findById(chatRoomId)).thenReturn(Optional.of(chatRoom));
 
     when(messageMapper.toDto(any())).thenReturn(returnedResponse);
-    when(messageRepository.findAllByChatRoomId(chatRoomId)).thenReturn(List.of(new Message(chatRoom, requestUser, "Test Message")));
+    when(messageRepository.findAllByChatRoomId(chatRoomId)).thenReturn(
+        List.of(new Message(chatRoom, requestUser, "Test Message")));
 
     // When
     List<MessageResponse> response = messageService.findAll(requestUserId, targetUserId);
 
     // Then
     assertNotNull(response);
-    assertFalse(response.isEmpty());
     assertEquals("Test Message", response.get(0).content());
   }
 }
