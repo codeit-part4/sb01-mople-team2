@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -39,12 +40,12 @@ public class Message {
   private String content;
 
   @Column(name = "created_at", nullable = false)
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 
   public Message(ChatRoom chatRoom, User sender, String content) {
     this.chatRoom = chatRoom;
     this.sender = sender;
     this.content = content;
-    this.createdAt = LocalDateTime.now();
+    this.createdAt = Instant.now();
   }
 }
