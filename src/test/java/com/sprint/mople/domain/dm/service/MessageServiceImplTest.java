@@ -23,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class MessageServiceImplTest {
@@ -112,16 +113,14 @@ class MessageServiceImplTest {
     UUID targetUserId = UUID.randomUUID();
     UUID chatRoomId = UUID.randomUUID();
     User requestUser = new User();
-    User targetUser = new User();
-    ChatRoom chatRoom = new ChatRoom(requestUser, targetUser);
-
+    ChatRoom chatRoom = new ChatRoom(new User(), new User());
     MessageResponse returnedResponse = new MessageResponse(UUID.randomUUID(), UUID.randomUUID(),
         requestUserId, "Test Message",
         Instant.now());
 
+    ReflectionTestUtils.setField(chatRoom, "id", chatRoomId);
     when(chatRoomUserRepository.findChatRoomByUserIds(requestUserId, targetUserId)).thenReturn(
         Optional.of(chatRoom));
-    when(chatRoomRepository.findById(chatRoomId)).thenReturn(Optional.of(chatRoom));
 
     when(messageMapper.toDto(any())).thenReturn(returnedResponse);
     when(messageRepository.findAllByChatRoomId(chatRoomId)).thenReturn(

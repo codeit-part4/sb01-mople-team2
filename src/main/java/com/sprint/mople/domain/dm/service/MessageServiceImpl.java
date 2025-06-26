@@ -54,8 +54,8 @@ public class MessageServiceImpl implements MessageService{
     log.debug("DM 전체 메세지 조회 시작 - 요청 유저: {}, 대상 유저: {}", requestUserId, targetUserId);
     ChatRoom chatRoom = chatRoomUserRepository.findChatRoomByUserIds(requestUserId, targetUserId)
         .orElseThrow(() -> new IllegalArgumentException("채팅방이 존재하지 않습니다."));
-
-    List<Message> messages = messageRepository.findAllByChatRoomId(chatRoom.getId());
+    UUID chatRoomId = chatRoom.getId();
+    List<Message> messages = messageRepository.findAllByChatRoomId(chatRoomId);
     return messages.stream().map(messageMapper::toDto).toList();
   }
 }
