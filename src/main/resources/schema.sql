@@ -1,9 +1,25 @@
+DROP TABLE IF EXISTS watch_comments CASCADE;
+DROP TABLE IF EXISTS watch_session_participants CASCADE;
+DROP TABLE IF EXISTS playlists_contents CASCADE;
+DROP TABLE IF EXISTS notifications CASCADE;
+DROP TABLE IF EXISTS follows CASCADE;
+DROP TABLE IF EXISTS messages CASCADE;
+DROP TABLE IF EXISTS chatrooms_users CASCADE;
+DROP TABLE IF EXISTS playlists CASCADE;
+DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS subscribes CASCADE;
+DROP TABLE IF EXISTS watch_sessions CASCADE;
+DROP TABLE IF EXISTS chat_rooms CASCADE;
+DROP TABLE IF EXISTS contents CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
 CREATE TABLE watch_comments (
     comment_id UUID PRIMARY KEY,
     session_id UUID NOT NULL,
     user_id    UUID NOT NULL,
     content    VARCHAR(500),
-    created_at TIMESTAMP WITH TIME ZONE
+    created_at TIMESTAMP WITH TIME ZONE,
+    message    TEXT
 );
 
 CREATE TABLE users (
