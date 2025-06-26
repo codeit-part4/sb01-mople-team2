@@ -10,3 +10,5 @@ spring:
     properties:
       hibernate:
         format_sql: true
+jwt:
+  secret: test_jwt_secret_1234567890_test_jwt_secret_1234567890
