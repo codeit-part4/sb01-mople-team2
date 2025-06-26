@@ -6,7 +6,6 @@ import com.sprint.mople.domain.dm.mapper.ChatRoomMapper;
 import com.sprint.mople.domain.dm.repository.ChatRoomRepository;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
