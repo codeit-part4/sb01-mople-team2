@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.sprint.mople.domain.dm.dto.ChatRoomResponse;
+import com.sprint.mople.domain.dm.dto.MessageCreateRequest;
 import com.sprint.mople.domain.dm.dto.MessageResponse;
 import com.sprint.mople.domain.dm.entity.ChatRoom;
 import com.sprint.mople.domain.dm.entity.Message;
@@ -58,6 +59,7 @@ class MessageServiceImplTest {
     User sender = new User();
     ChatRoom chatRoom = new ChatRoom(new User(), new User());
     Message message = new Message(chatRoom, sender, content);
+    MessageCreateRequest request = new MessageCreateRequest(senderId, receiverId, content);
 
     when(chatRoomUserRepository.findChatRoomByUserIds(senderId, receiverId))
         .thenReturn(Optional.of(chatRoom));
@@ -68,7 +70,7 @@ class MessageServiceImplTest {
             Instant.now()));
 
     // When
-    MessageResponse response = messageService.create(senderId, receiverId, content);
+    MessageResponse response = messageService.create(request);
 
     // Then
     assertNotNull(response);
@@ -85,6 +87,7 @@ class MessageServiceImplTest {
     User sender = new User();
     ChatRoom chatRoom = new ChatRoom(new User(), new User());
     Message message = new Message(chatRoom, sender, content);
+    MessageCreateRequest request = new MessageCreateRequest(senderId, receiverId, content);
 
     when(chatRoomUserRepository.findChatRoomByUserIds(senderId, receiverId))
         .thenReturn(Optional.empty());
@@ -98,7 +101,7 @@ class MessageServiceImplTest {
     when(chatRoomRepository.findById(any())).thenReturn(Optional.of(chatRoom));
 
     // When
-    MessageResponse response = messageService.create(senderId, receiverId, content);
+    MessageResponse response = messageService.create(request);
 
     // Then
     assertNotNull(response);
@@ -107,7 +110,7 @@ class MessageServiceImplTest {
   }
 
   @Test
-  void DM_내용_조회_성공() throws Exception {
+  void DM_내용_조회_성공() {
     // Given
     UUID requestUserId = UUID.randomUUID();
     UUID targetUserId = UUID.randomUUID();
