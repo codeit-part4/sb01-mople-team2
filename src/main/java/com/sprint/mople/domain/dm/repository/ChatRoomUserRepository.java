@@ -12,9 +12,8 @@ public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, UUID
 
   @Query("""
           SELECT cu.chatRoom FROM ChatRoomUser cu
-          JOIN FETCH cu.chatRoom cr
           WHERE cu.user.id IN (:userId1, :userId2)
-          GROUP BY cu.chatRoom.id
+          GROUP BY cu.chatRoom
           HAVING COUNT(DISTINCT cu.user.id) = 2
       """)
   Optional<ChatRoom> findChatRoomByUserIds(@Param("userId1") UUID requestUserId,
