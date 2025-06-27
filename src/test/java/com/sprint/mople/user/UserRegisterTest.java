@@ -1,6 +1,6 @@
 package com.sprint.mople.user;
-import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
-import com.sprint.mople.domain.user.dto.UserRegisterResponseDto;
+import com.sprint.mople.domain.user.dto.UserRegisterRequest;
+import com.sprint.mople.domain.user.dto.UserRegisterResponse;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.exception.EmailAlreadyExistsException;
 import com.sprint.mople.domain.user.repository.UserRepository;
@@ -42,7 +42,7 @@ public class UserRegisterTest {
   @Test
   void 회원가입_성공() {
     // given
-    UserRegisterRequestDto request = new UserRegisterRequestDto("모두의 플리", "modu@gmail.com", "password123");
+    UserRegisterRequest request = new UserRegisterRequest("모두의 플리", "modu@gmail.com", "password123");
 
     when(userRepository.save(any(User.class)))
         .thenAnswer(invocation -> {
@@ -52,18 +52,18 @@ public class UserRegisterTest {
         });
 
     // when
-    UserRegisterResponseDto response = userService.registerUser(request);
+    UserRegisterResponse response = userService.registerUser(request);
 
     // then
-    assertNotNull(response.getId());
-    assertEquals("모두의 플리", response.getName());
-    assertEquals("modu@gmail.com", response.getEmail());
+    assertNotNull(response.id());
+    assertEquals("모두의 플리", response.name());
+    assertEquals("modu@gmail.com", response.email());
   }
 
   @Test
   void 이메일_중복예외() {
     // given
-    UserRegisterRequestDto request = new UserRegisterRequestDto("모두의 플리", "modu@gmail.com", "password123");
+    UserRegisterRequest request = new UserRegisterRequest("모두의 플리", "modu@gmail.com", "password123");
 
     // 이미 이메일이 존재한다고 가정
     when(userRepository.existsByEmail("modu@gmail.com")).thenReturn(true);
@@ -79,14 +79,15 @@ public class UserRegisterTest {
   @Test
   void 이메일형식_실패체크() {
     // given
-    UserRegisterRequestDto invalidRequest = UserRegisterRequestDto.builder()
-        .name("모두의 플리")
-        .email("invalid-email")
-        .password("password123")
-        .build();
+    UserRegisterRequest invalidRequest = new UserRegisterRequest(
+        "모두의 플리",
+        "invalid-email",
+        "password123"
+    );
+
 
     // when
-    Set<ConstraintViolation<UserRegisterRequestDto>> violations = validator.validate(invalidRequest);
+    Set<ConstraintViolation<UserRegisterRequest>> violations = validator.validate(invalidRequest);
 
     // then
     assertFalse(violations.isEmpty());

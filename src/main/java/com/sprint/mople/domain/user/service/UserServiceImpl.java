@@ -1,46 +1,48 @@
 package com.sprint.mople.domain.user.service;
 
-import com.sprint.mople.domain.user.dto.UserLoginResponseDto;
-import com.sprint.mople.domain.user.dto.UserRegisterRequestDto;
-import com.sprint.mople.domain.user.dto.UserRegisterResponseDto;
+import com.sprint.mople.domain.user.dto.UpdateRoleResponse;
+import com.sprint.mople.domain.user.dto.UserListResponse;
+import com.sprint.mople.domain.user.dto.UserLoginResponse;
+import com.sprint.mople.domain.user.dto.UserRegisterRequest;
+import com.sprint.mople.domain.user.dto.UserRegisterResponse;
 import com.sprint.mople.domain.user.entity.Role;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.entity.UserSource;
+import com.sprint.mople.domain.user.exception.AccountLockedException;
 import com.sprint.mople.domain.user.exception.EmailAlreadyExistsException;
 import com.sprint.mople.domain.user.exception.LoginFailedException;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import com.sprint.mople.global.jwt.JwtProvider;
+import java.time.Instant;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserServiceImpl implements UserService{
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtProvider jwtProvider;
 
-
-
-  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-      JwtProvider jwtProvider) {
-    this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.jwtProvider = jwtProvider;
-  }
-
   @Override
-  public UserRegisterResponseDto registerUser(UserRegisterRequestDto request) {
-    if (userRepository.existsByEmail(request.getEmail())) {
+  public UserRegisterResponse registerUser(UserRegisterRequest request) {
+    if (userRepository.existsByEmail(request.email())) {
       throw new EmailAlreadyExistsException("이미 존재하는 이메일입니다.");
     }
 
     User user = new User();
-    user.setUserName(request.getName());
-    user.setEmail(request.getEmail());
+    user.setUserName(request.name());
+    user.setEmail(request.email());
 
     //비밀번호 BCrypt 암호화
-    String encoded = passwordEncoder.encode(request.getPassword());
+    String encoded = passwordEncoder.encode(request.password());
 
     //유저 기본값
     user.setPassword(encoded);
@@ -51,11 +53,11 @@ public class UserServiceImpl implements UserService{
 
     User saved = userRepository.save(user);
 
-    return new UserRegisterResponseDto(saved.getId(), saved.getUserName(), saved.getEmail());
+    return new UserRegisterResponse(saved.getId(), saved.getUserName(), saved.getEmail());
   }
 
   @Override
-  public UserLoginResponseDto login(String email, String password) {
+  public UserLoginResponse login(String email, String password) {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new LoginFailedException("이메일 또는 비밀번호가 일치하지 않습니다."));
 
@@ -63,17 +65,97 @@ public class UserServiceImpl implements UserService{
       throw new LoginFailedException("이메일 또는 비밀번호가 일치하지 않습니다.");
     }
 
+    if (user.getIsLocked()) {
+      throw new AccountLockedException("이 계정은 잠긴 계정입니다.");
+    }
+
     String token = jwtProvider.createToken(user.getId().toString(), user.getEmail());
 
-    return UserLoginResponseDto.builder()
-        .accessToken(token)
-        .tokenType("Bearer")
-        .expiresIn(jwtProvider.getExpirationSeconds())
-        .userId(user.getId())
-        .email(user.getEmail())
-        .name(user.getUserName())
-        .build();
+    return new UserLoginResponse(
+        token,
+        "Bearer",
+        jwtProvider.getExpirationSeconds(),
+        user.getId(),
+        user.getEmail(),
+        user.getUserName()
+    );
+
   }
 
+  @Override
+  public Page<UserListResponse> getUsers(String search, Pageable pageable) {
+    Specification<User> spec = getUserSearchSpec(search);
+
+    return userRepository.findAll(spec, pageable)
+        .map(user -> new UserListResponse(
+            user.getUserName(),
+            user.getEmail(),
+            user.getIsLocked(),
+            user.getCreateAt()
+        ));
+  }
+
+  private Specification<User> getUserSearchSpec(String search) {
+    return (root, query, cb) -> {
+      if (search == null || search.trim().isEmpty()) {
+        return cb.conjunction();
+      }
+
+      String like = "%" + search.toLowerCase() + "%";
+      return cb.or(
+          cb.like(cb.lower(root.get("userName")), like),
+          cb.like(cb.lower(root.get("email")), like)
+      );
+    };
+  }
+
+  @Override
+  public UpdateRoleResponse updateUserRole(UUID userId, Role newRole) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    user.setRole(newRole);
+    user.setUpdateAt(Instant.now());
+
+    userRepository.save(user);
+
+    return new UpdateRoleResponse(
+        user.getId(),
+        user.getCreateAt(),
+        user.getEmail(),
+        user.getUserName(),
+        user.getRole(),
+        user.getUserSource(),
+        Boolean.TRUE.equals(user.getIsLocked())
+    );
+  }
+
+  @Override
+  @Transactional
+  public void updateUserPassword(UUID userId, String newPassword) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    //비밀번호 암호화
+    String encoded = passwordEncoder.encode(newPassword);
+
+    user.setPassword(encoded);
+    user.setUpdateAt(Instant.now());
+
+    userRepository.save(user);
+  }
+
+  @Override
+  public UUID updateUserLockStatus(UUID userId, boolean isLocked) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    user.setIsLocked(isLocked);
+    user.setUpdateAt(Instant.now());
+
+    userRepository.save(user);
+
+    return user.getId();
+  }
 }
 

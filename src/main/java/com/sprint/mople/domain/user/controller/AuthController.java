@@ -1,7 +1,7 @@
 package com.sprint.mople.domain.user.controller;
 
-import com.sprint.mople.domain.user.dto.UserLoginRequestDto;
-import com.sprint.mople.domain.user.dto.UserLoginResponseDto;
+import com.sprint.mople.domain.user.dto.UserLoginRequest;
+import com.sprint.mople.domain.user.dto.UserLoginResponse;
 import com.sprint.mople.domain.user.service.TokenService;
 import com.sprint.mople.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -24,9 +24,9 @@ public class AuthController {
 
 
   @PostMapping("/login")
-  public ResponseEntity<UserLoginResponseDto> login(
-      @RequestBody @Valid UserLoginRequestDto request) {
-    UserLoginResponseDto response = userService.login(request.getEmail(), request.getPassword());
+  public ResponseEntity<UserLoginResponse> login(
+      @RequestBody @Valid UserLoginRequest request) {
+    UserLoginResponse response = userService.login(request.email(), request.password());
     return ResponseEntity.ok(response);
   }
 
