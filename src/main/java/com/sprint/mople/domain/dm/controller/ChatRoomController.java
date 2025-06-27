@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/dm")
-public class DmController {
+public class ChatRoomController {
 
   private final ChatRoomService chatRoomService;
 
@@ -38,7 +38,7 @@ public class DmController {
   }
 
   @GetMapping("/{targetUserId}")
-  public ResponseEntity<List<MessageResponse>> getChatRoom(@PathVariable UUID targetUserId,
+  public ResponseEntity<List<MessageResponse>> findAllMessages(@PathVariable UUID targetUserId,
       //    @AuthenticationPrincipal MopleUserDetails userDetails, TODO: MopleUserDetails 구현 필요
       @RequestHeader("X-USER-ID") UUID requestUserId) {
     //    UUID requestUserId = userDetails.getId();
