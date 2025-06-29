@@ -13,6 +13,8 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
@@ -20,8 +22,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "contents", uniqueConstraints = @UniqueConstraint(columnNames = {"external_id",
-    "source"}))
+@Table(
+    name = "contents", uniqueConstraints = @UniqueConstraint(
+    columnNames = {
+        "external_id",
+        "source"
+    }
+)
+)
 @Getter
 @NoArgsConstructor
 public class Content {
@@ -64,15 +72,21 @@ public class Content {
   @Column(name = "updated_at", columnDefinition = "timestamp with time zone")
   private Instant updatedAt;
 
+  @Column(precision = 3, scale = 2)
+  private BigDecimal averageRating;
+
   @Column
-  private Integer rating;
+  private Long totalRatingCount;
 
   public enum Source {
-    TMDB, THE_SPORTS_DB
+    TMDB,
+    THE_SPORTS_DB
   }
 
   public enum Category {
-    MOVIE, TV, SPORTS
+    MOVIE,
+    TV,
+    SPORTS
   }
 
   @PrePersist
@@ -84,5 +98,15 @@ public class Content {
   @PreUpdate
   protected void onUpdate() {
     this.updatedAt = Instant.now();
+  }
+
+  public void updateAverageRating(BigDecimal averageRating) {
+    this.averageRating = BigDecimal
+        .valueOf(totalRatingCount)
+        .divide(BigDecimal.valueOf(5), 2, RoundingMode.HALF_UP);
+  }
+
+  public void updateTotalRatingCount(Long totalRatingCount) {
+    this.totalRatingCount = totalRatingCount;
   }
 }
