@@ -2,6 +2,7 @@ package com.sprint.mople.domain.follow.service;
 
 import com.sprint.mople.domain.follow.dto.FollowResponse;
 import com.sprint.mople.domain.follow.entity.Follow;
+import com.sprint.mople.domain.follow.exception.FollowNotFoundException;
 import com.sprint.mople.domain.follow.mapper.FollowMapper;
 import com.sprint.mople.domain.follow.repository.FollowRepository;
 import com.sprint.mople.domain.user.entity.User;
@@ -41,8 +42,7 @@ public class FollowServiceImpl implements FollowService {
   public void unfollow(UUID followerId, UUID followeeId) {
     log.debug("언팔로우 시작 - 유저: {}, 언팔로우 대상: {}", followerId, followeeId);
     Follow follow = followRepository.findByFollowerIdAndFolloweeId(followerId, followeeId)
-        .orElseThrow(() -> new IllegalArgumentException(
-            "팔로우 관계를 찾을 수 없습니다 - followerId: " + followerId + " followeeId: " + followeeId));
+        .orElseThrow(FollowNotFoundException::new);
     followRepository.delete(follow);
     log.debug("언팔로우 완료 - 유저: {}, 언팔로우 대상: {}", followerId, followeeId);
   }

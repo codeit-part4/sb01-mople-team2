@@ -17,3 +17,6 @@ logging:
     org.springframework.boot.context.config: DEBUG
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
     org.springframework.jdbc.datasource: DEBUG
+
+jwt:
+  secret: test_jwt_secret_1234567890_test_jwt_secret_1234567890

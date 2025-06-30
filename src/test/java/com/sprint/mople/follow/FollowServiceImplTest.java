@@ -20,7 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class FollowTest {
+public class FollowServiceImplTest {
 
   @Mock
   FollowRepository followRepository;
@@ -39,12 +39,12 @@ public class FollowTest {
     // Given
     UUID followerId = UUID.randomUUID();
     UUID followeeId = UUID.randomUUID();
-
-    // When
     when(userRepository.findById(followerId)).thenReturn(Optional.of(new User()));
     when(userRepository.findById(followeeId)).thenReturn(Optional.of(new User()));
     when(followMapper.toDto(any(Follow.class))).thenReturn(
         new FollowResponse(followerId, followeeId));
+
+    // When
     FollowResponse response = followService.follow(followerId, followeeId);
 
     // Then
