@@ -15,7 +15,11 @@ public enum ErrorCode {
 
   FOLLOW_NOT_FOUND(404, "F001", "팔로우 관계를 찾을 수 없습니다."),
 
-  CHAT_ROOM_NOT_FOUND(404, "C001", "채팅방을 찾을 수 없습니다."),;
+  CHAT_ROOM_NOT_FOUND(404, "C001", "채팅방을 찾을 수 없습니다."),
+
+  NOTIFICATION_NOT_FOUND(404, "N001", "알림을 찾을 수 없습니다."),
+
+  FORBIDDEN_ACCESS(403, "C001", "해당 리소스에 접근할 권한이 없습니다.");;
 
   private final int status;   // HTTP Status
   private final String code;     // 도메인 식별 코드
