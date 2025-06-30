@@ -3,6 +3,7 @@ package com.sprint.mople.domain.dm.controller;
 import com.sprint.mople.domain.dm.dto.MessageCreateRequest;
 import com.sprint.mople.domain.dm.dto.MessageResponse;
 import com.sprint.mople.domain.dm.service.MessageService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -19,7 +20,7 @@ public class MessageController {
   private final MessageService messageService;
 
   @MessageMapping("/messages")
-  public void sendMessage(MessageCreateRequest request) {
+  public void sendMessage(@Valid MessageCreateRequest request) {
     MessageResponse response = messageService.create(request);
     simpMessagingTemplate.convertAndSend("/sub/chatrooms/" + response.chatRoomId(), response);
   }
