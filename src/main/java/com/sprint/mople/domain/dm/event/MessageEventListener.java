@@ -16,6 +16,6 @@ public class MessageEventListener {
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void handleMessageCreatedEvent(MessageCreatedEvent event) {
     MessageResponse message = event.messageResponse();
-    simpMessagingTemplate.convertAndSend("/sub/chatrooms/" + message.chatRoomId(), message);
+    simpMessagingTemplate.convertAndSend("/sub/dm/" + message.chatRoomId(), message);
   }
 }

@@ -21,8 +21,7 @@ public class MessageController {
 
   @MessageMapping("/messages")
   public void sendMessage(@Valid MessageCreateRequest request) {
-    MessageResponse response = messageService.create(request);
-    simpMessagingTemplate.convertAndSend("/sub/chatrooms/" + response.chatRoomId(), response);
+    messageService.create(request);
   }
 
 }
