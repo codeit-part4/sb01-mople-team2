@@ -9,7 +9,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
-public class MessageEventListener {
+public class MessageEventHandler {
 
   private final SimpMessagingTemplate simpMessagingTemplate;
 
