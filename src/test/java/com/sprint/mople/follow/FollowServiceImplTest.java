@@ -1,6 +1,7 @@
 package com.sprint.mople.follow;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,20 +79,25 @@ public class FollowServiceImplTest {
   void 팔로잉_페이징_조회_성공(){
     // Given
     UUID userId = UUID.randomUUID();
-    UUID followeeId = UUID.randomUUID();
+    User user = new User();
+    User followee = new User();
     int page = 0;
     int size = 10;
 
-    UserListResponse response = new UserListResponse(
-        "username", "user@email.com", false, Instant.now());
     Pageable pageable = Pageable.ofSize(size).withPage(page);
-    when(followRepository.findByFollowerId(userId, pageable))
-        .thenReturn(List.of(followeeId));
+
+    List<User> followees = List.of(followee);
+    Page<User> followeesPage = new PageImpl<>(followees, pageable, 1);
+
+    when(followRepository.findFolloweesByFollower(user, pageable)).thenReturn(followeesPage);
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(followRepository.findFolloweesByFollower(user, pageable)).thenReturn(
+        followeesPage);
 
     // When
     Page<UserListResponse> responses = followService.findAllFollowings(userId, page, size);
 
     // Then
-    assertNotNull(followService.findAllFollowings(userId, page, size));
+    assertEquals(1, responses.getTotalElements());
   }
 }
