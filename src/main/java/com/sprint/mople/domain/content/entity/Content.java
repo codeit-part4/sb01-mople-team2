@@ -1,6 +1,8 @@
 package com.sprint.mople.domain.content.entity;
 
+import com.sprint.mople.domain.playlist.entity.PlaylistContent;
 import com.sprint.mople.global.util.StringSetConverter;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -9,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -16,6 +19,8 @@ import jakarta.persistence.UniqueConstraint;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
@@ -77,6 +82,9 @@ public class Content {
 
   @Column
   private Long totalRatingCount;
+
+  @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<PlaylistContent> playlistContents = new ArrayList<>();
 
   public enum Source {
     TMDB,
