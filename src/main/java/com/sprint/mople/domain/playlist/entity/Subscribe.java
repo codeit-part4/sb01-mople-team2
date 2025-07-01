@@ -33,6 +33,10 @@ public class Subscribe {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "playlist_id")
+  private Playlist playlist;
+
   @CreationTimestamp
   @Column(
       name = "subscribed_at",
@@ -41,5 +45,15 @@ public class Subscribe {
       updatable = false
   )
   private Instant subscribedAt;
+
+  public void setPlaylist(Playlist playlist) {
+    if (this.playlist != null) {
+      this.playlist.getSubscribes().remove(this);
+    }
+    this.playlist = playlist;
+    if (playlist != null) {
+      playlist.getSubscribes().add(this);
+    }
+  }
 }
 
