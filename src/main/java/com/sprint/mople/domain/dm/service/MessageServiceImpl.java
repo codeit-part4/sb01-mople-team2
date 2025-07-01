@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.dm.service;
 
+import com.sprint.mople.domain.dm.event.MessageCreatedEvent;
 import com.sprint.mople.domain.dm.exception.ChatRoomNotFoundException;
 import com.sprint.mople.domain.dm.dto.ChatRoomResponse;
 import com.sprint.mople.domain.dm.dto.MessageCreateRequest;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ public class MessageServiceImpl implements MessageService{
   private final UserRepository userRepository;
   private final ChatRoomService chatRoomService;
   private final MessageMapper messageMapper;
+  private final ApplicationEventPublisher eventPublisher;
 
   @Transactional
   @Override
@@ -45,6 +48,7 @@ public class MessageServiceImpl implements MessageService{
         });
     Message message = new Message(chatRoom, sender, request.content());
     messageRepository.save(message);
+    eventPublisher.publishEvent(new MessageCreatedEvent(messageMapper.toDto(message)));
     log.debug("메세지 생성 완료 - 메세지 ID: {}", message.getId());
     return messageMapper.toDto(message);
   }

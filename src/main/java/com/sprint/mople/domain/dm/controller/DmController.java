@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/dm")
-public class ChatRoomController {
+public class DmController implements DmApi {
 
   private final ChatRoomService chatRoomService;
 
@@ -51,6 +51,5 @@ public class ChatRoomController {
     log.debug("{} 유저와의 전체 메세지 조회 완료: {}", targetUserId, response);
     return ResponseEntity.ok(response);
   }
-
 
 }
