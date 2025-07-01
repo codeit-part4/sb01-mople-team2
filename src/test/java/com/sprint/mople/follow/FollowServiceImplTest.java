@@ -9,8 +9,11 @@ import com.sprint.mople.domain.follow.entity.Follow;
 import com.sprint.mople.domain.follow.mapper.FollowMapper;
 import com.sprint.mople.domain.follow.repository.FollowRepository;
 import com.sprint.mople.domain.follow.service.FollowServiceImpl;
+import com.sprint.mople.domain.user.dto.UserListResponse;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -18,6 +21,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class FollowServiceImplTest {
@@ -66,5 +71,26 @@ public class FollowServiceImplTest {
     followService.unfollow(followerId, followeeId);
 
     // Then
+  }
+
+  @Test
+  void 팔로잉_페이징_조회_성공(){
+    // Given
+    UUID userId = UUID.randomUUID();
+    UUID followeeId = UUID.randomUUID();
+    int page = 0;
+    int size = 10;
+
+    UserListResponse response = new UserListResponse(
+        "username", "user@email.com", false, Instant.now());
+    Pageable pageable = Pageable.ofSize(size).withPage(page);
+    when(followRepository.findByFollowerId(userId, pageable))
+        .thenReturn(List.of(followeeId));
+
+    // When
+    Page<UserListResponse> responses = followService.findAllFollowings(userId, page, size);
+
+    // Then
+    assertNotNull(followService.findAllFollowings(userId, page, size));
   }
 }
