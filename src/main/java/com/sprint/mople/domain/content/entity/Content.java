@@ -101,6 +101,8 @@ public class Content {
     this.title = title;
     this.summary = summary;
     this.category = category;
+    this.averageRating = BigDecimal.ZERO;
+    this.totalRatingCount = 0L;
   }
 
   public enum Source {
