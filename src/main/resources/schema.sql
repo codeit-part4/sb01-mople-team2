@@ -126,13 +126,13 @@ CREATE TABLE reviews (
 );
 
 CREATE TABLE playlists (
-    playlist_id  UUID PRIMARY KEY,
-    user_id      UUID NOT NULL,
-    title        VARCHAR(255),
-    description  VARCHAR(1000),
-    is_public    BOOLEAN,
-    created_at   TIMESTAMP WITH TIME ZONE,
-    updated_at   TIMESTAMP WITH TIME ZONE
+    playlist_id UUID PRIMARY KEY,
+    user_id     UUID NOT NULL,
+    title       VARCHAR(255),
+    description VARCHAR(1000),
+    is_public   BOOLEAN,
+    created_at  TIMESTAMP WITH TIME ZONE,
+    updated_at  TIMESTAMP WITH TIME ZONE
 );
 
 -- WatchComment (N) -> WatchSession (1)
@@ -284,3 +284,20 @@ CREATE TABLE refresh_tokens (
 );
 
 CREATE INDEX idx_follower_followee ON follows (follower_id, followee_id);
+
+CREATE TABLE playlist_like (
+    id          UUID PRIMARY KEY,
+    user_id     UUID        NOT NULL,
+    playlist_id UUID        NOT NULL,
+    liked_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT fk_playlist_like_user
+        FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_playlist_like_playlist
+        FOREIGN KEY (playlist_id) REFERENCES playlists (playlist_id) ON DELETE CASCADE,
+
+    -- 한 사용자가 같은 플레이리스트에 한 번만 좋아요 가능
+    CONSTRAINT uc_playlist_like_user_playlist UNIQUE (user_id, playlist_id)
+);
+CREATE INDEX idx_playlist_like_playlist ON playlist_like (playlist_id);
+CREATE INDEX idx_playlist_like_user ON playlist_like (user_id);
