@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.user.controller;
 
+import com.sprint.mople.domain.user.dto.ResetPasswordRequest;
 import com.sprint.mople.domain.user.dto.UserLoginRequest;
 import com.sprint.mople.domain.user.dto.UserLoginResponse;
 import com.sprint.mople.domain.user.exception.UnauthorizedException;
@@ -57,6 +58,15 @@ public class AuthController {
     }
 
     return ResponseEntity.noContent().build(); // 204
+  }
+
+  @PostMapping("/reset-password")
+  public ResponseEntity<Map<String, String>> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+    userService.resetPassword(request.email());
+
+    return ResponseEntity.ok(Map.of(
+        "message", "임시 비밀번호가 해당 이메일로 전송되었습니다."
+    ));
   }
 }
 

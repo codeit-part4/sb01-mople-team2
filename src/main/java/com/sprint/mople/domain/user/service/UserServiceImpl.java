@@ -11,8 +11,10 @@ import com.sprint.mople.domain.user.entity.UserSource;
 import com.sprint.mople.domain.user.exception.AccountLockedException;
 import com.sprint.mople.domain.user.exception.EmailAlreadyExistsException;
 import com.sprint.mople.domain.user.exception.LoginFailedException;
+import com.sprint.mople.domain.user.exception.NotFoundException;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import com.sprint.mople.global.jwt.JwtProvider;
+import com.sprint.mople.global.util.TempPasswordUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.Instant;
 import java.util.Map;
@@ -35,6 +37,8 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   private final TokenServiceImpl tokenService;
   private final JwtProvider jwtProvider;
+  private final TempPasswordUtil tempPasswordUtil;
+  private final EmailServiceImpl emailService;
 
   @Override
   public UserRegisterResponse registerUser(UserRegisterRequest request) {
@@ -175,5 +179,26 @@ public class UserServiceImpl implements UserService {
 
     return user.getId();
   }
+
+  @Override
+  public void resetPassword(String email) {
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new NotFoundException("해당 이메일로 등록된 사용자가 없습니다."));
+
+    // 1. 임시 비밀번호 생성
+    String tempPassword = tempPasswordUtil.generate();
+
+    // 2. 임시 비밀번호 암호화
+    String encoded = passwordEncoder.encode(tempPassword);
+
+    // 3. 유저 비밀번호 업데이트 + 임시 비밀번호 플래그 설정
+    user.setPassword(encoded);
+    user.setIsUsingTempPassword(true);
+    userRepository.save(user);
+
+    // 4. 이메일 전송
+    emailService.sendTempPassword(email, tempPassword);
+  }
+
 }
 

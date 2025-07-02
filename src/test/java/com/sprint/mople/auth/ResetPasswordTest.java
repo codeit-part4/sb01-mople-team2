@@ -2,9 +2,8 @@ package com.sprint.mople.auth;
 
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
+import com.sprint.mople.domain.user.service.EmailServiceImpl;
 import com.sprint.mople.domain.user.service.UserServiceImpl;
-import com.sprint.mople.global.email.EmailService;
-import com.sprint.mople.global.jwt.JwtProvider;
 import com.sprint.mople.global.util.TempPasswordUtil;
 
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ class ResetPasswordTest {
   private UserRepository userRepository;
 
   @Mock
-  private EmailService emailService;
+  private EmailServiceImpl emailService;
 
   @Mock
   private PasswordEncoder passwordEncoder;
