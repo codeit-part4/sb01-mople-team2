@@ -94,6 +94,10 @@ public class Playlist {
     }
   }
 
+  public void setIsPublic(boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   public void addSubscribe(Subscribe subscribe) {
     subscribes.add(subscribe);
     subscribe.setPlaylist(this);

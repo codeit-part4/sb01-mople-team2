@@ -111,12 +111,12 @@ public class PlaylistServiceImpl implements PlaylistService {
     playlistContent.setPlaylist(playlist);
     playlistContent.setContent(content);
 
-    playlist
-        .getPlaylistContents()
-        .add(playlistContent);
-    content
-        .getPlaylistContents()
-        .add(playlistContent);
+//    playlist
+//        .getPlaylistContents()
+//        .add(playlistContent);
+//    content
+//        .getPlaylistContents()
+//        .add(playlistContent);
     log.info("Added content {} to playlist {}", content.getId(), playlistId);
   }
 

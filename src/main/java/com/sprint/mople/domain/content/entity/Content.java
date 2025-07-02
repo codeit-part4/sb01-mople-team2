@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -85,6 +86,22 @@ public class Content {
 
   @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PlaylistContent> playlistContents = new ArrayList<>();
+
+  @Builder
+  public Content(
+      String externalId,
+      Source source,
+      String title,
+      String summary,
+      Category category
+      )
+  {
+    this.externalId = externalId;
+    this.source = source;
+    this.title = title;
+    this.summary = summary;
+    this.category = category;
+  }
 
   public enum Source {
     TMDB,
