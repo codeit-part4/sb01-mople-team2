@@ -8,6 +8,9 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/api/{contentId}/reviews")
 @RequiredArgsConstructor
 public class ReviewController implements ReviewApi {
 
@@ -27,21 +30,31 @@ public class ReviewController implements ReviewApi {
 
   @PostMapping
   public ResponseEntity<ReviewResponse> createReview(
+      @PathVariable UUID contentId,
       @Valid @RequestBody ReviewCreateRequest request
   )
   {
-    ReviewResponse response = reviewService.createReview(request);
+    ReviewResponse response = reviewService.createReview(contentId, request);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping
-  public ResponseEntity<List<ReviewResponse>> getAllReviews() {
-    List<ReviewResponse> reviews = reviewService.getAllReviews();
+  public ResponseEntity<List<ReviewResponse>> getAllReviews(
+      @PathVariable UUID contentId,
+      @PageableDefault(
+          size = 20,
+          sort = "createdAt",
+          direction = Sort.Direction.DESC
+      ) Pageable pageable
+      )
+  {
+    List<ReviewResponse> reviews = reviewService.getAllReviews(pageable);
     return ResponseEntity.ok(reviews);
   }
 
   @GetMapping("/user/{userId}")
   public ResponseEntity<List<ReviewResponse>> getReviewsByUserId(
+      @PathVariable UUID contentId,
       @PathVariable UUID userId
   )
   {
@@ -51,6 +64,7 @@ public class ReviewController implements ReviewApi {
 
   @GetMapping("/{id}")
   public ResponseEntity<ReviewResponse> getReviewById(
+      @PathVariable UUID contentId,
       @PathVariable UUID id
   )
   {
@@ -60,6 +74,7 @@ public class ReviewController implements ReviewApi {
 
   @PutMapping("/{id}")
   public ResponseEntity<ReviewResponse> updateReview(
+      @PathVariable UUID contentId,
       @PathVariable UUID id,
       @Valid @RequestBody ReviewUpdateRequest request
   )
@@ -70,6 +85,7 @@ public class ReviewController implements ReviewApi {
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteReview(
+      @PathVariable UUID contentId,
       @PathVariable UUID id
   )
   {

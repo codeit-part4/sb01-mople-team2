@@ -5,14 +5,17 @@ import com.sprint.mople.domain.review.dto.ReviewResponse;
 import com.sprint.mople.domain.review.dto.ReviewUpdateRequest;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Pageable;
 
 public interface ReviewService {
 
-  ReviewResponse createReview(ReviewCreateRequest request);
+  ReviewResponse createReview(UUID contentId, ReviewCreateRequest request);
 
-  List<ReviewResponse> getAllReviews();
+  List<ReviewResponse> getAllReviews(Pageable pageable);
 
   List<ReviewResponse> getReviewsByUserId(UUID userId);
+
+  List<ReviewResponse> getReviewsByContentId(UUID contentId, Pageable pageable);
 
   ReviewResponse getReviewById(UUID id);
 
