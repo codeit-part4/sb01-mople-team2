@@ -65,7 +65,7 @@ public class FollowServiceImpl implements FollowService {
     Page<User> followees = followRepository.findFolloweesByFollower(user, pageable);
     if (followees.isEmpty()) {
       log.info("팔로잉 목록이 비어 있습니다 - 유저: {}", userId);
-      throw new FollowNotFoundException();
+      return Page.empty(pageable);
     }
 
     log.debug("팔로잉 목록 조회 완료 - 유저: {}, 페이지: {}, 사이즈: {}", userId, page, size);
@@ -89,7 +89,7 @@ public class FollowServiceImpl implements FollowService {
     Page<User> followers = followRepository.findFollowersByFollowee(user, pageable);
     if (followers.isEmpty()) {
       log.info("팔로워 목록이 비어 있습니다 - 유저: {}", userId);
-      throw new FollowNotFoundException();
+      return Page.empty(pageable);
     }
 
     log.debug("팔로워 목록 조회 완료 - 유저: {}, 페이지: {}, 사이즈: {}", userId, page, size);
