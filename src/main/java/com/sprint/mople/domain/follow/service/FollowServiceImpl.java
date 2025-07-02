@@ -5,6 +5,8 @@ import com.sprint.mople.domain.follow.entity.Follow;
 import com.sprint.mople.domain.follow.exception.FollowNotFoundException;
 import com.sprint.mople.domain.follow.mapper.FollowMapper;
 import com.sprint.mople.domain.follow.repository.FollowRepository;
+import com.sprint.mople.domain.notification.entity.NotificationType;
+import com.sprint.mople.domain.notification.service.NotificationService;
 import com.sprint.mople.domain.user.dto.UserListResponse;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
@@ -27,6 +29,7 @@ public class FollowServiceImpl implements FollowService {
   private final FollowRepository followRepository;
   private final UserRepository userRepository;
   private final FollowMapper followMapper;
+  private final NotificationService notificationService;
 
   @Transactional
   @Override
@@ -40,6 +43,10 @@ public class FollowServiceImpl implements FollowService {
     Follow follow = new Follow(follower, followee);
     followRepository.save(follow);
     log.debug("팔로우 생성 완료 - 유저: {}, 팔로우 대상: {}", followerId, followeeId);
+
+    String content = String.format("%s님이 당신을 팔로우하기 시작했습니다.", follower.getUserName());
+    notificationService.send(follower, NotificationType.NEW_FOLLOWER, content, null);
+    log.debug("팔로우 알림 전송 완료 - 대상: {}", followerId);
     return followMapper.toDto(follow);
   }
 

@@ -10,6 +10,7 @@ import com.sprint.mople.domain.follow.entity.Follow;
 import com.sprint.mople.domain.follow.mapper.FollowMapper;
 import com.sprint.mople.domain.follow.repository.FollowRepository;
 import com.sprint.mople.domain.follow.service.FollowServiceImpl;
+import com.sprint.mople.domain.notification.service.NotificationService;
 import com.sprint.mople.domain.user.dto.UserListResponse;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
@@ -36,6 +37,9 @@ public class FollowServiceImplTest {
 
   @Mock
   FollowMapper followMapper;
+
+  @Mock
+  NotificationService notificationService;
 
   @InjectMocks
   FollowServiceImpl followService;
