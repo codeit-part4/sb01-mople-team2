@@ -1,9 +1,11 @@
 package com.sprint.mople.domain.dm.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.sprint.mople.domain.dm.dto.ChatRoomResponse;
+import com.sprint.mople.domain.dm.entity.ChatRoom;
 import com.sprint.mople.domain.dm.mapper.ChatRoomMapper;
 import com.sprint.mople.domain.dm.repository.ChatRoomRepository;
 import com.sprint.mople.domain.user.entity.User;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 
 @ExtendWith(MockitoExtension.class)
 class ChatRoomServiceImplTest {
@@ -49,5 +52,25 @@ class ChatRoomServiceImplTest {
     assert (response.participantIds().contains(requestUserId));
     assert (response.participantIds().contains(userId));
 
+  }
+
+  void 채팅방_목록_조회(){
+    // Given
+    UUID userId = UUID.randomUUID();
+    ChatRoom chatRoom = new ChatRoom(new User(), new User());
+    ChatRoomResponse response = new ChatRoomResponse(UUID.randomUUID(), List.of(userId));
+
+    int page = 0;
+    int size = 10;
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(new User()));
+    when(chatRoomRepository.findAllByParticipantId(userId)).thenReturn(List.of(chatRoom));
+    when(chatRoomMapper.toDto(any())).thenReturn(response);
+
+    // When
+    Page<ChatRoomResponse> chatRooms = chatRoomService.findAllChatRooms(userId);
+
+    // Then
+    assertEquals(1, chatRooms.getTotalElements());
   }
 }
