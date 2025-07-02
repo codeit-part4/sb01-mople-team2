@@ -11,8 +11,8 @@ public interface FollowService {
 
   void unfollow(UUID followerId, UUID followeeId);
 
-  Page<UserListResponse> findAllFollowings(UUID userId, int page, int size);
+  Page<UserListResponse> findAllFollowings(UUID userId);
 
-  Page<UserListResponse> findAllFollowers(UUID userId, int page, int size);
+  Page<UserListResponse> findAllFollowers(UUID userId);
 
 }

@@ -49,12 +49,15 @@ public class FollowController implements FollowApi {
   public ResponseEntity<Page<UserListResponse>> findAllFollowings(HttpServletRequest request) {
     UUID userId = extractUserId(request, jwtProvider);
     log.debug("팔로잉 목록 조회 요청 - 유저: {}", userId);
-    Page<UserListResponse> followings = followService.findAllFollowings(userId, 0, 10);
+    Page<UserListResponse> followings = followService.findAllFollowings(userId);
     return ResponseEntity.ok(followings);
   }
 
   @GetMapping("/followers")
   public ResponseEntity<Page<UserListResponse>> findAllFollowers(HttpServletRequest request) {
+    UUID userId = extractUserId(request, jwtProvider);
+    log.debug("팔로워 목록 조회 요청 - 유저: {}", userId);
+    Page<UserListResponse> followers = followService.findAllFollowers(userId);
     return null;
   }
 }

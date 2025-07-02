@@ -94,7 +94,7 @@ public class FollowServiceImplTest {
         followeesPage);
 
     // When
-    Page<UserListResponse> responses = followService.findAllFollowings(userId, page, size);
+    Page<UserListResponse> responses = followService.findAllFollowings(userId);
 
     // Then
     assertEquals(1, responses.getTotalElements());
@@ -120,7 +120,7 @@ public class FollowServiceImplTest {
         followersPage);
 
     // When
-    Page<UserListResponse> responses = followService.findAllFollowers(userId, page, size);
+    Page<UserListResponse> responses = followService.findAllFollowers(userId);
 
     // Then
     assertEquals(1, responses.getTotalElements());

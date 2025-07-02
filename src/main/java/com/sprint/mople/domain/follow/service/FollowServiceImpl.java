@@ -21,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class FollowServiceImpl implements FollowService {
 
+  private static final int DEFAULT_PAGE_SIZE = 10;
+  private static final int DEFAULT_PAGE_NUMBER = 0;
+
   private final FollowRepository followRepository;
   private final UserRepository userRepository;
   private final FollowMapper followMapper;
@@ -51,13 +54,19 @@ public class FollowServiceImpl implements FollowService {
   }
 
   @Override
-  public Page<UserListResponse> findAllFollowings(UUID userId, int page, int size) {
+  public Page<UserListResponse> findAllFollowings(UUID userId) {
+    int page = DEFAULT_PAGE_NUMBER;
+    int size = DEFAULT_PAGE_SIZE;
     log.debug("팔로잉 목록 조회 시작 - 유저: {}, 페이지: {}, 사이즈: {}", userId, page, size);
     Pageable pageable = Pageable.ofSize(size).withPage(page);
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다 - id: " + userId));
 
     Page<User> followees = followRepository.findFolloweesByFollower(user, pageable);
+    if (followees.isEmpty()) {
+      log.info("팔로잉 목록이 비어 있습니다 - 유저: {}", userId);
+      throw new FollowNotFoundException();
+    }
 
     log.debug("팔로잉 목록 조회 완료 - 유저: {}, 페이지: {}, 사이즈: {}", userId, page, size);
     return followees.map(followee -> new UserListResponse(
@@ -66,11 +75,29 @@ public class FollowServiceImpl implements FollowService {
         followee.getIsLocked(),
         followee.getCreateAt()
     ));
-
   }
 
   @Override
-  public Page<UserListResponse> findAllFollowers(UUID userId, int page, int size) {
-    return null;
+  public Page<UserListResponse> findAllFollowers(UUID userId) {
+    int page = DEFAULT_PAGE_NUMBER;
+    int size = DEFAULT_PAGE_SIZE;
+    log.debug("팔로워 목록 조회 시작 - 유저: {}, 페이지: {}, 사이즈: {}", userId, page, size);
+    Pageable pageable = Pageable.ofSize(size).withPage(page);
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다 - id: " + userId));
+
+    Page<User> followers = followRepository.findFollowersByFollowee(user, pageable);
+    if (followers.isEmpty()) {
+      log.info("팔로워 목록이 비어 있습니다 - 유저: {}", userId);
+      throw new FollowNotFoundException();
+    }
+
+    log.debug("팔로워 목록 조회 완료 - 유저: {}, 페이지: {}, 사이즈: {}", userId, page, size);
+    return followers.map(follower -> new UserListResponse(
+        follower.getUserName(),
+        follower.getEmail(),
+        follower.getIsLocked(),
+        follower.getCreateAt()
+    ));
   }
 }
