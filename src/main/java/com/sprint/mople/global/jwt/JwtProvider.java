@@ -68,11 +68,11 @@ public class  JwtProvider {
 
   public long getRefreshExpirationSeconds() {
     return refreshExpirationMillis / 1000;
-
+  }
+  
   public UUID getUserId(String token){
     String userId = getClaims(token).getSubject();
     return UUID.fromString(userId);
-
   }
 
 }
