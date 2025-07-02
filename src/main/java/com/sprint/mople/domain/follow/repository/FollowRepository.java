@@ -14,17 +14,15 @@ public interface FollowRepository extends JpaRepository<Follow, UUID> {
 
   Optional<Follow> findByFollowerIdAndFolloweeId(UUID followerId, UUID followeeId);
 
-  @Query("""
-        SELECT f.followee
-        FROM Follow f
-        WHERE f.follower = :follower
-      """)
+  @Query(
+      "SELECT f.followee FROM Follow f"
+          + " WHERE f.follower = :follower"
+  )
   Page<User> findFolloweesByFollower(@Param("follower") User follower, Pageable pageable);
 
-  @Query("""
-        SELECT f.follower
-        FROM Follow f
-        WHERE f.followee = :followee
-      """)
+  @Query(
+      "SELECT f.follower FROM Follow f"
+          + " WHERE f.followee = :followee"
+  )
   Page<User> findFollowersByFollowee(@Param("followee") User followee, Pageable pageable);
 }

@@ -19,6 +19,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 class ChatRoomServiceImplTest {
@@ -54,17 +56,19 @@ class ChatRoomServiceImplTest {
 
   }
 
+  @Test
   void 채팅방_목록_조회(){
     // Given
     UUID userId = UUID.randomUUID();
     ChatRoom chatRoom = new ChatRoom(new User(), new User());
     ChatRoomResponse response = new ChatRoomResponse(UUID.randomUUID(), List.of(userId));
-
     int page = 0;
     int size = 10;
 
-    when(userRepository.findById(userId)).thenReturn(Optional.of(new User()));
-    when(chatRoomRepository.findAllByParticipantId(userId)).thenReturn(List.of(chatRoom));
+    Pageable pageable = Pageable.ofSize(size).withPage(page);
+    Page<ChatRoom> chatRoomPage = new PageImpl<>(List.of(chatRoom), pageable, 1);
+
+    when(chatRoomRepository.findAllByParticipantId(userId, pageable)).thenReturn(chatRoomPage);
     when(chatRoomMapper.toDto(any())).thenReturn(response);
 
     // When
