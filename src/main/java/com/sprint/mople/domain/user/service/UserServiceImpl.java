@@ -13,12 +13,16 @@ import com.sprint.mople.domain.user.exception.EmailAlreadyExistsException;
 import com.sprint.mople.domain.user.exception.LoginFailedException;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import com.sprint.mople.global.jwt.JwtProvider;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +33,7 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final TokenServiceImpl tokenService;
   private final JwtProvider jwtProvider;
 
   @Override
@@ -57,7 +62,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserLoginResponse login(String email, String password) {
+  public UserLoginResponse login(String email, String password, HttpServletResponse response) {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new LoginFailedException("이메일 또는 비밀번호가 일치하지 않습니다."));
 
@@ -69,12 +74,25 @@ public class UserServiceImpl implements UserService {
       throw new AccountLockedException("이 계정은 잠긴 계정입니다.");
     }
 
-    String token = jwtProvider.createToken(user.getId().toString(), user.getEmail());
+    // ✅ userId & email 기반으로 토큰 생성
+    Map<String, String> tokens = tokenService.generateTokens(user.getId(), user.getEmail());
+    String accessToken = tokens.get("accessToken");
+    String refreshToken = tokens.get("refreshToken");
+
+    // ✅ refreshToken을 HttpOnly 쿠키로 설정
+    ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken)
+        .httpOnly(true)
+        .secure(true)
+        .path("/api/auth/refresh")
+        .sameSite("Strict")
+        .maxAge(jwtProvider.getRefreshExpirationSeconds())
+        .build();
+    response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
     return new UserLoginResponse(
-        token,
+        accessToken,
         "Bearer",
-        jwtProvider.getExpirationSeconds(),
+        jwtProvider.getAccessExpirationSeconds(),
         user.getId(),
         user.getEmail(),
         user.getUserName()
