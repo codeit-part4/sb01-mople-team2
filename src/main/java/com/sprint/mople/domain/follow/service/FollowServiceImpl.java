@@ -2,6 +2,7 @@ package com.sprint.mople.domain.follow.service;
 
 import com.sprint.mople.domain.follow.dto.FollowResponse;
 import com.sprint.mople.domain.follow.entity.Follow;
+import com.sprint.mople.domain.follow.exception.FollowAlreadyExistsException;
 import com.sprint.mople.domain.follow.exception.FollowNotFoundException;
 import com.sprint.mople.domain.follow.mapper.FollowMapper;
 import com.sprint.mople.domain.follow.repository.FollowRepository;
@@ -40,6 +41,10 @@ public class FollowServiceImpl implements FollowService {
     User followee = userRepository.findById(followeeId)
         .orElseThrow(
             () -> new IllegalArgumentException("팔로우 대상 유저를 찾을 수 없습니다 - id: " + followeeId));
+
+    if (followRepository.findByFollowerIdAndFolloweeId(followerId, followeeId).isPresent()){
+      throw new FollowAlreadyExistsException();
+    }
     Follow follow = new Follow(follower, followee);
     followRepository.save(follow);
     log.debug("팔로우 생성 완료 - 유저: {}, 팔로우 대상: {}", followerId, followeeId);
@@ -47,6 +52,7 @@ public class FollowServiceImpl implements FollowService {
     String content = String.format("%s님이 당신을 팔로우하기 시작했습니다.", follower.getUserName());
     notificationService.send(follower, NotificationType.NEW_FOLLOWER, content, null);
     log.debug("팔로우 알림 전송 완료 - 대상: {}", followerId);
+
     return followMapper.toDto(follow);
   }
 
