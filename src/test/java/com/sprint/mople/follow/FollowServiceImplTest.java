@@ -13,7 +13,6 @@ import com.sprint.mople.domain.follow.service.FollowServiceImpl;
 import com.sprint.mople.domain.user.dto.UserListResponse;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -96,6 +95,32 @@ public class FollowServiceImplTest {
 
     // When
     Page<UserListResponse> responses = followService.findAllFollowings(userId, page, size);
+
+    // Then
+    assertEquals(1, responses.getTotalElements());
+  }
+
+  @Test
+  void 팔로워_페이징_조회_성공() {
+    // Given
+    UUID userId = UUID.randomUUID();
+    User user = new User();
+    User follower = new User();
+    int page = 0;
+    int size = 10;
+
+    Pageable pageable = Pageable.ofSize(size).withPage(page);
+
+    List<User> followers = List.of(follower);
+    Page<User> followersPage = new PageImpl<>(followers, pageable, 1);
+
+    when(followRepository.findFollowersByFollowee(user, pageable)).thenReturn(followersPage);
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(followRepository.findFollowersByFollowee(user, pageable)).thenReturn(
+        followersPage);
+
+    // When
+    Page<UserListResponse> responses = followService.findAllFollowers(userId, page, size);
 
     // Then
     assertEquals(1, responses.getTotalElements());
