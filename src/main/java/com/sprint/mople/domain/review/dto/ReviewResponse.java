@@ -2,6 +2,7 @@ package com.sprint.mople.domain.review.dto;
 
 
 import com.sprint.mople.domain.review.entity.Review;
+import java.time.Instant;
 import java.util.UUID;
 
 public record ReviewResponse(
@@ -11,7 +12,7 @@ public record ReviewResponse(
     UUID user,
     String comment,
     int rating,
-    String createdAt
+    Instant createdAt
 )
 {
 
@@ -22,7 +23,7 @@ public record ReviewResponse(
         review.getUser().getId(),
         review.getComment(),
         review.getRating(),
-        review.getCreatedAt().toString()
+        review.getCreatedAt()
     );
   }
 }

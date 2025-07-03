@@ -9,6 +9,13 @@ public enum ErrorCode {
 
   REVIEW_NOT_FOUND(404, "R001", "리뷰를 찾을 수 없습니다."),
 
+  PLAYLIST_NOT_FOUND(404, "P001", "플레이리스트를 찾을 수 없습니다."),
+  PLAYLIST_ILLEGAL_ACCESS(403, "P002", "플레이리스트에 접근할 수 없습니다."),
+  DUPLICATE_PLAYLIST_CONTENT(400, "P003", "이미 등록된 플레이리스트 콘텐츠입니다."),
+  PLAYLIST_CONTENT_NOT_FOUND(404, "P004", "플레이리스트 콘텐츠를 찾을 수 없습니다."),
+  PLAYLIST_ALREADY_LIKED(400, "P005", "이미 좋아요한 플레이리스트입니다."),
+  PLAYLIST_NOT_LIKED(400, "P006", "좋아요하지 않은 플레이리스트입니다."),
+
   USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다."),
 
   DUPLICATE_REVIEW(400, "R002", "이미 등록된 리뷰입니다."),

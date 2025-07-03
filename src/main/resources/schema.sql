@@ -44,10 +44,9 @@ CREATE TABLE watch_session_participants (
 );
 
 CREATE TABLE playlists_contents (
-    playlist_content_id UUID,
-    playlist_id         UUID,
-    content_id          UUID,
-    PRIMARY KEY (playlist_content_id, playlist_id)
+    playlist_content_id UUID PRIMARY KEY,
+    playlist_id         UUID NOT NULL,
+    content_id          UUID NOT NULL
 );
 
 CREATE TABLE notifications (
@@ -86,12 +85,13 @@ CREATE TABLE follows (
 CREATE TABLE subscribes (
     subscribe_id  UUID PRIMARY KEY,
     user_id       UUID NOT NULL,
+    playlist_id   UUID NOT NULL,
     subscribed_at TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TABLE chatrooms_users (
-    chat_room_id     UUID NOT NULL,
-    user_id          UUID NOT NULL,
+    chat_room_id UUID NOT NULL,
+    user_id      UUID NOT NULL,
     PRIMARY KEY (chat_room_id, user_id)
 );
 
@@ -126,14 +126,13 @@ CREATE TABLE reviews (
 );
 
 CREATE TABLE playlists (
-    playlist_id  UUID PRIMARY KEY,
-    user_id      UUID NOT NULL,
-    subscribe_id UUID NOT NULL,
-    title        VARCHAR(255),
-    description  VARCHAR(1000),
-    is_public    BOOLEAN,
-    created_at   TIMESTAMP WITH TIME ZONE,
-    updated_at   TIMESTAMP WITH TIME ZONE
+    playlist_id UUID PRIMARY KEY,
+    user_id     UUID NOT NULL,
+    title       VARCHAR(255),
+    description VARCHAR(1000),
+    is_public   BOOLEAN,
+    created_at  TIMESTAMP WITH TIME ZONE,
+    updated_at  TIMESTAMP WITH TIME ZONE
 );
 
 -- WatchComment (N) -> WatchSession (1)
@@ -177,6 +176,10 @@ ALTER TABLE playlists_contents
         FOREIGN KEY (content_id)
             REFERENCES contents (content_id)
             ON DELETE CASCADE;
+
+ALTER TABLE playlists_contents
+    ADD CONSTRAINT uk_playlist_content_unique
+        UNIQUE (playlist_id, content_id);
 
 -- Notification (N) -> User (1)
 ALTER TABLE notifications
@@ -262,22 +265,39 @@ ALTER TABLE playlists
             REFERENCES users (user_id)
             ON DELETE CASCADE;
 
--- Playlist (N) -> Subscribe (1)
-ALTER TABLE playlists
-    ADD CONSTRAINT fk_playlist_subscribe
-        FOREIGN KEY (subscribe_id)
-            REFERENCES subscribes (subscribe_id)
-            ON DELETE SET NULL;
+-- Subscribe (N) -> Playlist (1)
+ALTER TABLE subscribes
+    ADD CONSTRAINT fk_subscribe_playlist
+        FOREIGN KEY (playlist_id)
+            REFERENCES playlists (playlist_id)
+            ON DELETE CASCADE;
 
 CREATE TABLE refresh_tokens (
-    token_id UUID PRIMARY KEY,
-    user_id UUID NOT NULL UNIQUE,
-    token TEXT NOT NULL,
+    token_id    UUID PRIMARY KEY,
+    user_id     UUID      NOT NULL UNIQUE,
+    token       TEXT      NOT NULL,
     expiry_date TIMESTAMP NOT NULL,
     CONSTRAINT fk_user
         FOREIGN KEY (user_id)
-            REFERENCES users(user_id)
+            REFERENCES users (user_id)
             ON DELETE CASCADE
 );
 
-CREATE INDEX idx_follower_followee ON follows(follower_id, followee_id);
+CREATE INDEX idx_follower_followee ON follows (follower_id, followee_id);
+
+CREATE TABLE playlist_like (
+    id          UUID PRIMARY KEY,
+    user_id     UUID        NOT NULL,
+    playlist_id UUID        NOT NULL,
+    liked_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT fk_playlist_like_user
+        FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_playlist_like_playlist
+        FOREIGN KEY (playlist_id) REFERENCES playlists (playlist_id) ON DELETE CASCADE,
+
+    -- 한 사용자가 같은 플레이리스트에 한 번만 좋아요 가능
+    CONSTRAINT uc_playlist_like_user_playlist UNIQUE (user_id, playlist_id)
+);
+CREATE INDEX idx_playlist_like_playlist ON playlist_like (playlist_id);
+CREATE INDEX idx_playlist_like_user ON playlist_like (user_id);

@@ -31,5 +31,25 @@ public class PlaylistContent {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "content_id", nullable = false)
   private Content content;
+
+  public void setPlaylist(Playlist playlist) {
+    if (this.playlist != null) {
+      this.playlist.getPlaylistContents().remove(this);
+    }
+    this.playlist = playlist;
+    if (playlist != null) {
+      playlist.getPlaylistContents().add(this);
+    }
+  }
+
+  public void setContent(Content content) {
+    if (this.content != null) {
+      this.content.getPlaylistContents().remove(this);
+    }
+    this.content = content;
+    if (content != null) {
+      content.getPlaylistContents().add(this);
+    }
+  }
 }
 
