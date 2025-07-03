@@ -13,6 +13,7 @@ import com.sprint.mople.domain.dm.mapper.MessageMapper;
 import com.sprint.mople.domain.dm.repository.ChatRoomRepository;
 import com.sprint.mople.domain.dm.repository.ChatRoomUserRepository;
 import com.sprint.mople.domain.dm.repository.MessageRepository;
+import com.sprint.mople.domain.notification.service.NotificationService;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import java.time.Instant;
@@ -51,6 +52,9 @@ class MessageServiceImplTest {
 
   @Mock
   MessageMapper messageMapper;
+
+  @Mock
+  NotificationService notificationService;
 
   @InjectMocks
   MessageServiceImpl messageService;

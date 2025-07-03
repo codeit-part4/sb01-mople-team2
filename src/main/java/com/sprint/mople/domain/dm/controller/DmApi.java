@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -37,4 +38,12 @@ public interface DmApi {
   ResponseEntity<List<MessageResponse>> findAllMessages(@PathVariable UUID targetUserId,
       HttpServletRequest request);
 
+  @Operation(summary = "채팅방 목록 조회", description = "사용자의 모든 채팅방을 조회합니다.")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200", description = "채팅방 목록을 성공적으로 조회함",
+          content = @Content(schema = @Schema(implementation = ChatRoomResponse.class))
+      )
+  })
+  ResponseEntity<Page<ChatRoomResponse>> findAllChatRooms(HttpServletRequest request);
 }
