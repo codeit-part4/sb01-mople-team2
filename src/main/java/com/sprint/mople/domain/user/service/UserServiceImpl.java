@@ -11,14 +11,20 @@ import com.sprint.mople.domain.user.entity.UserSource;
 import com.sprint.mople.domain.user.exception.AccountLockedException;
 import com.sprint.mople.domain.user.exception.EmailAlreadyExistsException;
 import com.sprint.mople.domain.user.exception.LoginFailedException;
+import com.sprint.mople.domain.user.exception.NotFoundException;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import com.sprint.mople.global.jwt.JwtProvider;
+import com.sprint.mople.global.util.TempPasswordUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +35,10 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final TokenServiceImpl tokenService;
   private final JwtProvider jwtProvider;
+  private final TempPasswordUtil tempPasswordUtil;
+  private final EmailServiceImpl emailService;
 
   @Override
   public UserRegisterResponse registerUser(UserRegisterRequest request) {
@@ -57,7 +66,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserLoginResponse login(String email, String password) {
+  public UserLoginResponse login(String email, String password, HttpServletResponse response) {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new LoginFailedException("이메일 또는 비밀번호가 일치하지 않습니다."));
 
@@ -69,12 +78,25 @@ public class UserServiceImpl implements UserService {
       throw new AccountLockedException("이 계정은 잠긴 계정입니다.");
     }
 
-    String token = jwtProvider.createToken(user.getId().toString(), user.getEmail());
+    // ✅ userId & email 기반으로 토큰 생성
+    Map<String, String> tokens = tokenService.generateTokens(user.getId(), user.getEmail());
+    String accessToken = tokens.get("accessToken");
+    String refreshToken = tokens.get("refreshToken");
+
+    // ✅ refreshToken을 HttpOnly 쿠키로 설정
+    ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken)
+        .httpOnly(true)
+        .secure(true)
+        .path("/api/auth/refresh")
+        .sameSite("Strict")
+        .maxAge(jwtProvider.getRefreshExpirationSeconds())
+        .build();
+    response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
     return new UserLoginResponse(
-        token,
+        accessToken,
         "Bearer",
-        jwtProvider.getExpirationSeconds(),
+        jwtProvider.getAccessExpirationSeconds(),
         user.getId(),
         user.getEmail(),
         user.getUserName()
@@ -157,5 +179,26 @@ public class UserServiceImpl implements UserService {
 
     return user.getId();
   }
+
+  @Override
+  public void resetPassword(String email) {
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new NotFoundException("해당 이메일로 등록된 사용자가 없습니다."));
+
+    // 1. 임시 비밀번호 생성
+    String tempPassword = tempPasswordUtil.generate();
+
+    // 2. 임시 비밀번호 암호화
+    String encoded = passwordEncoder.encode(tempPassword);
+
+    // 3. 유저 비밀번호 업데이트 + 임시 비밀번호 플래그 설정
+    user.setPassword(encoded);
+    user.setIsUsingTempPassword(true);
+    userRepository.save(user);
+
+    // 4. 이메일 전송
+    emailService.sendTempPassword(email, tempPassword);
+  }
+
 }
 
