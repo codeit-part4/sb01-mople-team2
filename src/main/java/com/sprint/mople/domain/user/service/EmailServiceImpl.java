@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.user.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import jakarta.mail.MessagingException;
@@ -11,6 +12,8 @@ public class EmailServiceImpl implements EmailService {
 
   private final JavaMailSender mailSender;
 
+  @Value("${spring.mail.from}")
+  private String fromEmail;
 
   public EmailServiceImpl(JavaMailSender mailSender) {
     this.mailSender = mailSender;
@@ -25,9 +28,9 @@ public class EmailServiceImpl implements EmailService {
 
       helper.setTo(toEmail);
       helper.setSubject("[Mople] 임시 비밀번호 안내");
-      helper.setFrom("sbmople22@example.com");
+      helper.setFrom(fromEmail);
 
-      // HTML 본문 예시
+      // HTML 본문
       String content = "<h1>안녕하세요, Mople 입니다.</h1>"
           + "<p>요청하신 임시 비밀번호를 안내드립니다.</p>"
           + "<p><strong>임시 비밀번호: </strong> " + tempPassword + "</p>"
@@ -35,7 +38,7 @@ public class EmailServiceImpl implements EmailService {
           + "<br>"
           + "<p>감사합니다.</p>";
 
-      helper.setText(content, true); // true = HTML 형식
+      helper.setText(content, true);
 
       mailSender.send(message);
     } catch (MessagingException e) {
