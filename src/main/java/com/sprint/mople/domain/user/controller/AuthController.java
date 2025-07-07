@@ -1,14 +1,17 @@
 package com.sprint.mople.domain.user.controller;
 
+import com.sprint.mople.domain.user.dto.ResetPasswordRequest;
 import com.sprint.mople.domain.user.dto.UserLoginRequest;
 import com.sprint.mople.domain.user.dto.UserLoginResponse;
+import com.sprint.mople.domain.user.exception.UnauthorizedException;
 import com.sprint.mople.domain.user.service.TokenService;
 import com.sprint.mople.domain.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,21 +28,45 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<UserLoginResponse> login(
-      @RequestBody @Valid UserLoginRequest request) {
-    UserLoginResponse response = userService.login(request.email(), request.password());
-    return ResponseEntity.ok(response);
+      @RequestBody @Valid UserLoginRequest request,
+      HttpServletResponse response
+  ) {
+    return ResponseEntity.ok(userService.login(request.email(), request.password(), response));
   }
 
   @PostMapping("/refresh")
-  public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
-    String refreshToken = request.get("refreshToken");
-    try {
-      String newAccessToken = tokenService.refreshAccessToken(refreshToken);
-      return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+  public ResponseEntity<Map<String, String>> refreshToken(
+      @CookieValue(value = "refresh_token", required = false) String refreshToken,
+      HttpServletResponse response
+  ) {
+    if (refreshToken == null) {
+      throw new UnauthorizedException("Refresh Token이 존재하지 않습니다.");
     }
+
+    Map<String, String> newTokens = tokenService.reissueTokens(refreshToken, response);
+
+    return ResponseEntity.ok(newTokens);
   }
 
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logout(
+      @CookieValue(value = "refresh_token", required = false) String refreshToken,
+      HttpServletResponse response
+  ) {
+    if (refreshToken != null) {
+      tokenService.logout(refreshToken, response);
+    }
+
+    return ResponseEntity.noContent().build(); // 204
+  }
+
+  @PostMapping("/reset-password")
+  public ResponseEntity<Map<String, String>> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+    userService.resetPassword(request.email());
+
+    return ResponseEntity.ok(Map.of(
+        "message", "임시 비밀번호가 해당 이메일로 전송되었습니다."
+    ));
+  }
 }
 

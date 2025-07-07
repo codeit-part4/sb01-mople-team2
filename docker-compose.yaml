@@ -14,8 +14,26 @@ services:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - mople-network
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mople/app:latest
+    container_name: mople-app
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - mople-network
+
 volumes:
   postgres-data:
 networks:
   mople-network:
     driver: bridge
+
