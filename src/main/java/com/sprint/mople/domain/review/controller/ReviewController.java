@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.review.controller;
 
+import com.sprint.mople.domain.review.api.ReviewApi;
 import com.sprint.mople.domain.review.dto.ReviewCreateRequest;
 import com.sprint.mople.domain.review.dto.ReviewResponse;
 import com.sprint.mople.domain.review.dto.ReviewUpdateRequest;

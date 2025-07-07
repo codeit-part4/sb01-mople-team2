@@ -2,8 +2,8 @@ package com.sprint.mople.domain.playlist.service;
 
 import com.sprint.mople.domain.playlist.entity.Playlist;
 import com.sprint.mople.domain.playlist.entity.PlaylistLike;
-import com.sprint.mople.domain.playlist.exception.AlreadyLikedException;
-import com.sprint.mople.domain.playlist.exception.NotLikedException;
+import com.sprint.mople.domain.playlist.exception.PlaylistAlreadyLikedException;
+import com.sprint.mople.domain.playlist.exception.PlaylistNotLikedException;
 import com.sprint.mople.domain.playlist.exception.PlaylistNotFoundException;
 import com.sprint.mople.domain.playlist.repository.PlaylistLikeRepository;
 import com.sprint.mople.domain.playlist.repository.PlaylistRepository;
@@ -36,7 +36,7 @@ public class PlaylistLikeService {
         .orElseThrow(PlaylistNotFoundException::new);
 
     if (playlistLikeRepository.existsByUserAndPlaylist(user, playlist)) {
-      throw new AlreadyLikedException();
+      throw new PlaylistAlreadyLikedException();
     }
 
     playlistLikeRepository.save(new PlaylistLike(user, playlist));
@@ -53,7 +53,7 @@ public class PlaylistLikeService {
 
     PlaylistLike like = playlistLikeRepository
         .findByUserAndPlaylist(user, playlist)
-        .orElseThrow(NotLikedException::new);
+        .orElseThrow(PlaylistNotLikedException::new);
 
     playlistLikeRepository.delete(like);
   }

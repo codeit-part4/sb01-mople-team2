@@ -1,4 +1,4 @@
-package com.sprint.mople.domain.playlist.controller;
+package com.sprint.mople.domain.playlist.api;
 
 import com.sprint.mople.domain.playlist.dto.*;
 import io.swagger.v3.oas.annotations.Operation;

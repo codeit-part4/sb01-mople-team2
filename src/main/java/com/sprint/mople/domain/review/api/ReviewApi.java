@@ -1,4 +1,4 @@
-package com.sprint.mople.domain.review.controller;
+package com.sprint.mople.domain.review.api;
 
 import com.sprint.mople.domain.review.dto.ReviewCreateRequest;
 import com.sprint.mople.domain.review.dto.ReviewResponse;

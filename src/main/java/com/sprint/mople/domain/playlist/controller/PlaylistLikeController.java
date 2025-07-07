@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.playlist.controller;
 
+import com.sprint.mople.domain.playlist.api.PlaylistLikeApi;
 import com.sprint.mople.domain.playlist.service.PlaylistLikeService;
 import com.sprint.mople.global.jwt.JwtProvider;
 import com.sprint.mople.global.jwt.JwtTokenExtractor;
@@ -23,6 +24,7 @@ class PlaylistLikeController implements PlaylistLikeApi {
   private final HttpServletRequest request;
   private final JwtProvider jwtProvider;
 
+  // TODO SecurityContext 대체
   private UUID getRequestUserId() {
     String token = JwtTokenExtractor.resolveToken(request);
     return jwtProvider.getUserId(token);

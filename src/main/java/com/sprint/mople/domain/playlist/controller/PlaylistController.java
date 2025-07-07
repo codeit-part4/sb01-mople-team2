@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.playlist.controller;
 
+import com.sprint.mople.domain.playlist.api.PlaylistApi;
 import com.sprint.mople.domain.playlist.dto.PlaylistContentRequest;
 import com.sprint.mople.domain.playlist.dto.PlaylistCreateRequest;
 import com.sprint.mople.domain.playlist.dto.PlaylistResponse;
@@ -23,6 +24,7 @@ public class PlaylistController implements PlaylistApi {
   private final JwtProvider jwtProvider;
   private final HttpServletRequest request;
 
+  // TODO SecurityContext 대체
   private UUID getRequestUserId() {
     String token = JwtTokenExtractor.resolveToken(request);
     return jwtProvider.getUserId(token);
