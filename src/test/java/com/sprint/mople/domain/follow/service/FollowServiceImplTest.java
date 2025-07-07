@@ -1,4 +1,4 @@
-package com.sprint.mople.follow;
+package com.sprint.mople.domain.follow.service;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,7 +9,6 @@ import com.sprint.mople.domain.follow.dto.FollowResponse;
 import com.sprint.mople.domain.follow.entity.Follow;
 import com.sprint.mople.domain.follow.mapper.FollowMapper;
 import com.sprint.mople.domain.follow.repository.FollowRepository;
-import com.sprint.mople.domain.follow.service.FollowServiceImpl;
 import com.sprint.mople.domain.notification.service.NotificationService;
 import com.sprint.mople.domain.user.dto.UserListResponse;
 import com.sprint.mople.domain.user.entity.User;
