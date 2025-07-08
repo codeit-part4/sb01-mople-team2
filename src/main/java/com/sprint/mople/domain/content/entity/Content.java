@@ -17,7 +17,6 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,9 +127,7 @@ public class Content {
   }
 
   public void updateAverageRating(BigDecimal averageRating) {
-    this.averageRating = BigDecimal
-        .valueOf(totalRatingCount)
-        .divide(BigDecimal.valueOf(5), 2, RoundingMode.HALF_UP);
+    this.averageRating = averageRating;
   }
 
   public void updateTotalRatingCount(Long totalRatingCount) {
