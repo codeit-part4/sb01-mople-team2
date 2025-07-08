@@ -40,7 +40,10 @@ jobs:
         run: chmod +x gradlew
 
       - name: Write .env file
-        run: echo "${{ secrets.ENV_FILE }}" > .env
+        run: |
+          cat <<EOF > .env
+          ${{ secrets.ENV_FILE }}
+          EOF
 
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
