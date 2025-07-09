@@ -1,9 +1,11 @@
 package com.sprint.mople.domain.dm.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.sprint.mople.domain.dm.dto.ChatRoomResponse;
+import com.sprint.mople.domain.dm.entity.ChatRoom;
 import com.sprint.mople.domain.dm.mapper.ChatRoomMapper;
 import com.sprint.mople.domain.dm.repository.ChatRoomRepository;
 import com.sprint.mople.domain.user.entity.User;
@@ -16,6 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 class ChatRoomServiceImplTest {
@@ -49,5 +54,27 @@ class ChatRoomServiceImplTest {
     assert (response.participantIds().contains(requestUserId));
     assert (response.participantIds().contains(userId));
 
+  }
+
+  @Test
+  void 채팅방_목록_조회(){
+    // Given
+    UUID userId = UUID.randomUUID();
+    ChatRoom chatRoom = new ChatRoom(new User(), new User());
+    ChatRoomResponse response = new ChatRoomResponse(UUID.randomUUID(), List.of(userId));
+    int page = 0;
+    int size = 10;
+
+    Pageable pageable = Pageable.ofSize(size).withPage(page);
+    Page<ChatRoom> chatRoomPage = new PageImpl<>(List.of(chatRoom), pageable, 1);
+
+    when(chatRoomRepository.findAllByParticipantId(userId, pageable)).thenReturn(chatRoomPage);
+    when(chatRoomMapper.toDto(any())).thenReturn(response);
+
+    // When
+    Page<ChatRoomResponse> chatRooms = chatRoomService.findAllChatRooms(userId);
+
+    // Then
+    assertEquals(1, chatRooms.getTotalElements());
   }
 }

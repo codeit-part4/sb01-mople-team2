@@ -13,6 +13,7 @@ import com.sprint.mople.domain.dm.mapper.MessageMapper;
 import com.sprint.mople.domain.dm.repository.ChatRoomRepository;
 import com.sprint.mople.domain.dm.repository.ChatRoomUserRepository;
 import com.sprint.mople.domain.dm.repository.MessageRepository;
+import com.sprint.mople.domain.notification.service.NotificationService;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import java.time.Instant;
@@ -24,6 +25,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.context.event.SpringApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +48,13 @@ class MessageServiceImplTest {
   ChatRoomService chatRoomService;
 
   @Mock
+  ApplicationEventPublisher eventPublisher;
+
+  @Mock
   MessageMapper messageMapper;
+
+  @Mock
+  NotificationService notificationService;
 
   @InjectMocks
   MessageServiceImpl messageService;
