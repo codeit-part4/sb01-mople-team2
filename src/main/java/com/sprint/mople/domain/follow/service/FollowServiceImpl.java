@@ -131,4 +131,10 @@ public class FollowServiceImpl implements FollowService {
 
     return new FollowCountResponse(followerCount, followingCount);
   }
+
+  @Override
+  public Boolean checkFollowing(UUID followerId, UUID followeeId) {
+    log.debug("팔로우 상태 조회 시작 - 요청한 유저: {}, 팔로우 대상: {}", followerId, followeeId);
+    return followRepository.findByFollowerIdAndFolloweeId(followerId, followeeId).isPresent();
+  }
 }

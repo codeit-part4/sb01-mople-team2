@@ -39,6 +39,14 @@ public class FollowController implements FollowApi {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/{followeeId}")
+  public Boolean checkFollowing(@PathVariable UUID followeeId,
+      HttpServletRequest request) {
+    UUID followerId = extractUserId(request, jwtProvider);
+    log.debug("팔로우 상태 조회 요청 - 요청한 유저: {}, 팔로우 대상: {}", followeeId, followerId);
+    return followService.checkFollowing(followerId, followeeId);
+  }
+
   @DeleteMapping("/{followeeId}")
   public void unfollow(@PathVariable UUID followeeId, HttpServletRequest request) {
     UUID followerId = extractUserId(request, jwtProvider);

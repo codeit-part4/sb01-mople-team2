@@ -9,5 +9,4 @@ public interface FollowRepository extends JpaRepository<Follow, UUID>, CustomFol
 
   Optional<Follow> findByFollowerIdAndFolloweeId(UUID followerId, UUID followeeId);
 
-
 }

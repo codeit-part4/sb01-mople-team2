@@ -18,4 +18,6 @@ public interface FollowService {
 
   FollowCountResponse getFollowCount(UUID userId);
 
+  Boolean checkFollowing(UUID followerId, UUID followeeId);
+
 }
