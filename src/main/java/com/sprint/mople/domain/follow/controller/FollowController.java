@@ -58,6 +58,6 @@ public class FollowController implements FollowApi {
     UUID userId = extractUserId(request, jwtProvider);
     log.debug("팔로워 목록 조회 요청 - 유저: {}", userId);
     Page<UserListResponse> followers = followService.findAllFollowers(userId);
-    return null;
+    return ResponseEntity.ok(followers);
   }
 }
