@@ -28,6 +28,14 @@ jobs:
           cat <<EOF > .env
           ${{ secrets.ENV_FILE }}
           EOF
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Apply schema.sql to PostgreSQL
+        run: |
+          psql -h localhost -p 5432 -U mople_user -d mople -f src/main/resources/schema.sql
+        env:
+          PGPASSWORD: mople_1234
 
       - name: Run tests and generate coverage
         run: ./gradlew clean test jacocoTestReport
