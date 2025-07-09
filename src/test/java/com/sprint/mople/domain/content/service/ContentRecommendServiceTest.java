@@ -5,35 +5,37 @@ import com.sprint.mople.domain.content.entity.ContentSortType;
 import com.sprint.mople.domain.content.repository.ContentLikeRepository;
 import com.sprint.mople.domain.content.repository.ContentRecommendRepository;
 import com.sprint.mople.domain.content.repository.ContentRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ContentRecommendServiceTest {
-
-  private ContentRecommendRepository recommendRepository;
-  private ContentRepository contentRepository;
-  private ContentLikeRepository contentLikeRepository;
-  private ContentRecommendService contentRecommendService;
 
   private final UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111");
   private final UUID contentId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1");
 
-  @BeforeEach
-  void setUp() {
-    recommendRepository = mock(ContentRecommendRepository.class);
-    contentRepository = mock(ContentRepository.class);
-    contentLikeRepository = mock(ContentLikeRepository.class);
-    contentRecommendService = new ContentRecommendService(recommendRepository, contentRepository, contentLikeRepository);
-  }
+  @Mock
+  private ContentRecommendRepository recommendRepository;
+
+  @Mock
+  private ContentRepository contentRepository;
+
+  @Mock
+  private ContentLikeRepository contentLikeRepository;
+
+  @InjectMocks
+  private ContentRecommendService contentRecommendService;
 
   @Test
   @DisplayName("getRecommendedContents - 추천 콘텐츠 반환")
@@ -41,15 +43,7 @@ class ContentRecommendServiceTest {
     Instant now = Instant.now();
     List<Object[]> rawList = List.of(new Object[][]{
         new Object[]{
-            contentId,
-            "Test Title",
-            now,
-            now,
-            5L,
-            BigDecimal.valueOf(4.7),
-            "poster.jpg",
-            10L,
-            0.95
+            contentId, "Test Title", now, now, 5L, BigDecimal.valueOf(4.7), "poster.jpg", 10L, 0.95
         }
     });
 
@@ -74,22 +68,18 @@ class ContentRecommendServiceTest {
     Instant now = Instant.now();
     List<Object[]> rawList = List.of(new Object[][]{
         new Object[]{
-            contentId,
-            "New Title",
-            now,
-            now,
-            7L,
-            BigDecimal.valueOf(4.3),
-            "recent.jpg",
-            15L,
-            0.85
+            contentId, "New Title", now, now, 7L, BigDecimal.valueOf(4.3), "recent.jpg", 15L, 0.85
         }
     });
 
     when(recommendRepository.findAllByRecent(1)).thenReturn(rawList);
     when(contentLikeRepository.existsByUserIdAndContentId(userId, contentId)).thenReturn(false);
 
-    List<ContentResponse> result = contentRecommendService.getSortedContents(userId, 1, ContentSortType.RECENT);
+    List<ContentResponse> result = contentRecommendService.getSortedContents(
+        userId,
+        1,
+        ContentSortType.RECENT
+    );
 
     assertThat(result).hasSize(1);
     ContentResponse content = result.get(0);
@@ -118,10 +108,16 @@ class ContentRecommendServiceTest {
     when(recommendRepository.findAllByReviewCount(1)).thenReturn(rawList);
     when(contentLikeRepository.existsByUserIdAndContentId(userId, contentId)).thenReturn(false);
 
-    List<ContentResponse> result = contentRecommendService.getSortedContents(userId, 1, ContentSortType.MOST_REVIEWED);
+    List<ContentResponse> result = contentRecommendService.getSortedContents(
+        userId,
+        1,
+        ContentSortType.MOST_REVIEWED
+    );
 
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).totalRatingCount()).isEqualTo(20);
+    assertThat(result
+        .get(0)
+        .totalRatingCount()).isEqualTo(20);
   }
 
   @Test
@@ -145,11 +141,21 @@ class ContentRecommendServiceTest {
     when(recommendRepository.findAllByScore(1)).thenReturn(rawList);
     when(contentLikeRepository.existsByUserIdAndContentId(userId, contentId)).thenReturn(true);
 
-    List<ContentResponse> result = contentRecommendService.getSortedContents(userId, 1, ContentSortType.SCORE);
+    List<ContentResponse> result = contentRecommendService.getSortedContents(
+        userId,
+        1,
+        ContentSortType.SCORE
+    );
 
     assertThat(result).hasSize(1);
-    assertThat(result.get(0).averageRating()).isNotNull();
-    assertThat(result.get(0).title()).isEqualTo("Scored Title");
-    assertThat(result.get(0).liked()).isTrue();
+    assertThat(result
+        .get(0)
+        .averageRating()).isNotNull();
+    assertThat(result
+        .get(0)
+        .title()).isEqualTo("Scored Title");
+    assertThat(result
+        .get(0)
+        .liked()).isTrue();
   }
 }
