@@ -68,7 +68,7 @@ class ChatRoomServiceImplTest {
     Pageable pageable = Pageable.ofSize(size).withPage(page);
     Page<ChatRoom> chatRoomPage = new PageImpl<>(List.of(chatRoom), pageable, 1);
 
-    when(chatRoomRepository.findAllByParticipantId(userId, pageable)).thenReturn(chatRoomPage);
+    when(chatRoomRepository.findAllByUserIdWithParticipants(userId, pageable)).thenReturn(chatRoomPage);
     when(chatRoomMapper.toDto(any())).thenReturn(response);
 
     // When
