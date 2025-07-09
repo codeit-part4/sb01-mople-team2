@@ -21,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ContentLikeService {
 
   private final ContentLikeRepository contentLikeRepository;
-  private final ContentRepository     contentRepository;
-  private final UserRepository        userRepository;
+  private final ContentRepository contentRepository;
+  private final UserRepository userRepository;
 
   @Transactional
   public void like(UUID userId, UUID contentId) {
-    User user       = getUser(userId);
+    User user = getUser(userId);
     Content content = getContent(contentId);
 
     if (contentLikeRepository.existsByUserAndContent(user, content)) {
@@ -38,10 +38,11 @@ public class ContentLikeService {
 
   @Transactional
   public void unlike(UUID userId, UUID contentId) {
-    User user       = getUser(userId);
+    User user = getUser(userId);
     Content content = getContent(contentId);
 
-    ContentLike like = contentLikeRepository.findByUserAndContent(user, content)
+    ContentLike like = contentLikeRepository
+        .findByUserAndContent(user, content)
         .orElseThrow(PlaylistNotLikedException::new);
 
     contentLikeRepository.delete(like);
@@ -62,19 +63,24 @@ public class ContentLikeService {
   }
 
   public List<UUID> listUserLikedContentIds(UUID userId) {
-    return contentLikeRepository.findByUser(getUser(userId))
+    return contentLikeRepository
+        .findByUser(getUser(userId))
         .stream()
-        .map(cl -> cl.getContent().getId())
+        .map(cl -> cl
+            .getContent()
+            .getId())
         .toList();
   }
 
   private User getUser(UUID userId) {
-    return userRepository.findById(userId)
+    return userRepository
+        .findById(userId)
         .orElseThrow(() -> new EntityNotFoundException("없는 사용자입니다."));
   }
 
   private Content getContent(UUID contentId) {
-    return contentRepository.findById(contentId)
+    return contentRepository
+        .findById(contentId)
         .orElseThrow(() -> new EntityNotFoundException("없는 콘텐츠입니다."));
   }
 }
