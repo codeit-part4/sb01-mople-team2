@@ -20,8 +20,7 @@ public interface FollowApi {
   @Operation(summary = "팔로우", description = "특정 사용자를 팔로우합니다.")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "201", description = "사용자를 성공적으로 팔로우함",
-          content = @Content(schema = @Schema(implementation = FollowResponse.class))
+          responseCode = "201", description = "사용자를 성공적으로 팔로우함"
       )
   })
   ResponseEntity<FollowResponse> follow(@PathVariable UUID followeeId, HttpServletRequest request);
@@ -37,8 +36,7 @@ public interface FollowApi {
   @Operation(summary = "팔로잉 목록", description = "사용자가 팔로우하는 대상 목록을 조회합니다.")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "200", description = "팔로잉 목록 조회 성",
-          content = @Content(schema = @Schema(implementation = UserListResponse.class))
+          responseCode = "200", description = "팔로잉 목록 조회 성공"
       )
   })
   ResponseEntity<Page<UserListResponse>> findAllFollowings(HttpServletRequest request);
@@ -46,8 +44,7 @@ public interface FollowApi {
   @Operation(summary = "팔로워 목록", description = "사용자를 팔로우하는 사람들의 목록을 조회합니다.")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "200", description = "팔로워 목록 조회 성공",
-          content = @Content(schema = @Schema(implementation = UserListResponse.class))
+          responseCode = "200", description = "팔로워 목록 조회 성공"
       )
   })
   ResponseEntity<Page<UserListResponse>> findAllFollowers(HttpServletRequest request);
