@@ -2,6 +2,7 @@ package com.sprint.mople.domain.follow.controller;
 
 import static com.sprint.mople.global.jwt.JwtTokenExtractor.extractUserId;
 
+import com.sprint.mople.domain.follow.dto.FollowCountResponse;
 import com.sprint.mople.domain.follow.dto.FollowResponse;
 import com.sprint.mople.domain.follow.service.FollowService;
 import com.sprint.mople.domain.user.dto.UserListResponse;
@@ -38,7 +39,6 @@ public class FollowController implements FollowApi {
     return ResponseEntity.ok(response);
   }
 
-
   @DeleteMapping("/{followeeId}")
   public void unfollow(@PathVariable UUID followeeId, HttpServletRequest request) {
     UUID followerId = extractUserId(request, jwtProvider);
@@ -60,5 +60,12 @@ public class FollowController implements FollowApi {
     log.debug("팔로워 목록 조회 요청 - 유저: {}", userId);
     Page<UserListResponse> followers = followService.findAllFollowers(userId);
     return ResponseEntity.ok(followers);
+  }
+
+  @GetMapping("/count")
+  public ResponseEntity<FollowCountResponse> getFollowCount(HttpServletRequest request) {
+    UUID userId = extractUserId(request, jwtProvider);
+    FollowCountResponse response = followService.getFollowCount(userId);
+    return ResponseEntity.ok(response);
   }
 }

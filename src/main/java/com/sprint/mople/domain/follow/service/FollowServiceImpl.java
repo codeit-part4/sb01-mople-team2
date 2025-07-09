@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.follow.service;
 
+import com.sprint.mople.domain.follow.dto.FollowCountResponse;
 import com.sprint.mople.domain.follow.dto.FollowResponse;
 import com.sprint.mople.domain.follow.entity.Follow;
 import com.sprint.mople.domain.follow.exception.FollowAlreadyExistsException;
@@ -10,6 +11,7 @@ import com.sprint.mople.domain.notification.entity.NotificationType;
 import com.sprint.mople.domain.notification.service.NotificationService;
 import com.sprint.mople.domain.user.dto.UserListResponse;
 import com.sprint.mople.domain.user.entity.User;
+import com.sprint.mople.domain.user.exception.UserNotFoundException;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -37,12 +39,12 @@ public class FollowServiceImpl implements FollowService {
   public FollowResponse follow(UUID followerId, UUID followeeId) {
     log.debug("팔로우 생성 시작 - 유저: {}, 팔로우 대상: {}", followerId, followeeId);
     User follower = userRepository.findById(followerId)
-        .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다 - id: " + followerId));
+        .orElseThrow(() -> new UserNotFoundException());
     User followee = userRepository.findById(followeeId)
         .orElseThrow(
-            () -> new IllegalArgumentException("팔로우 대상 유저를 찾을 수 없습니다 - id: " + followeeId));
+            () -> new UserNotFoundException());
 
-    if (followRepository.findByFollowerIdAndFolloweeId(followerId, followeeId).isPresent()){
+    if (followRepository.findByFollowerIdAndFolloweeId(followerId, followeeId).isPresent()) {
       throw new FollowAlreadyExistsException();
     }
     Follow follow = new Follow(follower, followee);
@@ -73,7 +75,7 @@ public class FollowServiceImpl implements FollowService {
     log.debug("팔로잉 목록 조회 시작 - 유저: {}, 페이지: {}, 사이즈: {}", userId, page, size);
     Pageable pageable = Pageable.ofSize(size).withPage(page);
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다 - id: " + userId));
+        .orElseThrow(() -> new UserNotFoundException());
 
     Page<User> followees = followRepository.findFolloweesByFollower(user, pageable);
     if (followees.isEmpty()) {
@@ -97,7 +99,7 @@ public class FollowServiceImpl implements FollowService {
     log.debug("팔로워 목록 조회 시작 - 유저: {}, 페이지: {}, 사이즈: {}", userId, page, size);
     Pageable pageable = Pageable.ofSize(size).withPage(page);
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다 - id: " + userId));
+        .orElseThrow(() -> new UserNotFoundException());
 
     Page<User> followers = followRepository.findFollowersByFollowee(user, pageable);
     if (followers.isEmpty()) {
@@ -112,5 +114,21 @@ public class FollowServiceImpl implements FollowService {
         follower.getIsLocked(),
         follower.getCreateAt()
     ));
+  }
+
+  @Override
+  public FollowCountResponse getFollowCount(UUID userId) {
+    int page = DEFAULT_PAGE_NUMBER;
+    int size = DEFAULT_PAGE_SIZE;
+    Pageable pageable = Pageable.ofSize(size).withPage(page);
+
+    log.debug("팔로우 카운트 조회 시작 - 유저: {}", userId);
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException());
+
+    long followerCount = followRepository.findFollowersByFollowee(user, pageable).getTotalElements();
+    long followingCount = followRepository.findFolloweesByFollower(user, pageable).getTotalElements();
+
+    return new FollowCountResponse(followerCount, followingCount);
   }
 }
