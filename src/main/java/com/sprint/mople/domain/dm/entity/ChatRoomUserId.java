@@ -18,8 +18,7 @@ public class ChatRoomUserId implements Serializable {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof ChatRoomUserId)) return false;
-    ChatRoomUserId that = (ChatRoomUserId) o;
+    if (!(o instanceof ChatRoomUserId that)) return false;
     return Objects.equals(chatRoom, that.chatRoom) &&
         Objects.equals(user, that.user);
   }

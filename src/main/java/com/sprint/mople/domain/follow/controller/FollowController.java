@@ -30,7 +30,8 @@ public class FollowController implements FollowApi {
   private final JwtProvider jwtProvider;
 
   @PostMapping("/{followeeId}")
-  public ResponseEntity<FollowResponse> follow(@PathVariable UUID followeeId, HttpServletRequest request) {
+  public ResponseEntity<FollowResponse> follow(@PathVariable UUID followeeId,
+      HttpServletRequest request) {
     UUID followerId = extractUserId(request, jwtProvider);
     log.debug("팔로우 요청 - 요청한 유저: {}, 팔로우 대상: {}", followeeId, followerId);
     FollowResponse response = followService.follow(followerId, followeeId);
@@ -39,7 +40,7 @@ public class FollowController implements FollowApi {
 
 
   @DeleteMapping("/{followeeId}")
-  public void unfollow(@PathVariable UUID followeeId,HttpServletRequest request) {
+  public void unfollow(@PathVariable UUID followeeId, HttpServletRequest request) {
     UUID followerId = extractUserId(request, jwtProvider);
     log.debug("언팔로우 요청 - 요청한 유저: {}, 언팔로우 대상: {}", followeeId, followerId);
     followService.unfollow(followerId, followeeId);

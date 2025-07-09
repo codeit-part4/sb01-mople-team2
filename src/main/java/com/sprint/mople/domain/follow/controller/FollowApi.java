@@ -3,8 +3,6 @@ package com.sprint.mople.domain.follow.controller;
 import com.sprint.mople.domain.follow.dto.FollowResponse;
 import com.sprint.mople.domain.user.dto.UserListResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,7 +29,7 @@ public interface FollowApi {
           responseCode = "204", description = "팔로우가 성공적으로 취소됨"
       )
   })
-  void unfollow(@PathVariable UUID followeeId,HttpServletRequest request);
+  void unfollow(@PathVariable UUID followeeId, HttpServletRequest request);
 
   @Operation(summary = "팔로잉 목록", description = "사용자가 팔로우하는 대상 목록을 조회합니다.")
   @ApiResponses(value = {

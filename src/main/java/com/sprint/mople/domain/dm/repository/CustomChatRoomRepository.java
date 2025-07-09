@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CustomChatRoomRepository {
+
   Page<ChatRoom> findAllByUserIdWithParticipants(UUID userId, Pageable pageable);
 
 }
