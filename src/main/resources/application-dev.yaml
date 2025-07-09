@@ -25,7 +25,12 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+
 jwt:
   secret: ${SPRING_JWT_SECRET}
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
 
