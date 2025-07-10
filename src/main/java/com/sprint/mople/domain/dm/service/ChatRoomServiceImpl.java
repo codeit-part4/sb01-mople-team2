@@ -46,7 +46,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     int size = DEFAULT_PAGE_SIZE;
     log.debug("DM 채팅방 목록 조회 시작 - 유저: {}", userId);
     Pageable pageable = Pageable.ofSize(size).withPage(page);
-    Page<ChatRoom> chatRooms = chatRoomRepository.findAllByParticipantId(userId, pageable);
+    Page<ChatRoom> chatRooms = chatRoomRepository.findAllByUserIdWithParticipants(userId, pageable);
     if (chatRooms.isEmpty()) {
       log.info("DM 채팅방 목록 조회 결과 없음 - 유저: {}", userId);
       return Page.empty();

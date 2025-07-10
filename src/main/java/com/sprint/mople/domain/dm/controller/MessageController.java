@@ -17,6 +17,7 @@ public class MessageController {
 
   @MessageMapping("/messages")
   public void sendMessage(@Valid MessageCreateRequest request) {
+    log.debug("메시지 전송 요청 - 보낸 사람: {}, 내용: {}", request.senderId(), request.content());
     messageService.create(request);
   }
 

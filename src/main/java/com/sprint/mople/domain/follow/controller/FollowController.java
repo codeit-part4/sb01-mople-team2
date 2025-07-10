@@ -2,6 +2,7 @@ package com.sprint.mople.domain.follow.controller;
 
 import static com.sprint.mople.global.jwt.JwtTokenExtractor.extractUserId;
 
+import com.sprint.mople.domain.follow.dto.FollowCountResponse;
 import com.sprint.mople.domain.follow.dto.FollowResponse;
 import com.sprint.mople.domain.follow.service.FollowService;
 import com.sprint.mople.domain.user.dto.UserListResponse;
@@ -30,16 +31,24 @@ public class FollowController implements FollowApi {
   private final JwtProvider jwtProvider;
 
   @PostMapping("/{followeeId}")
-  public ResponseEntity<FollowResponse> follow(@PathVariable UUID followeeId, HttpServletRequest request) {
+  public ResponseEntity<FollowResponse> follow(@PathVariable UUID followeeId,
+      HttpServletRequest request) {
     UUID followerId = extractUserId(request, jwtProvider);
     log.debug("팔로우 요청 - 요청한 유저: {}, 팔로우 대상: {}", followeeId, followerId);
     FollowResponse response = followService.follow(followerId, followeeId);
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/{followeeId}")
+  public Boolean checkFollowing(@PathVariable UUID followeeId,
+      HttpServletRequest request) {
+    UUID followerId = extractUserId(request, jwtProvider);
+    log.debug("팔로우 상태 조회 요청 - 요청한 유저: {}, 팔로우 대상: {}", followeeId, followerId);
+    return followService.checkFollowing(followerId, followeeId);
+  }
 
   @DeleteMapping("/{followeeId}")
-  public void unfollow(@PathVariable UUID followeeId,HttpServletRequest request) {
+  public void unfollow(@PathVariable UUID followeeId, HttpServletRequest request) {
     UUID followerId = extractUserId(request, jwtProvider);
     log.debug("언팔로우 요청 - 요청한 유저: {}, 언팔로우 대상: {}", followeeId, followerId);
     followService.unfollow(followerId, followeeId);
@@ -58,6 +67,13 @@ public class FollowController implements FollowApi {
     UUID userId = extractUserId(request, jwtProvider);
     log.debug("팔로워 목록 조회 요청 - 유저: {}", userId);
     Page<UserListResponse> followers = followService.findAllFollowers(userId);
-    return null;
+    return ResponseEntity.ok(followers);
+  }
+
+  @GetMapping("/count")
+  public ResponseEntity<FollowCountResponse> getFollowCount(HttpServletRequest request) {
+    UUID userId = extractUserId(request, jwtProvider);
+    FollowCountResponse response = followService.getFollowCount(userId);
+    return ResponseEntity.ok(response);
   }
 }

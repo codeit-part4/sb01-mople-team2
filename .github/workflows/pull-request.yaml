@@ -40,7 +40,10 @@ jobs:
         run: chmod +x gradlew
 
       - name: Write .env file
-        run: echo "${{ secrets.ENV_FILE }}" > .env
+        run: |
+          cat <<EOF > .env
+          ${{ secrets.ENV_FILE }}
+          EOF
 
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
@@ -57,6 +60,17 @@ jobs:
       - name: Run tests (ignore failures)
         run: ./gradlew test -Dspring.profiles.active=test
         continue-on-error: true
+
+      - name: Generate coverage
+        run: ./gradlew clean test jacocoTestReport
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/reports/jacoco/test/jacocoTestReport.xml
+          flags: unittests
+          name: codecov-coverage
 
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2

@@ -84,7 +84,7 @@ public class Content {
   private Long totalRatingCount;
 
   @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<PlaylistContent> playlistContents = new ArrayList<>();
+  private final List<PlaylistContent> playlistContents = new ArrayList<>();
 
   @Builder
   public Content(

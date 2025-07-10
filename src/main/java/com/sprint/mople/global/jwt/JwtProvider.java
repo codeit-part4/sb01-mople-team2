@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtProvider {
+public class  JwtProvider {
 
   @Value("${jwt.secret}")
   private String secret;
@@ -39,14 +39,6 @@ public class JwtProvider {
         .compact();
   }
 
-  public Claims getClaims(String token) {
-    return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-  }
-
-  public long getExpirationSeconds() {
-    return expirationMillis / 1000;
-  }
-
   public String createRefreshToken(String userId) {
     Date now = new Date();
     Date expiry = new Date(now.getTime() + refreshExpirationMillis);
@@ -58,11 +50,26 @@ public class JwtProvider {
         .signWith(key, SignatureAlgorithm.HS256)
         .compact();
   }
+  public Claims getClaims(String token) {
+    return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+  }
+
+  public long getAccessExpirationMillis() {
+    return expirationMillis;
+  }
 
   public long getRefreshExpirationMillis() {
     return refreshExpirationMillis;
   }
 
+  public long getAccessExpirationSeconds() {
+    return expirationMillis / 1000;
+  }
+
+  public long getRefreshExpirationSeconds() {
+    return refreshExpirationMillis / 1000;
+  }
+  
   public UUID getUserId(String token){
     String userId = getClaims(token).getSubject();
     return UUID.fromString(userId);

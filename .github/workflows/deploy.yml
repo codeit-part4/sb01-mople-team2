@@ -1,0 +1,50 @@
+name: Deploy Mople to ECS (EC2)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Load .env file
+        run: |
+          set -a
+          source .env
+          set +a
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
+          docker login --username AWS --password-stdin ${{ secrets.ECR_REPO_URI }}
+
+      - name: Build and Push Docker image
+        run: |
+          docker build -t mople-app .
+          docker tag mople-app:latest $ECR_REPO_URI:latest
+          docker push $ECR_REPO_URI:latest
+
+      - name: Replace image in task definition template
+        run: |
+          mkdir -p temp
+          envsubst < .github/ecs-task-template.json > temp/ecs-task-def.json
+
+      - name: Deploy to ECS EC2
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: temp/ecs-task-def.json
+          service: mople-service
+          cluster: mople-cluster
+          wait-for-service-stability: true

@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.follow.service;
 
+import com.sprint.mople.domain.follow.dto.FollowCountResponse;
 import com.sprint.mople.domain.follow.dto.FollowResponse;
 import com.sprint.mople.domain.user.dto.UserListResponse;
 import java.util.UUID;
@@ -14,5 +15,9 @@ public interface FollowService {
   Page<UserListResponse> findAllFollowings(UUID userId);
 
   Page<UserListResponse> findAllFollowers(UUID userId);
+
+  FollowCountResponse getFollowCount(UUID userId);
+
+  Boolean checkFollowing(UUID followerId, UUID followeeId);
 
 }

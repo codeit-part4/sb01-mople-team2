@@ -35,7 +35,7 @@ public class PlaylistLike {
   private Playlist playlist;
 
   @Column(name = "liked_at", nullable = false)
-  private Instant likedAt = Instant.now();
+  private final Instant likedAt = Instant.now();
 
   protected PlaylistLike() { }           // JPA 기본 생성자
 
