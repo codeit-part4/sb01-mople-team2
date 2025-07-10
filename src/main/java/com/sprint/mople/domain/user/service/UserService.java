@@ -25,5 +25,5 @@ public interface UserService {
 
   UUID updateUserLockStatus(UUID userId, boolean locked);
 
-  public void resetPassword(String email);
+  void resetPassword(String email);
 }

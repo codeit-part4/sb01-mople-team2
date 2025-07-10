@@ -10,7 +10,7 @@ public interface TokenService {
   Map<String, String> generateTokens(UUID userId, String email);
 
   String refreshAccessToken(String refreshToken);
-  public Map<String, String> reissueTokens(String refreshToken, HttpServletResponse response);
+  Map<String, String> reissueTokens(String refreshToken, HttpServletResponse response);
 
   void logout(String refreshToken, HttpServletResponse response);
 }

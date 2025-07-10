@@ -28,10 +28,10 @@ public class ChatRoom {
   private UUID id;
 
   @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<ChatRoomUser> participants = new ArrayList<>();
+  private final List<ChatRoomUser> participants = new ArrayList<>();
 
   @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Message> messages = new ArrayList<>();
+  private final List<Message> messages = new ArrayList<>();
 
   public ChatRoom(User user1, User user2) {
     this.participants.add(new ChatRoomUser(this, user1));

@@ -4,6 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.5'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'jacoco'
+    id "idea"
 }
 
 group = 'com.sprint4'
@@ -42,12 +43,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -70,3 +75,23 @@ jacocoTestReport {
         html.required = true
     }
 }
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += [
+            "-s", querydslDir
+    ]
+}
+
+idea {
+    module {
+        sourceDirs += file(querydslDir)
+        generatedSourceDirs += file(querydslDir)
+    }
+}
+
+clean {
+    delete file(querydslDir)
+}
+
