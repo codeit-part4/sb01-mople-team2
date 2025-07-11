@@ -1,6 +1,6 @@
 package com.sprint.mople.domain.content.repository;
 
-import com.sprint.mople.config.QuerydslTestConfig;
+import com.sprint.mople.global.config.QueryDSLConfig;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-@Import(QuerydslTestConfig.class)
+@Import(QueryDSLConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ContentRecommendRepositoryTest {
 
