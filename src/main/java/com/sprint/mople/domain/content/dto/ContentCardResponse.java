@@ -1,5 +1,7 @@
 package com.sprint.mople.domain.content.dto;
 
+
+import com.sprint.mople.domain.content.entity.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -7,7 +9,7 @@ import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record ContentResponse(
+public record ContentCardResponse(
     @Schema(description = "콘텐츠 ID", example = "123e4567-e89b-12d3-a456-426614174000")
     UUID id,
 
@@ -36,4 +38,19 @@ public record ContentResponse(
     boolean liked
 )
 {
+
+    public static ContentCardResponse from(Content content) {
+        return ContentCardResponse
+            .builder()
+            .id(content.getId())
+            .title(content.getTitle())
+            .likeCount(content.getContentLikes().size())
+            .createdAt(content.getCreatedAt())
+            .updatedAt(content.getUpdatedAt())
+            .posterUrl(content.getPosterUrl())
+            .totalRatingCount(content.getTotalRatingCount())
+            .averageRating(content.getAverageRating())
+            .liked(false)
+            .build();
+    }
 }

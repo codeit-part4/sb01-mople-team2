@@ -32,11 +32,10 @@ public class PlaylistController implements PlaylistApi {
 
   @Override
   public ResponseEntity<PlaylistResponse> createPlaylist(
-      UUID playlistId,
       PlaylistCreateRequest req) {
 
     UUID userId = getRequestUserId();
-    PlaylistResponse res = playlistService.createPlaylist(playlistId, req, userId);
+    PlaylistResponse res = playlistService.createPlaylist(req, userId);
     return ResponseEntity.ok(res);
   }
 

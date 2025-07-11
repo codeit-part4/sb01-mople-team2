@@ -11,7 +11,6 @@ public interface PlaylistService {
 
   @Transactional
   PlaylistResponse createPlaylist(
-      UUID playlistId,
       PlaylistCreateRequest request,
       UUID requestUserId
   );

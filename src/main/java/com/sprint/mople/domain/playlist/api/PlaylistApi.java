@@ -1,16 +1,27 @@
 package com.sprint.mople.domain.playlist.api;
 
-import com.sprint.mople.domain.playlist.dto.*;
+import com.sprint.mople.domain.playlist.dto.PlaylistContentRequest;
+import com.sprint.mople.domain.playlist.dto.PlaylistCreateRequest;
+import com.sprint.mople.domain.playlist.dto.PlaylistResponse;
+import com.sprint.mople.domain.playlist.dto.PlaylistUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+@Tag(name = "Playlist", description = "플레이리스트 API")
 @RequestMapping("/api/playlists")
 public interface PlaylistApi {
 
@@ -21,10 +32,8 @@ public interface PlaylistApi {
           @ApiResponse(responseCode = "200", description = "생성된 플레이리스트 정보 반환")
       }
   )
-  @PostMapping("/{playlistId}")
+  @PostMapping("/")
   ResponseEntity<PlaylistResponse> createPlaylist(
-      @Parameter(description = "플레이리스트 UUID", required = true)
-      @PathVariable("playlistId") UUID playlistId,
 
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
           description = "플레이리스트 생성 요청 DTO",
