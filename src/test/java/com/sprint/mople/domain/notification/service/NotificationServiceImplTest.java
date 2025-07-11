@@ -1,4 +1,4 @@
-package com.sprint.mople.notification;
+package com.sprint.mople.domain.notification.service;
 
 import com.sprint.mople.domain.notification.dto.NotificationResponse;
 import com.sprint.mople.domain.notification.entity.Notification;
@@ -7,7 +7,6 @@ import com.sprint.mople.domain.notification.exception.NotificationForbiddenAcces
 import com.sprint.mople.domain.notification.exception.NotificationNotFoundException;
 import com.sprint.mople.domain.notification.repository.EmitterRepository;
 import com.sprint.mople.domain.notification.repository.NotificationRepository;
-import com.sprint.mople.domain.notification.service.NotificationServiceImpl;
 import com.sprint.mople.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
