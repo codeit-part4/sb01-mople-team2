@@ -7,6 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
+  CONTENT_ALREADY_LIKED(400, "C005", "이미 좋아요한 컨텐츠입니다."),
+  CONTENT_NOT_LIKED(400, "C006", "좋아요하지 않은 컨텐츠입니다."),
+
   REVIEW_NOT_FOUND(404, "R001", "리뷰를 찾을 수 없습니다."),
 
   PLAYLIST_NOT_FOUND(404, "P001", "플레이리스트를 찾을 수 없습니다."),

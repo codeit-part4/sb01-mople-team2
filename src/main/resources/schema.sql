@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS playlist_likes CASCADE;
+DROP TABLE IF EXISTS content_likes CASCADE;
+DROP TABLE IF EXISTS refresh_tokens CASCADE;
 DROP TABLE IF EXISTS watch_comments CASCADE;
 DROP TABLE IF EXISTS watch_session_participants CASCADE;
 DROP TABLE IF EXISTS playlists_contents CASCADE;
@@ -44,7 +47,7 @@ CREATE TABLE watch_session_participants (
 );
 
 CREATE TABLE playlists_contents (
-    playlist_content_id UUID PRIMARY KEY,
+    playlist_content_id BIGSERIAL PRIMARY KEY,
     playlist_id         UUID NOT NULL,
     content_id          UUID NOT NULL
 );
@@ -285,19 +288,31 @@ CREATE TABLE refresh_tokens (
 
 CREATE INDEX idx_follower_followee ON follows (follower_id, followee_id);
 
-CREATE TABLE playlist_like (
-    id          UUID PRIMARY KEY,
-    user_id     UUID        NOT NULL,
-    playlist_id UUID        NOT NULL,
-    liked_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
+CREATE TABLE playlist_likes (
+    playlist_like_id BIGSERIAL PRIMARY KEY,
+    user_id          UUID        NOT NULL,
+    playlist_id      UUID        NOT NULL,
+    liked_at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uc_playlist_like_user_playlist UNIQUE (user_id, playlist_id),
     CONSTRAINT fk_playlist_like_user
         FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
     CONSTRAINT fk_playlist_like_playlist
-        FOREIGN KEY (playlist_id) REFERENCES playlists (playlist_id) ON DELETE CASCADE,
-
-    -- 한 사용자가 같은 플레이리스트에 한 번만 좋아요 가능
-    CONSTRAINT uc_playlist_like_user_playlist UNIQUE (user_id, playlist_id)
+        FOREIGN KEY (playlist_id) REFERENCES playlists (playlist_id) ON DELETE CASCADE
 );
-CREATE INDEX idx_playlist_like_playlist ON playlist_like (playlist_id);
-CREATE INDEX idx_playlist_like_user ON playlist_like (user_id);
+
+CREATE INDEX idx_playlist_like_playlist ON playlist_likes (playlist_id);
+CREATE INDEX idx_playlist_like_user ON playlist_likes (user_id);
+
+CREATE TABLE content_likes (
+    content_like_id BIGSERIAL PRIMARY KEY,
+    user_id         UUID        NOT NULL,
+    content_id      UUID        NOT NULL,
+    liked_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_user_content UNIQUE (user_id, content_id),
+    CONSTRAINT fk_content_likes_user FOREIGN KEY (user_id) REFERENCES users (user_id),
+    CONSTRAINT fk_content_likes_content FOREIGN KEY (content_id) REFERENCES contents (content_id)
+);
+
+CREATE INDEX idx_content_likes_user_id ON content_likes (user_id);
+CREATE INDEX idx_content_likes_content_id ON content_likes (content_id);
+
