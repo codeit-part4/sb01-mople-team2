@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.follow.controller;
 
+import com.sprint.mople.domain.follow.dto.FollowCountResponse;
 import com.sprint.mople.domain.follow.dto.FollowResponse;
 import com.sprint.mople.domain.user.dto.UserListResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +38,7 @@ public interface FollowApi {
           responseCode = "200", description = "팔로잉 목록 조회 성공"
       )
   })
-  ResponseEntity<Page<UserListResponse>> findAllFollowings(HttpServletRequest request);
+  ResponseEntity<Page<UserListResponse>> findAllFollowings(@PathVariable UUID userId);
 
   @Operation(summary = "팔로워 목록", description = "사용자를 팔로우하는 사람들의 목록을 조회합니다.")
   @ApiResponses(value = {
@@ -45,5 +46,13 @@ public interface FollowApi {
           responseCode = "200", description = "팔로워 목록 조회 성공"
       )
   })
-  ResponseEntity<Page<UserListResponse>> findAllFollowers(HttpServletRequest request);
+  ResponseEntity<Page<UserListResponse>> findAllFollowers(@PathVariable UUID userId);
+
+  @Operation(summary = "팔로워, 팔로잉 수", description = "사용자를 팔로우, 팔로잉하는 사람들의 수를 조회합니다.")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200", description = "팔로워, 팔로잉 수 조회 성공"
+      )
+  })
+  ResponseEntity<FollowCountResponse> getFollowCount(@PathVariable UUID userId);
 }
