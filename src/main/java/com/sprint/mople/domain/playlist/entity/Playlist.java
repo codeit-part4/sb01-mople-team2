@@ -36,13 +36,18 @@ public class Playlist {
   private UUID id;
 
   // --- ManyToOne: User ---
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "user_id", nullable = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
 
   // --- OneToMany: Subscribe ---
-  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(
+      mappedBy = "playlist",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
   private final List<Subscribe> subscribes = new ArrayList<>();
 
   @Column(name = "title", length = 255)
@@ -102,6 +107,7 @@ public class Playlist {
     subscribes.add(subscribe);
     subscribe.setPlaylist(this);
   }
+
   public void removeSubscribe(Subscribe subscribe) {
     subscribes.remove(subscribe);
     subscribe.setPlaylist(null);

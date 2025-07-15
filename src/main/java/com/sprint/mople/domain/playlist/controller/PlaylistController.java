@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.playlist.controller;
 
+import com.sprint.mople.domain.content.dto.ContentCardResponse;
 import com.sprint.mople.domain.playlist.api.PlaylistApi;
 import com.sprint.mople.domain.playlist.dto.PlaylistContentRequest;
 import com.sprint.mople.domain.playlist.dto.PlaylistCreateRequest;
@@ -9,6 +10,7 @@ import com.sprint.mople.domain.playlist.service.PlaylistService;
 import com.sprint.mople.global.jwt.JwtProvider;
 import com.sprint.mople.global.jwt.JwtTokenExtractor;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +78,24 @@ public class PlaylistController implements PlaylistApi {
   @Override
   public ResponseEntity<PlaylistResponse> getPlaylist(UUID playlistId) {
     PlaylistResponse res =
-        playlistService.getPlaylistById(playlistId, getRequestUserId());
+        playlistService.getPlaylistById(playlistId, UUID.randomUUID());
+    //TODO:janghoosa 임시 userId로 조회
     return ResponseEntity.ok(res);
+  }
+
+  @Override
+  public ResponseEntity<List<ContentCardResponse>> getPlaylistContents(
+      UUID playlistId
+  ) {
+
+    List<ContentCardResponse> contents =
+        playlistService.getContentByPlaylist(playlistId, getRequestUserId());
+    return ResponseEntity.ok(contents);
+  }
+
+  @Override
+  public ResponseEntity<List<PlaylistResponse>> getAllPlaylists() {
+    List<PlaylistResponse> playlists = playlistService.getAllPlaylists();
+    return ResponseEntity.ok(playlists);
   }
 }

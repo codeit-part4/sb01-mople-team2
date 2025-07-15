@@ -1,9 +1,11 @@
 package com.sprint.mople.domain.playlist.service;
 
+import com.sprint.mople.domain.content.dto.ContentCardResponse;
 import com.sprint.mople.domain.playlist.dto.PlaylistContentRequest;
 import com.sprint.mople.domain.playlist.dto.PlaylistCreateRequest;
 import com.sprint.mople.domain.playlist.dto.PlaylistResponse;
 import com.sprint.mople.domain.playlist.dto.PlaylistUpdateRequest;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,4 +39,8 @@ public interface PlaylistService {
 
   @Transactional(readOnly = true)
   PlaylistResponse getPlaylistById(UUID playlistId, UUID requestUserId);
+
+  List<ContentCardResponse> getContentByPlaylist(UUID playlistId, UUID userId);
+
+  List<PlaylistResponse> getAllPlaylists();
 }

@@ -172,7 +172,9 @@ public class PlaylistServiceImpl implements PlaylistService {
     return PlaylistResponse.from(playlist);
   }
 
+  @Override
   public List<ContentCardResponse> getContentByPlaylist(UUID playlistId, UUID userId) {
+    // userId는 현재 사용하지 않지만, 추후에 사용자 권한 체크를 위해 남겨둠
     Playlist playlist = playlistRepository.findById(playlistId)
         .orElseThrow(PlaylistNotFoundException::new);
 
@@ -184,6 +186,14 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     return contents.stream()
         .map(ContentCardResponse::from)
+        .toList();
+  }
+
+  @Override
+  public List<PlaylistResponse> getAllPlaylists(){
+    List<Playlist> playlists = playlistRepository.findAllByIsPublicTrue();
+    return playlists.stream()
+        .map(PlaylistResponse::from)
         .toList();
   }
 
