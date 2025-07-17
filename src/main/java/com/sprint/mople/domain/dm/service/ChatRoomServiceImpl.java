@@ -6,6 +6,7 @@ import com.sprint.mople.domain.dm.mapper.ChatRoomMapper;
 import com.sprint.mople.domain.dm.repository.ChatRoomRepository;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.repository.UserRepository;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         .orElseThrow(() -> new IllegalArgumentException("요청 유저를 찾을 수 없습니다 - id: " + requestUserId));
     User targetUser = userRepository.findById(targetUserId)
         .orElseThrow(() -> new IllegalArgumentException("대상 유저를 찾을 수 없습니다 - id: " + targetUserId));
+
+    Optional<ChatRoom> existingChatRoom = chatRoomRepository.findChatRoomByUserIds(requestUserId, targetUserId);
+    if (existingChatRoom.isPresent()) {
+      return chatRoomMapper.toDto(existingChatRoom.get());
+    }
     ChatRoom chatRoom = new ChatRoom(requestUser, targetUser);
     chatRoomRepository.save(chatRoom);
     log.debug("DM 채팅방 생성 완료 - 채팅방 ID: {}", chatRoom.getId());

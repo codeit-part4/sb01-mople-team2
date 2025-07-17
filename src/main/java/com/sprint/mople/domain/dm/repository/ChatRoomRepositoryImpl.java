@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sprint.mople.domain.dm.entity.ChatRoom;
 import com.sprint.mople.domain.dm.entity.QChatRoomUser;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,4 +40,22 @@ public class ChatRoomRepositoryImpl implements CustomChatRoomRepository {
 
     return new PageImpl<>(content, pageable, total != null ? total : 0);
   }
+
+  @Override
+  public Optional<ChatRoom> findChatRoomByUserIds(UUID userId1, UUID userId2) {
+    QChatRoom chatRoom = QChatRoom.chatRoom;
+    QChatRoomUser chatRoomUser = QChatRoomUser.chatRoomUser;
+
+    List<ChatRoom> rooms = queryFactory
+        .selectFrom(chatRoom)
+        .join(chatRoom.participants, chatRoomUser)
+        .where(chatRoomUser.user.id.in(userId1, userId2))
+        .groupBy(chatRoom.id)
+        .having(chatRoomUser.user.id.countDistinct().eq(2L))
+        .fetch();
+
+    return rooms.stream().findFirst();
+  }
+
+
 }
