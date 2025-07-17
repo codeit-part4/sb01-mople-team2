@@ -54,25 +54,22 @@ public class FollowController implements FollowApi {
     followService.unfollow(followerId, followeeId);
   }
 
-  @GetMapping("/followings")
-  public ResponseEntity<Page<UserListResponse>> findAllFollowings(HttpServletRequest request) {
-    UUID userId = extractUserId(request, jwtProvider);
+  @GetMapping("/followings/{userId}")
+  public ResponseEntity<Page<UserListResponse>> findAllFollowings(@PathVariable UUID userId) {
     log.debug("팔로잉 목록 조회 요청 - 유저: {}", userId);
     Page<UserListResponse> followings = followService.findAllFollowings(userId);
     return ResponseEntity.ok(followings);
   }
 
-  @GetMapping("/followers")
-  public ResponseEntity<Page<UserListResponse>> findAllFollowers(HttpServletRequest request) {
-    UUID userId = extractUserId(request, jwtProvider);
+  @GetMapping("/followers/{userId}")
+  public ResponseEntity<Page<UserListResponse>> findAllFollowers(@PathVariable UUID userId) {
     log.debug("팔로워 목록 조회 요청 - 유저: {}", userId);
     Page<UserListResponse> followers = followService.findAllFollowers(userId);
     return ResponseEntity.ok(followers);
   }
 
-  @GetMapping("/count")
-  public ResponseEntity<FollowCountResponse> getFollowCount(HttpServletRequest request) {
-    UUID userId = extractUserId(request, jwtProvider);
+  @GetMapping("/count/{userId}")
+  public ResponseEntity<FollowCountResponse> getFollowCount(@PathVariable UUID userId) {
     FollowCountResponse response = followService.getFollowCount(userId);
     return ResponseEntity.ok(response);
   }
