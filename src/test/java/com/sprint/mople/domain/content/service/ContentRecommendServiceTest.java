@@ -56,9 +56,9 @@ class ContentRecommendServiceTest {
     ContentCardResponse content = result.get(0);
     assertThat(content.id()).isEqualTo(contentId);
     assertThat(content.title()).isEqualTo("Test Title");
-    assertThat(content.averageRating()).isEqualTo(BigDecimal.valueOf(4.7));
-    assertThat(content.posterUrl()).isEqualTo("poster.jpg");
-    assertThat(content.totalRatingCount()).isEqualTo(5);
+    assertThat(content.rating()).isEqualTo(BigDecimal.valueOf(4.7));
+    assertThat(content.image()).isEqualTo("poster.jpg");
+    assertThat(content.reviews()).isEqualTo(5);
     assertThat(content.liked()).isTrue();
   }
 
@@ -117,7 +117,7 @@ class ContentRecommendServiceTest {
     assertThat(result).hasSize(1);
     assertThat(result
         .get(0)
-        .totalRatingCount()).isEqualTo(20);
+        .reviews()).isEqualTo(20);
   }
 
   @Test
@@ -150,7 +150,7 @@ class ContentRecommendServiceTest {
     assertThat(result).hasSize(1);
     assertThat(result
         .get(0)
-        .averageRating()).isNotNull();
+        .rating()).isNotNull();
     assertThat(result
         .get(0)
         .title()).isEqualTo("Scored Title");

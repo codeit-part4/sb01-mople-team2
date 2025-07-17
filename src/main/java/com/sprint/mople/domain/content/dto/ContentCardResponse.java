@@ -26,13 +26,17 @@ public record ContentCardResponse(
     Instant updatedAt,
 
     @Schema(description = "콘텐츠 포스터 url")
-    String posterUrl,
+    String image,
 
     @Schema(description = "콘텐츠 리뷰 개수")
-    Long totalRatingCount,
+    Long reviews,
+
+    //TODO:janghoosa 임시 시청자수
+    @Schema(description = "콘텐츠 시청자수")
+    Long viewers,
 
     @Schema(description = "콘텐츠 평균 평점")
-    BigDecimal averageRating,
+    BigDecimal rating,
 
     @Schema(description = "사용자의 좋아요 여부", example = "true")
     boolean liked
@@ -47,9 +51,10 @@ public record ContentCardResponse(
             .likeCount(content.getContentLikes().size())
             .createdAt(content.getCreatedAt())
             .updatedAt(content.getUpdatedAt())
-            .posterUrl(content.getPosterUrl())
-            .totalRatingCount(content.getTotalRatingCount())
-            .averageRating(content.getAverageRating())
+            .image(content.getPosterUrl())
+            .viewers(content.getTotalRatingCount())
+            .reviews(content.getTotalRatingCount())
+            .rating(content.getAverageRating())
             .liked(false)
             .build();
     }

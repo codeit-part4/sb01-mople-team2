@@ -58,9 +58,11 @@ public class ContentRecommendService {
               .likeCount(likeCount)
               .createdAt(createdAt)
               .updatedAt(updatedAt)
-              .posterUrl(posterUrl)
-              .totalRatingCount(reviewCount)
-              .averageRating(averageRating)
+              .image(posterUrl)
+              .viewers(reviewCount)
+              //TODO:janghoosa 임시 시청자수
+              .reviews(reviewCount)
+              .rating(averageRating)
               .liked(liked)
               .build();
         })

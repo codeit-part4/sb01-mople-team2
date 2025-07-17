@@ -48,7 +48,7 @@ public class Playlist {
       orphanRemoval = true,
       fetch = FetchType.EAGER
   )
-  private final List<Subscribe> subscribes = new ArrayList<>();
+  private final List<Subscription> subscriptions = new ArrayList<>();
 
   @Column(name = "title", length = 255)
   private String title;
@@ -68,7 +68,12 @@ public class Playlist {
   private OffsetDateTime updatedAt;
 
   // --- OneToMany: PlaylistContent ---
-  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(
+      mappedBy = "playlist",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
   private final List<PlaylistContent> playlistContents = new ArrayList<>();
 
   /**
@@ -103,13 +108,13 @@ public class Playlist {
     this.isPublic = isPublic;
   }
 
-  public void addSubscribe(Subscribe subscribe) {
-    subscribes.add(subscribe);
-    subscribe.setPlaylist(this);
+  public void addSubscribe(Subscription subscription) {
+    subscriptions.add(subscription);
+    subscription.setPlaylist(this);
   }
 
-  public void removeSubscribe(Subscribe subscribe) {
-    subscribes.remove(subscribe);
-    subscribe.setPlaylist(null);
+  public void removeSubscribe(Subscription subscription) {
+    subscriptions.remove(subscription);
+    subscription.setPlaylist(null);
   }
 }

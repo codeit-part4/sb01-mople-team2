@@ -32,7 +32,7 @@ public record PlaylistResponse(
     String description,
 
     @Schema(description = "공개 여부", example = "true")
-    Boolean isPublic,
+    boolean isPublic,
 
     @Schema(description = "생성 일시", example = "2024-06-01T13:00:00+09:00")
     OffsetDateTime createdAt,
@@ -55,7 +55,7 @@ public record PlaylistResponse(
         playlist.getCreatedAt(),
         playlist.getUpdatedAt(),
         playlist
-            .getSubscribes()
+            .getSubscriptions()
             .size()
     );
   }

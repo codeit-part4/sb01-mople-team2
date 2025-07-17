@@ -34,7 +34,9 @@ public class PlaylistController implements PlaylistApi {
 
   @Override
   public ResponseEntity<PlaylistResponse> createPlaylist(
-      PlaylistCreateRequest req) {
+      PlaylistCreateRequest req
+  )
+  {
 
     UUID userId = getRequestUserId();
     PlaylistResponse res = playlistService.createPlaylist(req, userId);
@@ -42,9 +44,8 @@ public class PlaylistController implements PlaylistApi {
   }
 
   @Override
-  public ResponseEntity<PlaylistResponse> updatePlaylist(
-      UUID playlistId,
-      PlaylistUpdateRequest req) {
+  public ResponseEntity<PlaylistResponse> updatePlaylist(UUID playlistId, PlaylistUpdateRequest req)
+  {
 
     UUID userId = getRequestUserId();
     PlaylistResponse res = playlistService.updatePlaylist(playlistId, req, userId);
@@ -54,31 +55,34 @@ public class PlaylistController implements PlaylistApi {
   @Override
   public ResponseEntity<Void> deletePlaylist(UUID playlistId) {
     playlistService.deletePlaylist(playlistId, getRequestUserId());
-    return ResponseEntity.noContent().build();
+    return ResponseEntity
+        .noContent()
+        .build();
   }
 
   @Override
-  public ResponseEntity<Void> addContentToPlaylist(
-      UUID playlistId,
-      PlaylistContentRequest req) {
+  public ResponseEntity<Void> addContentToPlaylist(UUID playlistId, PlaylistContentRequest req)
+  {
 
     playlistService.addContent(playlistId, req, getRequestUserId());
-    return ResponseEntity.ok().build();
+    return ResponseEntity
+        .ok()
+        .build();
   }
 
   @Override
-  public ResponseEntity<Void> removeContentFromPlaylist(
-      UUID playlistId,
-      PlaylistContentRequest req) {
+  public ResponseEntity<Void> removeContentFromPlaylist(UUID playlistId, PlaylistContentRequest req)
+  {
 
     playlistService.removeContent(playlistId, req, getRequestUserId());
-    return ResponseEntity.ok().build();
+    return ResponseEntity
+        .ok()
+        .build();
   }
 
   @Override
   public ResponseEntity<PlaylistResponse> getPlaylist(UUID playlistId) {
-    PlaylistResponse res =
-        playlistService.getPlaylistById(playlistId, UUID.randomUUID());
+    PlaylistResponse res = playlistService.getPlaylistById(playlistId, UUID.randomUUID());
     //TODO:janghoosa 임시 userId로 조회
     return ResponseEntity.ok(res);
   }
@@ -86,10 +90,13 @@ public class PlaylistController implements PlaylistApi {
   @Override
   public ResponseEntity<List<ContentCardResponse>> getPlaylistContents(
       UUID playlistId
-  ) {
-
-    List<ContentCardResponse> contents =
-        playlistService.getContentByPlaylist(playlistId, getRequestUserId());
+  )
+  {
+    //TODO:janghoosa 임시 userId로 조회
+    List<ContentCardResponse> contents = playlistService.getContentByPlaylist(
+        playlistId,
+        UUID.randomUUID()
+    );
     return ResponseEntity.ok(contents);
   }
 

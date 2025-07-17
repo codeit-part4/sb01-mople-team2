@@ -115,7 +115,8 @@ public class Content {
   public enum Category {
     MOVIE,
     TV,
-    SPORTS
+    SPORTS,
+    SHOW
   }
 
   @PrePersist
