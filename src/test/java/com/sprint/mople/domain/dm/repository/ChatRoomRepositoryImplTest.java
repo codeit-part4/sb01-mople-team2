@@ -3,7 +3,6 @@ package com.sprint.mople.domain.dm.repository;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import com.sprint.mople.domain.dm.entity.ChatRoom;
-import com.sprint.mople.domain.dm.entity.ChatRoomUser;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.entity.UserSource;
 import com.sprint.mople.domain.user.entity.Role;
