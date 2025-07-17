@@ -38,6 +38,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     Optional<ChatRoom> existingChatRoom = chatRoomRepository.findChatRoomByUserIds(requestUserId, targetUserId);
     if (existingChatRoom.isPresent()) {
+      log.info("이미 존재하는 DM 채팅방 - 채팅방 ID: {}", existingChatRoom.get().getId());
       return chatRoomMapper.toDto(existingChatRoom.get());
     }
     ChatRoom chatRoom = new ChatRoom(requestUser, targetUser);
