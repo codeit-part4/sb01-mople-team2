@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.dm.repository;
 
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sprint.mople.domain.dm.entity.ChatRoom;
 import com.sprint.mople.domain.dm.entity.QChatRoomUser;
@@ -26,7 +27,12 @@ public class ChatRoomRepositoryImpl implements CustomChatRoomRepository {
         .selectFrom(cr)
         .distinct()
         .join(cr.participants, cu).fetchJoin()
-        .where(cu.user.id.eq(userId))
+        .where(cr.id.in(
+            JPAExpressions
+                .select(cu.chatRoom.id)
+                .from(cu)
+                .where(cu.user.id.eq(userId))
+        ))
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
         .fetch();
