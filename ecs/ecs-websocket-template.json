@@ -1,0 +1,25 @@
+{
+  "family": "websocket-service-task",
+  "networkMode": "awsvpc",
+  "executionRoleArn": "${EXECUTION_ROLE_ARN}",
+  "requiresCompatibilities": ["EC2"],
+  "cpu": "512",
+  "memory": "1024",
+  "containerDefinitions": [
+    {
+      "name": "websocket-service",
+      "image": "${ECR_WEBSOCKET_URI}:latest",
+      "portMappings": [
+        {
+          "containerPort": 8081,
+          "hostPort": 8081
+        }
+      ],
+      "environment": [
+        { "name": "SPRING_PROFILES_ACTIVE", "value": "ws" },
+        { "name": "REDIS_HOST", "value": "${REDIS_HOST}" }
+      ],
+      "essential": true
+    }
+  ]
+}
