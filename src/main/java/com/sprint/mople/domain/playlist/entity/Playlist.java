@@ -76,6 +76,12 @@ public class Playlist {
   )
   private final List<PlaylistContent> playlistContents = new ArrayList<>();
 
+  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+  private final List<PlaylistLike> playlistLikes = new ArrayList<>();
+
+//  @Column(name = "category", length = 100)
+//  private String category;
+
   /**
    * Playlist 생성자
    *
