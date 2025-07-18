@@ -102,4 +102,11 @@ public class UserController {
         new UserProfileResponse(user.getId(), user.getEmail(), user.getUserName()));
   }
 
+  @GetMapping("{userId}")
+  public ResponseEntity<UserProfileResponse> getUserByUserId(@PathVariable UUID userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+    return ResponseEntity.ok(
+        new UserProfileResponse(user.getId(), user.getEmail(), user.getUserName()));
+  }
 }
