@@ -29,5 +29,6 @@ COPY --from=builder /app/application/ ./
 
 ENV SERVER_PORT=8080
 ENV SPRING_PROFILES_ACTIVE=prod
+ENV JAVA_OPTS="-Xms512m -Xmx1024m"
 
-ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-Dserver.port=${SERVER_PORT}", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["sh", "-c","java $JAVA_OPTS -Duser.timezone=Asia/Seoul -Dserver.port=$SERVER_PORT -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE org.springframework.boot.loader.launch.JarLauncher"]
