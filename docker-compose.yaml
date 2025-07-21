@@ -31,6 +31,53 @@ services:
     networks:
       - mople-network
 
+  ws-service:
+    image: ws-service:latest
+    container_name: ws-service
+    build:
+      context: ./ws-service
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - SPRING_PROFILES_ACTIVE=ws
+    ports:
+      - "8081:8081"
+    networks:
+      - mople-net
+    depends_on:
+      - redis
+
+  sse-service:
+    image: sse-service:latest
+    container_name: sse-service
+    build:
+      context: ./sse-service
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - SPRING_PROFILES_ACTIVE=sse
+    ports:
+      - "8082:8082"
+    networks:
+      - mople-net
+    depends_on:
+      - redis
+
+  nginx-gateway:
+    image: nginx:latest
+    container_name: nginx-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - mople-app
+      - ws-service
+      - sse-service
+    networks:
+      - mople-net
+
+
 volumes:
   postgres-data:
 networks:
