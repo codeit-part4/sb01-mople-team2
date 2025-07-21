@@ -41,9 +41,9 @@ jobs:
 
       - name: Write .env file
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+          if [[ "${{ github.base_ref }}" == "refs/heads/dev" ]]; then
             echo "${{ secrets.ENV_FILE_DEV }}" > .env
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          elif [[ "${{ github.base_ref }}" == "refs/heads/main" ]]; then
             echo "${{ secrets.ENV_FILE }}" > .env
           fi
           echo ".env 파일 생성 완료"
