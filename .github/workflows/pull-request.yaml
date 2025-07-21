@@ -41,9 +41,11 @@ jobs:
 
       - name: Write .env file
         run: |
-          cat <<EOF > .env
-          ${{ secrets.ENV_FILE }}
-          EOF
+          if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+            echo "${{ secrets.ENV_FILE_DEV }}" > .env
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "${{ secrets.ENV_FILE_MAIN }}" > .env
+          fi
 
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
