@@ -59,5 +59,19 @@ public class Subscription {
           .add(this);
     }
   }
+
+  public void setUser(User user) {
+    if (this.user != null) {
+      if (user.getSubscriptions() != null) {
+        user.getSubscriptions().remove(this);
+      }
+    }
+    this.user = user;
+    if (user != null) {
+      if (user.getSubscriptions() != null) {
+        user.getSubscriptions().add(this);
+      }
+    }
+  }
 }
 

@@ -1,13 +1,18 @@
 package com.sprint.mople.domain.user.entity;
 
+import com.sprint.mople.domain.playlist.entity.Subscription;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -69,5 +74,8 @@ public class User {
   @Column(name = "update_at", columnDefinition = "timestamp with time zone")
   @Setter
   private Instant updateAt;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private final List<Subscription> subscriptions = new ArrayList<>();
 
 }
