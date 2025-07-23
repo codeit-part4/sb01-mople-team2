@@ -52,8 +52,9 @@ public class FollowServiceImpl implements FollowService {
     log.debug("팔로우 생성 완료 - 유저: {}, 팔로우 대상: {}", followerId, followeeId);
 
     String content = String.format("%s님이 당신을 팔로우하기 시작했습니다.", follower.getUserName());
-    notificationService.send(follower, NotificationType.NEW_FOLLOWER, content, null);
-    log.debug("팔로우 알림 전송 완료 - 대상: {}", followerId);
+    String url = "/profile/" + follower.getId();
+    notificationService.send(followee, NotificationType.NEW_FOLLOWER, content, url);
+    log.debug("팔로우 알림 전송 완료 - 대상: {}", followee.getId());
 
     return followMapper.toDto(follow);
   }
