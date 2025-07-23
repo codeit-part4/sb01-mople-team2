@@ -36,14 +36,19 @@ public class Playlist {
   private UUID id;
 
   // --- ManyToOne: User ---
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "user_id", nullable = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
 
   // --- OneToMany: Subscribe ---
-  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
-  private final List<Subscribe> subscribes = new ArrayList<>();
+  @OneToMany(
+      mappedBy = "playlist",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
+  private final List<Subscription> subscriptions = new ArrayList<>();
 
   @Column(name = "title", length = 255)
   private String title;
@@ -63,8 +68,19 @@ public class Playlist {
   private OffsetDateTime updatedAt;
 
   // --- OneToMany: PlaylistContent ---
-  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(
+      mappedBy = "playlist",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
   private final List<PlaylistContent> playlistContents = new ArrayList<>();
+
+  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+  private final List<PlaylistLike> playlistLikes = new ArrayList<>();
+
+//  @Column(name = "category", length = 100)
+//  private String category;
 
   /**
    * Playlist 생성자
@@ -98,12 +114,13 @@ public class Playlist {
     this.isPublic = isPublic;
   }
 
-  public void addSubscribe(Subscribe subscribe) {
-    subscribes.add(subscribe);
-    subscribe.setPlaylist(this);
+  public void addSubscribe(Subscription subscription) {
+    subscriptions.add(subscription);
+    subscription.setPlaylist(this);
   }
-  public void removeSubscribe(Subscribe subscribe) {
-    subscribes.remove(subscribe);
-    subscribe.setPlaylist(null);
+
+  public void removeSubscribe(Subscription subscription) {
+    subscriptions.remove(subscription);
+    subscription.setPlaylist(null);
   }
 }

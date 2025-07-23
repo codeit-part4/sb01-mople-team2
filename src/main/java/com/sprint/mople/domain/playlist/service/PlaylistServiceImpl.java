@@ -1,5 +1,6 @@
 package com.sprint.mople.domain.playlist.service;
 
+import com.sprint.mople.domain.content.dto.ContentCardResponse;
 import com.sprint.mople.domain.content.entity.Content;
 import com.sprint.mople.domain.content.repository.ContentRepository;
 import com.sprint.mople.domain.playlist.dto.PlaylistContentRequest;
@@ -16,6 +17,7 @@ import com.sprint.mople.domain.playlist.repository.PlaylistRepository;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.exception.UserNotFoundException;
 import com.sprint.mople.domain.user.repository.UserRepository;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +36,12 @@ public class PlaylistServiceImpl implements PlaylistService {
   @Transactional
   @Override
   public PlaylistResponse createPlaylist(
-      UUID playlistId,
       PlaylistCreateRequest request,
       UUID requestUserId
   )
   {
 
-    log.info("Create playlist: playlistId={}, requestUserId={}", playlistId, requestUserId);
+    log.info("Create playlist: requestUserId={}", requestUserId);
 
     User owner = userRepository
         .findById(requestUserId)
@@ -167,7 +168,33 @@ public class PlaylistServiceImpl implements PlaylistService {
         .getId()
         .equals(requestUserId)) {
       throw new PlaylistIllegalAccessException();
-    } return PlaylistResponse.from(playlist);
+    }
+    return PlaylistResponse.from(playlist);
+  }
+
+  @Override
+  public List<ContentCardResponse> getContentByPlaylist(UUID playlistId, UUID userId) {
+    // userId는 현재 사용하지 않지만, 추후에 사용자 권한 체크를 위해 남겨둠
+    Playlist playlist = playlistRepository.findById(playlistId)
+        .orElseThrow(PlaylistNotFoundException::new);
+
+    List<UUID> contentIds = playlist.getPlaylistContents().stream()
+        .map(pc -> pc.getContent().getId())
+        .toList();
+
+    List<Content> contents = contentRepository.findAllByIdIn(contentIds);
+
+    return contents.stream()
+        .map(ContentCardResponse::from)
+        .toList();
+  }
+
+  @Override
+  public List<PlaylistResponse> getAllPlaylists(){
+    List<Playlist> playlists = playlistRepository.findAllByIsPublicTrue();
+    return playlists.stream()
+        .map(PlaylistResponse::from)
+        .toList();
   }
 
   private Playlist getOwnedPlaylist(UUID playlistId, UUID requestUserId) {
@@ -180,6 +207,7 @@ public class PlaylistServiceImpl implements PlaylistService {
         .getId()
         .equals(requestUserId)) {
       throw new PlaylistIllegalAccessException();
-    } return playlist;
+    }
+    return playlist;
   }
 }

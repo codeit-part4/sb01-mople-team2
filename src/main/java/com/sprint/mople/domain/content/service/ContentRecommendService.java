@@ -1,6 +1,6 @@
 package com.sprint.mople.domain.content.service;
 
-import com.sprint.mople.domain.content.dto.ContentResponse;
+import com.sprint.mople.domain.content.dto.ContentCardResponse;
 import com.sprint.mople.domain.content.entity.ContentSortType;
 import com.sprint.mople.domain.content.repository.ContentLikeRepository;
 import com.sprint.mople.domain.content.repository.ContentRecommendRepository;
@@ -20,13 +20,13 @@ public class ContentRecommendService {
   private final ContentRepository contentRepository;
   private final ContentLikeRepository contentLikeRepository;
 
-  public List<ContentResponse> getRecommendedContents(UUID userId, int limit) {
+  public List<ContentCardResponse> getRecommendedContents(UUID userId, int limit) {
     List<Object[]> rawList = recommendRepository.findTopRecommended(limit);
 
     return getContentResponses(userId, rawList);
   }
 
-  public List<ContentResponse> getSortedContents(UUID userId, int limit, ContentSortType sortType) {
+  public List<ContentCardResponse> getSortedContents(UUID userId, int limit, ContentSortType sortType) {
     List<Object[]> rawList = switch (sortType) {
       case RECENT -> recommendRepository.findAllByRecent(limit);
       case MOST_REVIEWED -> recommendRepository.findAllByReviewCount(limit);
@@ -36,7 +36,7 @@ public class ContentRecommendService {
     return getContentResponses(userId, rawList);
   }
 
-  private List<ContentResponse> getContentResponses(UUID userId, List<Object[]> rawList) {
+  private List<ContentCardResponse> getContentResponses(UUID userId, List<Object[]> rawList) {
     return rawList
         .stream()
         .map(row -> {
@@ -51,16 +51,18 @@ public class ContentRecommendService {
           double score = ((Number) row[8]).doubleValue();
           boolean liked = contentLikeRepository.existsByUserIdAndContentId(userId, contentId);
 
-          return ContentResponse
+          return ContentCardResponse
               .builder()
               .id(contentId)
               .title(title)
               .likeCount(likeCount)
               .createdAt(createdAt)
               .updatedAt(updatedAt)
-              .posterUrl(posterUrl)
-              .totalRatingCount(reviewCount)
-              .averageRating(averageRating)
+              .image(posterUrl)
+              .viewers(reviewCount)
+              //TODO:janghoosa 임시 시청자수
+              .reviews(reviewCount)
+              .rating(averageRating)
               .liked(liked)
               .build();
         })

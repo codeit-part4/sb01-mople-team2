@@ -1,6 +1,6 @@
 package com.sprint.mople.domain.content.service;
 
-import com.sprint.mople.domain.content.dto.ContentResponse;
+import com.sprint.mople.domain.content.dto.ContentCardResponse;
 import com.sprint.mople.domain.content.entity.ContentSortType;
 import com.sprint.mople.domain.content.repository.ContentLikeRepository;
 import com.sprint.mople.domain.content.repository.ContentRecommendRepository;
@@ -50,15 +50,15 @@ class ContentRecommendServiceTest {
     when(recommendRepository.findTopRecommended(1)).thenReturn(rawList);
     when(contentLikeRepository.existsByUserIdAndContentId(userId, contentId)).thenReturn(true);
 
-    List<ContentResponse> result = contentRecommendService.getRecommendedContents(userId, 1);
+    List<ContentCardResponse> result = contentRecommendService.getRecommendedContents(userId, 1);
 
     assertThat(result).hasSize(1);
-    ContentResponse content = result.get(0);
+    ContentCardResponse content = result.get(0);
     assertThat(content.id()).isEqualTo(contentId);
     assertThat(content.title()).isEqualTo("Test Title");
-    assertThat(content.averageRating()).isEqualTo(BigDecimal.valueOf(4.7));
-    assertThat(content.posterUrl()).isEqualTo("poster.jpg");
-    assertThat(content.totalRatingCount()).isEqualTo(5);
+    assertThat(content.rating()).isEqualTo(BigDecimal.valueOf(4.7));
+    assertThat(content.image()).isEqualTo("poster.jpg");
+    assertThat(content.reviews()).isEqualTo(5);
     assertThat(content.liked()).isTrue();
   }
 
@@ -75,14 +75,14 @@ class ContentRecommendServiceTest {
     when(recommendRepository.findAllByRecent(1)).thenReturn(rawList);
     when(contentLikeRepository.existsByUserIdAndContentId(userId, contentId)).thenReturn(false);
 
-    List<ContentResponse> result = contentRecommendService.getSortedContents(
+    List<ContentCardResponse> result = contentRecommendService.getSortedContents(
         userId,
         1,
         ContentSortType.RECENT
     );
 
     assertThat(result).hasSize(1);
-    ContentResponse content = result.get(0);
+    ContentCardResponse content = result.get(0);
     assertThat(content.title()).isEqualTo("New Title");
     assertThat(content.liked()).isFalse();
   }
@@ -108,7 +108,7 @@ class ContentRecommendServiceTest {
     when(recommendRepository.findAllByReviewCount(1)).thenReturn(rawList);
     when(contentLikeRepository.existsByUserIdAndContentId(userId, contentId)).thenReturn(false);
 
-    List<ContentResponse> result = contentRecommendService.getSortedContents(
+    List<ContentCardResponse> result = contentRecommendService.getSortedContents(
         userId,
         1,
         ContentSortType.MOST_REVIEWED
@@ -117,7 +117,7 @@ class ContentRecommendServiceTest {
     assertThat(result).hasSize(1);
     assertThat(result
         .get(0)
-        .totalRatingCount()).isEqualTo(20);
+        .reviews()).isEqualTo(20);
   }
 
   @Test
@@ -141,7 +141,7 @@ class ContentRecommendServiceTest {
     when(recommendRepository.findAllByScore(1)).thenReturn(rawList);
     when(contentLikeRepository.existsByUserIdAndContentId(userId, contentId)).thenReturn(true);
 
-    List<ContentResponse> result = contentRecommendService.getSortedContents(
+    List<ContentCardResponse> result = contentRecommendService.getSortedContents(
         userId,
         1,
         ContentSortType.SCORE
@@ -150,7 +150,7 @@ class ContentRecommendServiceTest {
     assertThat(result).hasSize(1);
     assertThat(result
         .get(0)
-        .averageRating()).isNotNull();
+        .rating()).isNotNull();
     assertThat(result
         .get(0)
         .title()).isEqualTo("Scored Title");
