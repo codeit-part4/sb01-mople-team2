@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_TEST_DDL_OPTION}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    from: sbmople22@example.com
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
+logging:
+  level:
+    org.springframework.core.env: DEBUG
+    org.springframework.boot.context.config: DEBUG
+    org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
+    org.springframework.jdbc.datasource: DEBUG
+
+jwt:
+  secret: ${SPRING_JWT_SECRET}

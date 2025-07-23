@@ -1,8 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.3.1'
+    id 'io.spring.dependency-management' version '1.1.5'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'jacoco'
+    id "idea"
 }
 
 group = 'com.sprint4'
@@ -28,16 +30,34 @@ ext {
     set('snippetsDir', file("build/generated-snippets"))
 }
 
+jacoco {
+    toolVersion = "0.8.10"
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
     compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:testcontainers:1.21.3'
+    testImplementation 'org.testcontainers:junit-jupiter:1.21.3'
+    testImplementation 'org.testcontainers:postgresql:1.21.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -49,4 +69,31 @@ tasks.named('test') {
 tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += [
+            "-s", querydslDir
+    ]
+}
+
+idea {
+    module {
+        sourceDirs += file(querydslDir)
+        generatedSourceDirs += file(querydslDir)
+    }
+}
+
+clean {
+    delete file(querydslDir)
 }
