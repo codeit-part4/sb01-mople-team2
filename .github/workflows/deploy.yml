@@ -33,7 +33,7 @@ jobs:
             path: ./nginx
             port: 80
             ecr_var: ECR_NGINX_URI
-            taskdef: ecs/ecs=nginx-template.json
+            taskdef: ecs/ecs-nginx-template.json
 
     steps:
       - name: Checkout code
@@ -59,7 +59,9 @@ jobs:
       - name: Resolve ECR URI from env var
         id: resolve-ecr
         run: |
-          echo "ECR_URI=${!{matrix.service.ecr_uri_var}}" >> $GITHUB_ENV
+          ECR_VAR_NAME=${{ matrix.service.ecr_var }}
+          ECR_URI=$(eval echo \$$ECR_VAR_NAME)
+          echo "ECR_URI=$ECR_URI" >> $GITHUB_ENV
 
       - name: Login to Amazon ECR
         run: |
