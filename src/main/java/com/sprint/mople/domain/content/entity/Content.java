@@ -86,6 +86,9 @@ public class Content {
   @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
   private final List<PlaylistContent> playlistContents = new ArrayList<>();
 
+  @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
+  private final List<ContentLike> contentLikes = new ArrayList<>();
+
   @Builder
   public Content(
       String externalId,
@@ -112,7 +115,8 @@ public class Content {
   public enum Category {
     MOVIE,
     TV,
-    SPORTS
+    SPORTS,
+    SHOW
   }
 
   @PrePersist

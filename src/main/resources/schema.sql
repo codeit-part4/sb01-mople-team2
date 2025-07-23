@@ -86,7 +86,7 @@ CREATE TABLE follows (
 );
 
 CREATE TABLE subscribes (
-    subscribe_id  UUID PRIMARY KEY,
+    subscribe_id  BIGSERIAL PRIMARY KEY,
     user_id       UUID NOT NULL,
     playlist_id   UUID NOT NULL,
     subscribed_at TIMESTAMP WITH TIME ZONE

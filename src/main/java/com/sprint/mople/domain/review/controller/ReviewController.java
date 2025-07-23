@@ -49,7 +49,7 @@ public class ReviewController implements ReviewApi {
       ) Pageable pageable
       )
   {
-    List<ReviewResponse> reviews = reviewService.getAllReviews(pageable);
+    List<ReviewResponse> reviews = reviewService.getReviewsByContentId(contentId, pageable);
     return ResponseEntity.ok(reviews);
   }
 
