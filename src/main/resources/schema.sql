@@ -318,8 +318,6 @@ CREATE TABLE content_likes (
 CREATE INDEX idx_content_likes_user_id ON content_likes (user_id);
 CREATE INDEX idx_content_likes_content_id ON content_likes (content_id);
 
-
-
 CREATE TABLE playlist_category (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE
