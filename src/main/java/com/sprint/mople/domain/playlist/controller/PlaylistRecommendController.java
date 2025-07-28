@@ -24,10 +24,11 @@ public class PlaylistRecommendController {
       @RequestParam List<String> categories,                     // 사용자가 선택한 카테고리
       @RequestParam(required = false) Double lastScore,          // 커서: 마지막 점수
       @RequestParam(required = false) UUID lastId,               // 커서: 마지막 ID
-      @RequestParam(defaultValue = "10") @Min(1) int size        // 페이지 사이즈
+      @RequestParam(defaultValue = "10") @Min(1) int size,        // 페이지 사이즈
+      @RequestParam(required = false) String query
   ) {
     RecommendedPlaylistsPage response = playlistRecommendService.getRecommendedPlaylists(
-        categories, lastScore, lastId, size
+        categories, lastScore, lastId, size, query
     );
     return ResponseEntity.ok(response);
   }

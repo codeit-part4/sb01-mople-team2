@@ -135,7 +135,8 @@ class PlaylistRecommendRepositoryImplTest {
             userCategories,
             null,
             null,
-            pageSize
+            pageSize,
+            null
         );
 
     // then
@@ -160,7 +161,8 @@ class PlaylistRecommendRepositoryImplTest {
             userCategories,
             null,
             null,
-            pageSize
+            pageSize,
+            null
         );
 
     assertThat(firstPage).hasSize(1);
@@ -172,7 +174,8 @@ class PlaylistRecommendRepositoryImplTest {
             userCategories,
             first.score(),
             first.id(),
-            pageSize
+            pageSize,
+            null
         );
 
     // then

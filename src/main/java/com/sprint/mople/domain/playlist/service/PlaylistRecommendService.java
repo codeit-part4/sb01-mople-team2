@@ -20,11 +20,12 @@ public class PlaylistRecommendService {
       List<String> userCategories,
       Double lastScore,
       UUID lastId,
-      int size
+      int size,
+      String query
   )
   {
     List<RecommendedPlaylistResponse> list = playlistRecommendRepository.findRecommendedByUserCategoriesWithCursor(
-        userCategories, lastScore, lastId, size
+        userCategories, lastScore, lastId, size, query
     );
 
     return RecommendedPlaylistsPage.from(list);

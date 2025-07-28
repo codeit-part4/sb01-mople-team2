@@ -9,7 +9,8 @@ public interface PlaylistRecommendRepositoryCustom {
       List<String> userCategories,
       Double lastScore,
       UUID lastId,
-      int pageSize
+      int pageSize,
+      String query
   );
 }
 
