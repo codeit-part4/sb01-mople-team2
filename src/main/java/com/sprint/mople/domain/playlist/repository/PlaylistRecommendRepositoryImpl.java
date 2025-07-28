@@ -1,12 +1,14 @@
 package com.sprint.mople.domain.playlist.repository;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sprint.mople.domain.playlist.dto.RecommendedPlaylistResponse;
 import com.sprint.mople.domain.playlist.entity.Playlist;
+import com.sprint.mople.domain.playlist.entity.PlaylistSortType;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +35,8 @@ public class PlaylistRecommendRepositoryImpl implements PlaylistRecommendReposit
       Double lastScore,
       UUID lastId,
       int pageSize,
-      String query
+      String query,
+      PlaylistSortType searchType
   )
   {
     double MAX_SUBSCRIPTION_SCORE = 0.3;
@@ -97,11 +100,25 @@ public class PlaylistRecommendRepositoryImpl implements PlaylistRecommendReposit
               .eq(lastScore)
               .and(playlist.id.gt(lastId)));
     }
-    NumberExpression<Long> subCount = subscription.countDistinct();
-    NumberExpression<Long> likeCount = playlistLike.countDistinct();
-    NumberExpression<Double> avgRating = content.averageRating
-        .avg()
-        .coalesce(0.0);
+
+    OrderSpecifier<?> orderSpecifier = totalScore.desc();
+
+// searchType에 따라 정렬 변경
+    if (searchType != null) {
+      switch (searchType) {
+        case RECENT -> orderSpecifier = playlist.createdAt.desc();
+        case MOST_SUBSCRIBED -> orderSpecifier = subscription
+            .countDistinct()
+            .desc();
+        case MOST_LIKED -> orderSpecifier = playlistLike
+            .countDistinct()
+            .desc();
+        case HIGHEST_RATED -> orderSpecifier = content.averageRating
+            .avg()
+            .desc();
+        // 기본값은 추천 점수 기반
+      }
+    }
 
     List<Tuple> raw = queryFactory
         .select(playlist, totalScore)
@@ -116,7 +133,7 @@ public class PlaylistRecommendRepositoryImpl implements PlaylistRecommendReposit
         .where(baseCondition)
         .groupBy(playlist.id, user.id, playlistCategory.name)
         .having(cursorCondition)
-        .orderBy(totalScore.desc(), playlist.id.asc())
+        .orderBy(orderSpecifier, playlist.id.asc())
         .limit(pageSize)
         .fetch();
 

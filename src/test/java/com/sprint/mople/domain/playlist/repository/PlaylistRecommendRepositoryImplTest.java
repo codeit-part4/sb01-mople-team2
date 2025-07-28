@@ -36,28 +36,28 @@ class PlaylistRecommendRepositoryImplTest {
       .withDatabaseName("testdb")
       .withUsername("test")
       .withPassword("test");
+  @Autowired
+  private PlaylistRecommendRepositoryImpl playlistRecommendRepository;
+  @Autowired
+  private EntityManager em;
+  private User user;
+  private Playlist playlist1;
+  private Playlist playlist2;
 
   @DynamicPropertySource
   static void overrideProps(DynamicPropertyRegistry registry) {
     registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
     registry.add("spring.datasource.username", POSTGRES::getUsername);
     registry.add("spring.datasource.password", POSTGRES::getPassword);
-    registry.add("spring.jpa.properties.hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQLDialect");
+    registry.add(
+        "spring.jpa.properties.hibernate.dialect",
+        () -> "org.hibernate.dialect.PostgreSQLDialect"
+    );
     registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
     registry.add("spring.sql.init.mode", () -> "always");
     registry.add("spring.sql.init.schema-locations", () -> "classpath:schema.sql");
 //    registry.add("spring.sql.init.data-locations", () -> "classpath:data.sql");
   }
-
-  @Autowired
-  private PlaylistRecommendRepositoryImpl playlistRecommendRepository;
-
-  @Autowired
-  private EntityManager em;
-
-  private User user;
-  private Playlist playlist1;
-  private Playlist playlist2;
 
   @BeforeEach
   void setUp() {
@@ -136,6 +136,7 @@ class PlaylistRecommendRepositoryImplTest {
             null,
             null,
             pageSize,
+            null,
             null
         );
 
@@ -162,6 +163,7 @@ class PlaylistRecommendRepositoryImplTest {
             null,
             null,
             pageSize,
+            null,
             null
         );
 
@@ -175,6 +177,7 @@ class PlaylistRecommendRepositoryImplTest {
             first.score(),
             first.id(),
             pageSize,
+            null,
             null
         );
 

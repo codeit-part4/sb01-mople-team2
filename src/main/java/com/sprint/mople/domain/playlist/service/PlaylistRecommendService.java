@@ -2,6 +2,7 @@ package com.sprint.mople.domain.playlist.service;
 
 import com.sprint.mople.domain.playlist.dto.RecommendedPlaylistResponse;
 import com.sprint.mople.domain.playlist.dto.RecommendedPlaylistsPage;
+import com.sprint.mople.domain.playlist.entity.PlaylistSortType;
 import com.sprint.mople.domain.playlist.repository.PlaylistRecommendRepository;
 import com.sprint.mople.domain.playlist.repository.PlaylistRepository;
 import java.util.List;
@@ -21,11 +22,12 @@ public class PlaylistRecommendService {
       Double lastScore,
       UUID lastId,
       int size,
-      String query
+      String query,
+      PlaylistSortType searchType
   )
   {
     List<RecommendedPlaylistResponse> list = playlistRecommendRepository.findRecommendedByUserCategoriesWithCursor(
-        userCategories, lastScore, lastId, size, query
+        userCategories, lastScore, lastId, size, query, searchType
     );
 
     return RecommendedPlaylistsPage.from(list);
