@@ -13,6 +13,7 @@ import com.sprint.mople.domain.playlist.exception.DuplicatePlaylistContentExcept
 import com.sprint.mople.domain.playlist.exception.PlaylistContentNotFoundException;
 import com.sprint.mople.domain.playlist.exception.PlaylistIllegalAccessException;
 import com.sprint.mople.domain.playlist.exception.PlaylistNotFoundException;
+import com.sprint.mople.domain.playlist.repository.PlaylistCategoryMappingRepository;
 import com.sprint.mople.domain.playlist.repository.PlaylistRepository;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.domain.user.exception.UserNotFoundException;
@@ -32,6 +33,7 @@ public class PlaylistServiceImpl implements PlaylistService {
   private final PlaylistRepository playlistRepository;
   private final UserRepository userRepository;
   private final ContentRepository contentRepository;
+  private final PlaylistCategoryMappingRepository playlistCategoryMappingRepository;
 
   @Transactional
   @Override
@@ -209,5 +211,16 @@ public class PlaylistServiceImpl implements PlaylistService {
       throw new PlaylistIllegalAccessException();
     }
     return playlist;
+  }
+
+  @Override
+  public List<PlaylistResponse> getPlaylistsByUserId(UUID userId) {
+    User owner = userRepository
+        .findById(userId)
+        .orElseThrow(UserNotFoundException::new);
+    List<Playlist> playlists = playlistRepository.findAllByUser(owner);
+    return playlists.stream()
+        .map(PlaylistResponse::from)
+        .toList();
   }
 }

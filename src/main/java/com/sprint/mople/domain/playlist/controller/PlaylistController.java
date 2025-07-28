@@ -107,4 +107,10 @@ public class PlaylistController implements PlaylistApi {
     List<PlaylistResponse> playlists = playlistService.getAllPlaylists();
     return ResponseEntity.ok(playlists);
   }
+
+  @Override
+  public ResponseEntity<List<PlaylistResponse>> getPlaylistsByUserId(UUID userId) {
+    List<PlaylistResponse> playlists = playlistService.getPlaylistsByUserId(userId);
+    return ResponseEntity.ok(playlists);
+  }
 }

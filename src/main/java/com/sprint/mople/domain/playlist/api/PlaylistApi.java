@@ -132,12 +132,39 @@ public interface PlaylistApi {
       @PathVariable("playlistId") UUID playlistId
   );
 
+  @Operation(
+      summary = "콘텐츠 조회",
+      description = "플레이리스트 상세 콘텐츠들을 조회합니다. 비공개일 경우 소유자만 접근 가능합니다.",
+      responses = {
+          @ApiResponse(responseCode = "200", description = "조회된 플레이리스트 정보 반환")
+      }
+  )
   @GetMapping("/{playlistId}/contents")
   ResponseEntity<List<ContentCardResponse>> getPlaylistContents(
       @Parameter(description = "조회할 플레이리스트 ID", required = true)
       @PathVariable("playlistId") UUID playlistId
   );
 
+  @Operation(
+      summary = "전체 플레이리스트 조회",
+      description = "플레이리스트 전체 정보를 조회합니다.",
+      responses = {
+          @ApiResponse(responseCode = "200", description = "조회된 플레이리스트 정보 반환")
+      }
+  )
   @GetMapping("/")
   ResponseEntity<List<PlaylistResponse>> getAllPlaylists();
+
+  @Operation(
+      summary = "플레이리스트 owner 조회",
+      description = "플레이리스트 owner로 내가 만든 플레이리스트를 조회합니다.",
+      responses = {
+          @ApiResponse(responseCode = "200", description = "조회된 플레이리스트 정보 반환")
+      }
+  )
+  @GetMapping("/user/{userId}")
+  ResponseEntity<List<PlaylistResponse>> getPlaylistsByUserId(
+      @Parameter(description = "조회할 owner ID", required = true)
+      @PathVariable("userId") UUID userId
+  );
 }
