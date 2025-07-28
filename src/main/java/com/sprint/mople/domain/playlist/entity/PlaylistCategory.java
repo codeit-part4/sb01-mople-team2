@@ -29,6 +29,7 @@ public class PlaylistCategory {
 
   private String name;
 
+  @Builder.Default
   @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PlaylistCategoryMapping> playlists = new ArrayList<>();
 
