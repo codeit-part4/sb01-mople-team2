@@ -70,7 +70,7 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-          docker build -t ${{ matrix.service.name }} ${{ matrix.service.path }}
+          docker build -t ${{ matrix.service.name }} -f ${{ matrix.service.path }}/Dockerfile .
           docker tag ${{ matrix.service.name }}:latest $ECR_URI:latest
           docker push $ECR_URI:latest
 
