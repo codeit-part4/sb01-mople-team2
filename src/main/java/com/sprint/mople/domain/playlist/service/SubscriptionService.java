@@ -36,17 +36,18 @@ public class SubscriptionService {
     Subscription subscription = new Subscription();
     subscription.setPlaylist(playlist);
 
-
     return subscriptionRepository.save(subscription);
   }
 
   @Transactional
-  public void unsubscribePlaylist(Long subscribeId) {
-    Subscription subscription = subscriptionRepository
-        .findById(subscribeId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 구독입니다."));
+  public void unsubscribePlaylist(UUID userId, UUID playlistId) {
+    User user = userRepository.findById(userId).orElseThrow();
+    Playlist playlist = playlistRepository.findById(playlistId).orElseThrow();
+    Subscription subscription = (Subscription) subscriptionRepository
+        .findAllByUserAndPlaylist(user, playlist)
+        .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 구독 정보를 찾을 수 없습니다."));
 
-    subscription.setPlaylist(null); // 연관관계 제거
+    subscription.setPlaylist(null);
     subscriptionRepository.delete(subscription);
   }
 
