@@ -48,7 +48,12 @@ public class Playlist {
   private final List<PlaylistContent> playlistContents = new ArrayList<>();
   @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
   private final List<PlaylistLike> playlistLikes = new ArrayList<>();
-  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(
+      mappedBy = "playlist",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
   private final List<PlaylistCategoryMapping> categories = new ArrayList<>();
 
   @Id
