@@ -41,13 +41,13 @@ public class SubscriptionController {
 
   @Operation(summary = "플레이리스트 구독 취소")
   @ApiResponse(responseCode = "200", description = "구독 취소 성공")
-  @DeleteMapping("/{subscribeId}")
+  @DeleteMapping("/playlists/{playlistId}")
   public ResponseEntity<Void> unsubscribePlaylist(
-      @PathVariable Long subscribeId
+      @PathVariable UUID playlistId
   )
   {
     UUID userId = UUID.randomUUID();
-    subscriptionService.unsubscribePlaylist(subscribeId);
+    subscriptionService.unsubscribePlaylist(userId, playlistId);
     return ResponseEntity
         .ok()
         .build();

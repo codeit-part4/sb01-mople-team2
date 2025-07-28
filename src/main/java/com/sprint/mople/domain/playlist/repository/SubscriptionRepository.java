@@ -4,6 +4,8 @@ import com.sprint.mople.domain.playlist.entity.Playlist;
 import com.sprint.mople.domain.playlist.entity.Subscription;
 import com.sprint.mople.domain.user.entity.User;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
@@ -17,4 +19,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
   long countByPlaylist(Playlist playlist);
 
   long countByUser(User user);
+
+  Optional<Object> findAllByUserAndPlaylist(User user, Playlist playlist);
 }
