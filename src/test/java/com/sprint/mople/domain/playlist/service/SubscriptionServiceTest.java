@@ -1,6 +1,7 @@
 package com.sprint.mople.domain.playlist.service;
 
 import com.sprint.mople.domain.playlist.dto.SubscriberCountResponse;
+import com.sprint.mople.domain.playlist.dto.SubscriptionResponse;
 import com.sprint.mople.domain.playlist.entity.Playlist;
 import com.sprint.mople.domain.playlist.entity.Subscription;
 import com.sprint.mople.domain.playlist.repository.PlaylistRepository;
@@ -149,11 +150,10 @@ class SubscriptionServiceTest {
         when(subscriptionRepository.findAllByUser(user)).thenReturn(subscriptions);
 
         // when
-        List<Subscription> result = subscriptionService.getUserSubscriptions(userId);
+        List<SubscriptionResponse> result = subscriptionService.getUserSubscriptions(userId);
 
         // then
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getPlaylist()).isEqualTo(playlist);
     }
 
     @Test

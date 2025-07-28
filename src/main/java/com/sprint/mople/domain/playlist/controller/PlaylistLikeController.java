@@ -1,5 +1,7 @@
 package com.sprint.mople.domain.playlist.controller;
 
+import static com.sprint.mople.global.jwt.JwtTokenExtractor.extractUserId;
+
 import com.sprint.mople.domain.playlist.api.PlaylistLikeApi;
 import com.sprint.mople.domain.playlist.service.PlaylistLikeService;
 import com.sprint.mople.global.jwt.JwtProvider;
@@ -31,24 +33,27 @@ class PlaylistLikeController implements PlaylistLikeApi {
   }
 
   @PostMapping
-  public ResponseEntity<Void> like(@PathVariable UUID playlistId) {
-    playlistLikeService.likePlaylist(getRequestUserId(), playlistId);
+  public ResponseEntity<Void> like(@PathVariable UUID playlistId, HttpServletRequest request) {
+    UUID userId = extractUserId(request, jwtProvider);
+    playlistLikeService.likePlaylist(userId, playlistId);
     return ResponseEntity
         .ok()
         .build();
   }
 
   @DeleteMapping
-  public ResponseEntity<Void> unlike(@PathVariable UUID playlistId) {
-    playlistLikeService.unlikePlaylist(getRequestUserId(), playlistId);
+  public ResponseEntity<Void> unlike(@PathVariable UUID playlistId, HttpServletRequest request) {
+    UUID userId = extractUserId(request, jwtProvider);
+    playlistLikeService.unlikePlaylist(userId, playlistId);
     return ResponseEntity
         .noContent()
         .build();
   }
 
   @GetMapping("/me")
-  public ResponseEntity<Boolean> isLiked(@PathVariable UUID playlistId) {
-    return ResponseEntity.ok(playlistLikeService.isLiked(getRequestUserId(), playlistId));
+  public ResponseEntity<Boolean> isLiked(@PathVariable UUID playlistId, HttpServletRequest request) {
+    UUID userId = extractUserId(request, jwtProvider);
+    return ResponseEntity.ok(playlistLikeService.isLiked(userId, playlistId));
   }
 
   @GetMapping

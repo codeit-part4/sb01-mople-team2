@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +26,7 @@ public interface PlaylistLikeApi {
   @PostMapping
   ResponseEntity<Void> like(
       @Parameter(description = "플레이리스트 ID", required = true)
-      @PathVariable UUID playlistId
+      @PathVariable UUID playlistId,  HttpServletRequest request
   );
 
   @Operation(summary = "플레이리스트 좋아요 취소", description = "해당 플레이리스트에 좋아요를 취소합니다.")
@@ -38,7 +39,7 @@ public interface PlaylistLikeApi {
   @DeleteMapping
   ResponseEntity<Void> unlike(
       @Parameter(description = "플레이리스트 ID", required = true)
-      @PathVariable UUID playlistId
+      @PathVariable UUID playlistId,  HttpServletRequest request
   );
 
   @Operation(summary = "내가 좋아요 눌렀는지 확인", description = "현재 사용자가 해당 플레이리스트에 좋아요를 눌렀는지 여부를 확인합니다.")
@@ -46,7 +47,7 @@ public interface PlaylistLikeApi {
   @GetMapping("/me")
   ResponseEntity<Boolean> isLiked(
       @Parameter(description = "플레이리스트 ID", required = true)
-      @PathVariable UUID playlistId
+      @PathVariable UUID playlistId,  HttpServletRequest request
   );
 
   @Operation(summary = "플레이리스트 좋아요 수 조회", description = "해당 플레이리스트의 총 좋아요 수를 조회합니다.")
