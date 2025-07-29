@@ -27,6 +27,8 @@ COPY --from=builder /app/spring-boot-loader/ ./
 COPY --from=builder /app/snapshot-dependencies/ ./
 COPY --from=builder /app/application/ ./
 
+COPY src/main/resources/application-prod.yaml ./application-prod.yaml
+
 ENV SERVER_PORT=8080
 ENV SPRING_PROFILES_ACTIVE=prod
 ENV JAVA_OPTS="-Xms512m -Xmx1024m"
