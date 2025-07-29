@@ -4,7 +4,7 @@
   "executionRoleArn": "${EXECUTION_ROLE_ARN}",
   "requiresCompatibilities": ["EC2"],
   "cpu": "256",
-  "memory": "512",
+  "memory": "256",
   "containerDefinitions": [
     {
       "name": "nginx-gateway",
