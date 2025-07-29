@@ -5,6 +5,7 @@ import com.sprint.mople.domain.content.dto.ContentLikeDto.LikeStatusResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public interface ContentLikeApi {
   @PostMapping
   ResponseEntity<Void> like(
       @Parameter(description = "콘텐츠 ID", required = true)
-      @PathVariable UUID contentId
+      @PathVariable UUID contentId, HttpServletRequest request
   );
 
   @Operation(
@@ -30,7 +31,7 @@ public interface ContentLikeApi {
   @DeleteMapping
   ResponseEntity<Void> unlike(
       @Parameter(description = "콘텐츠 ID", required = true)
-      @PathVariable UUID contentId
+      @PathVariable UUID contentId, HttpServletRequest request
   );
 
   @Operation(
@@ -40,7 +41,7 @@ public interface ContentLikeApi {
   @GetMapping("/me")
   ResponseEntity<LikeStatusResponse> isLiked(
       @Parameter(description = "콘텐츠 ID", required = true)
-      @PathVariable UUID contentId
+      @PathVariable UUID contentId, HttpServletRequest request
   );
 
   @Operation(

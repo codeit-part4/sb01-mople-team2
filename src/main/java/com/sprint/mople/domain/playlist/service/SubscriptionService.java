@@ -1,11 +1,13 @@
 package com.sprint.mople.domain.playlist.service;
 
 import com.sprint.mople.domain.playlist.dto.SubscriberCountResponse;
+import com.sprint.mople.domain.playlist.dto.SubscriptionResponse;
 import com.sprint.mople.domain.playlist.entity.Playlist;
 import com.sprint.mople.domain.playlist.entity.Subscription;
 import com.sprint.mople.domain.playlist.repository.PlaylistRepository;
 import com.sprint.mople.domain.playlist.repository.SubscriptionRepository;
 import com.sprint.mople.domain.user.entity.User;
+import com.sprint.mople.domain.user.exception.NotFoundException;
 import com.sprint.mople.domain.user.repository.UserRepository;
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +28,8 @@ public class SubscriptionService {
   @Transactional
   public Subscription subscribePlaylist(UUID userId, UUID playlistId) {
     // 이미 구독중인지 확인
-    User user = userRepository.findById(userId).orElseThrow();
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
     Playlist playlist = playlistRepository.findById(playlistId).orElseThrow();
 
     if (subscriptionRepository.existsByUserAndPlaylist(user, playlist)) {
@@ -35,18 +38,20 @@ public class SubscriptionService {
 
     Subscription subscription = new Subscription();
     subscription.setPlaylist(playlist);
-
+    subscription.setUser(user);
 
     return subscriptionRepository.save(subscription);
   }
 
   @Transactional
-  public void unsubscribePlaylist(Long subscribeId) {
-    Subscription subscription = subscriptionRepository
-        .findById(subscribeId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 구독입니다."));
+  public void unsubscribePlaylist(UUID userId, UUID playlistId) {
+    User user = userRepository.findById(userId).orElseThrow();
+    Playlist playlist = playlistRepository.findById(playlistId).orElseThrow();
+    Subscription subscription = (Subscription) subscriptionRepository
+        .findAllByUserAndPlaylist(user, playlist)
+        .orElseThrow(() -> new IllegalArgumentException("해당 사용자의 구독 정보를 찾을 수 없습니다."));
 
-    subscription.setPlaylist(null); // 연관관계 제거
+    subscription.setPlaylist(null);
     subscriptionRepository.delete(subscription);
   }
 
@@ -56,9 +61,12 @@ public class SubscriptionService {
     return subscriptionRepository.existsByUserAndPlaylist(user, playlist);
   }
 
-  public List<Subscription> getUserSubscriptions(UUID userId) {
+  public List<SubscriptionResponse> getUserSubscriptions(UUID userId) {
     User user = userRepository.findById(userId).orElseThrow();
-    return subscriptionRepository.findAllByUser(user);
+    return subscriptionRepository.findAllByUser(user)
+        .stream()
+        .map(SubscriptionResponse::from)
+        .toList();
   }
 
   public List<Subscription> getPlaylistSubscribers(UUID playlistId) {

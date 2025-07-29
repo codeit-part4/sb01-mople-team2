@@ -12,7 +12,7 @@ jobs:
       matrix:
         service:
           - name: mople-app
-            path: ./mople-app
+            path: .
             port: 8080
             ecr_var: ECR_REPO_URI
             taskdef: ecs/ecs-app-template.json
@@ -70,7 +70,7 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-          docker build -t ${{ matrix.service.name }} -f ${{ matrix.service.path }}/Dockerfile .
+          docker build -t ${{ matrix.service.name }} -f ${{ matrix.service.path }}/Dockerfile ${{ matrix.service.path }}
           docker tag ${{ matrix.service.name }}:latest $ECR_URI:latest
           docker push $ECR_URI:latest
 

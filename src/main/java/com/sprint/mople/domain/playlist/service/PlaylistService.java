@@ -43,4 +43,6 @@ public interface PlaylistService {
   List<ContentCardResponse> getContentByPlaylist(UUID playlistId, UUID userId);
 
   List<PlaylistResponse> getAllPlaylists();
+
+  List<PlaylistResponse> getPlaylistsByUserId(UUID userId);
 }

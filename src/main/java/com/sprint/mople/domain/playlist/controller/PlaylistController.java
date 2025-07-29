@@ -1,5 +1,7 @@
 package com.sprint.mople.domain.playlist.controller;
 
+import static com.sprint.mople.global.jwt.JwtTokenExtractor.extractUserId;
+
 import com.sprint.mople.domain.content.dto.ContentCardResponse;
 import com.sprint.mople.domain.playlist.api.PlaylistApi;
 import com.sprint.mople.domain.playlist.dto.PlaylistContentRequest;
@@ -34,11 +36,11 @@ public class PlaylistController implements PlaylistApi {
 
   @Override
   public ResponseEntity<PlaylistResponse> createPlaylist(
-      PlaylistCreateRequest req
+      PlaylistCreateRequest req,
+      HttpServletRequest request
   )
   {
-
-    UUID userId = getRequestUserId();
+    UUID userId = extractUserId(request, jwtProvider);
     PlaylistResponse res = playlistService.createPlaylist(req, userId);
     return ResponseEntity.ok(res);
   }
@@ -103,6 +105,12 @@ public class PlaylistController implements PlaylistApi {
   @Override
   public ResponseEntity<List<PlaylistResponse>> getAllPlaylists() {
     List<PlaylistResponse> playlists = playlistService.getAllPlaylists();
+    return ResponseEntity.ok(playlists);
+  }
+
+  @Override
+  public ResponseEntity<List<PlaylistResponse>> getPlaylistsByUserId(UUID userId) {
+    List<PlaylistResponse> playlists = playlistService.getPlaylistsByUserId(userId);
     return ResponseEntity.ok(playlists);
   }
 }
