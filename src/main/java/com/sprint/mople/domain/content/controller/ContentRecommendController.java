@@ -1,7 +1,7 @@
 package com.sprint.mople.domain.content.controller;
 
 import com.sprint.mople.domain.content.api.ContentRecommendApi;
-import com.sprint.mople.domain.content.dto.ContentResponse;
+import com.sprint.mople.domain.content.dto.ContentCardResponse;
 import com.sprint.mople.domain.content.entity.ContentSortType;
 import com.sprint.mople.domain.content.service.ContentRecommendService;
 import com.sprint.mople.global.jwt.JwtProvider;
@@ -28,14 +28,14 @@ public class ContentRecommendController implements ContentRecommendApi {
   }
 
   @Override
-  public ResponseEntity<List<ContentResponse>> getRecommendedContents(int limit) {
-    List<ContentResponse> responses =
+  public ResponseEntity<List<ContentCardResponse>> getRecommendedContents(int limit) {
+    List<ContentCardResponse> responses =
         contentRecommendService.getRecommendedContents(getRequestUserId(), limit);
     return ResponseEntity.ok(responses);
   }
 
   @Override
-  public ResponseEntity<List<ContentResponse>> getSortedContents(
+  public ResponseEntity<List<ContentCardResponse>> getSortedContents(
       int limit,
       ContentSortType sortType
   )

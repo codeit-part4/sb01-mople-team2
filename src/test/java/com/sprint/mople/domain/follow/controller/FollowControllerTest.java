@@ -87,14 +87,11 @@ class FollowControllerTest {
     List<UserListResponse> userResponses = List.of(userResponse);
     Page<UserListResponse> userResponsePage = new PageImpl<>(userResponses, PageRequest.of(0, 10),
         userResponses.size());
-    when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer token");
-    when(jwtProvider.getUserId("token")).thenReturn(followerId);
 
     when(followService.findAllFollowings(followerId)).thenReturn(userResponsePage);
 
     // When
-    ResponseEntity<Page<UserListResponse>> response = followController.findAllFollowings(
-        httpServletRequest);
+    ResponseEntity<Page<UserListResponse>> response = followController.findAllFollowings(followerId);
 
     // Then
     Page<UserListResponse> body = response.getBody();
@@ -104,26 +101,31 @@ class FollowControllerTest {
 
   @Test
   void 팔로워_전체_조회() {
-
     // Given
-    UUID followeeId = UUID.randomUUID();
-    UserListResponse userResponse = new UserListResponse("TestUser", "test@email.com", false,
-        Instant.now());
+    UUID userId = UUID.randomUUID();
+
+    UserListResponse userResponse = new UserListResponse(
+        "TestUser",
+        "test@email.com",
+        false,
+        Instant.now()
+    );
+
     List<UserListResponse> userResponses = List.of(userResponse);
-    Page<UserListResponse> userResponsePage = new PageImpl<>(userResponses, PageRequest.of(0, 10),
-        userResponses.size());
-    when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer token");
-    when(jwtProvider.getUserId("token")).thenReturn(followeeId);
-    when(followService.findAllFollowers(followeeId)).thenReturn(userResponsePage);
+    Page<UserListResponse> userResponsePage = new PageImpl<>(
+        userResponses,
+        PageRequest.of(0, 10),
+        userResponses.size()
+    );
+
+    when(followService.findAllFollowers(userId)).thenReturn(userResponsePage);
 
     // When
-    ResponseEntity<Page<UserListResponse>> response = followController.findAllFollowers(
-        httpServletRequest);
+    ResponseEntity<Page<UserListResponse>> response = followController.findAllFollowers(userId);
 
     // Then
-    Page<UserListResponse> body = response.getBody();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(body.getContent().get(0).userName()).isEqualTo("TestUser");
-
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().getContent().get(0).userName()).isEqualTo("TestUser");
   }
 }

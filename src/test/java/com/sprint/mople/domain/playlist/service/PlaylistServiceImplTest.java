@@ -85,7 +85,7 @@ class PlaylistServiceImplTest {
       return p;
     });
 
-    PlaylistResponse res = playlistService.createPlaylist(playlistId, req, userId);
+    PlaylistResponse res = playlistService.createPlaylist(req, userId);
 
     assertThat(res.id()).isEqualTo(playlistId);
     assertThat(res.title()).isEqualTo("t");

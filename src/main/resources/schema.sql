@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS playlist_category CASCADE;
+DROP TABLE IF EXISTS playlist_category_mapping CASCADE;
 DROP TABLE IF EXISTS playlist_likes CASCADE;
 DROP TABLE IF EXISTS content_likes CASCADE;
 DROP TABLE IF EXISTS refresh_tokens CASCADE;
@@ -86,7 +88,7 @@ CREATE TABLE follows (
 );
 
 CREATE TABLE subscribes (
-    subscribe_id  UUID PRIMARY KEY,
+    subscribe_id  BIGSERIAL PRIMARY KEY,
     user_id       UUID NOT NULL,
     playlist_id   UUID NOT NULL,
     subscribed_at TIMESTAMP WITH TIME ZONE
@@ -316,3 +318,21 @@ CREATE TABLE content_likes (
 CREATE INDEX idx_content_likes_user_id ON content_likes (user_id);
 CREATE INDEX idx_content_likes_content_id ON content_likes (content_id);
 
+CREATE TABLE playlist_category (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE playlist_category_mapping (
+    id BIGSERIAL PRIMARY KEY,
+    playlist_id UUID NOT NULL,
+    category_id BIGINT NOT NULL,
+
+    CONSTRAINT fk_playlist
+        FOREIGN KEY (playlist_id) REFERENCES playlists (playlist_id) ON DELETE CASCADE,
+
+    CONSTRAINT fk_category
+        FOREIGN KEY (category_id) REFERENCES playlist_category (id) ON DELETE CASCADE,
+
+    CONSTRAINT uq_playlist_category UNIQUE (playlist_id, category_id) -- 중복 방지
+);

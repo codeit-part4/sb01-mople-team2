@@ -30,41 +30,49 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 public class Playlist {
 
+  // --- OneToMany: Subscribe ---
+  @OneToMany(
+      mappedBy = "playlist",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
+  private final List<Subscription> subscriptions = new ArrayList<>();
+  // --- OneToMany: PlaylistContent ---
+  @OneToMany(
+      mappedBy = "playlist",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
+  private final List<PlaylistContent> playlistContents = new ArrayList<>();
+  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+  private final List<PlaylistLike> playlistLikes = new ArrayList<>();
+  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+  private final List<PlaylistCategoryMapping> categories = new ArrayList<>();
+
   @Id
   @Column(name = "playlist_id", columnDefinition = "uuid")
   @GeneratedValue
   private UUID id;
-
   // --- ManyToOne: User ---
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "user_id", nullable = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
 
-  // --- OneToMany: Subscribe ---
-  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
-  private final List<Subscribe> subscribes = new ArrayList<>();
-
   @Column(name = "title", length = 255)
   private String title;
-
   @Column(name = "description", length = 1000)
   private String description;
-
   @Column(name = "is_public")
   private Boolean isPublic;
-
   @CreationTimestamp
   @Column(name = "created_at", columnDefinition = "timestamp with time zone", updatable = false)
   private OffsetDateTime createdAt;
-
   @UpdateTimestamp
   @Column(name = "updated_at", columnDefinition = "timestamp with time zone")
   private OffsetDateTime updatedAt;
-
-  // --- OneToMany: PlaylistContent ---
-  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
-  private final List<PlaylistContent> playlistContents = new ArrayList<>();
 
   /**
    * Playlist 생성자
@@ -98,12 +106,24 @@ public class Playlist {
     this.isPublic = isPublic;
   }
 
-  public void addSubscribe(Subscribe subscribe) {
-    subscribes.add(subscribe);
-    subscribe.setPlaylist(this);
+  public void addSubscribe(Subscription subscription) {
+    subscriptions.add(subscription);
+    subscription.setPlaylist(this);
   }
-  public void removeSubscribe(Subscribe subscribe) {
-    subscribes.remove(subscribe);
-    subscribe.setPlaylist(null);
+
+  public void removeSubscribe(Subscription subscription) {
+    subscriptions.remove(subscription);
+    subscription.setPlaylist(null);
   }
+
+  public void addCategoryMapping(PlaylistCategoryMapping mapping) {
+    this.categories.add(mapping);
+    mapping.setPlaylist(this);
+  }
+
+  public void removeCategoryMapping(PlaylistCategoryMapping mapping) {
+    this.categories.remove(mapping);
+    mapping.setPlaylist(null);
+  }
+
 }
