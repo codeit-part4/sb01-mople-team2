@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +43,7 @@ public interface PlaylistApi {
           required = true,
           content = @Content(schema = @Schema(implementation = PlaylistCreateRequest.class))
       )
-      @RequestBody @Valid PlaylistCreateRequest request
+      @RequestBody @Valid PlaylistCreateRequest rea, HttpServletRequest request
   );
 
   @Operation(
