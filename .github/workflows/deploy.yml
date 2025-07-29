@@ -11,12 +11,12 @@ jobs:
     strategy:
       matrix:
         service:
-          - name: mople-app
+          - name: mople-app-service
             path: .
             port: 8080
             ecr_var: ECR_REPO_URI
             taskdef: ecs/ecs-app-template.json
-          - name: nginx-gateway
+          - name: nginx-gateway-service
             path: ./nginx
             port: 80
             ecr_var: ECR_NGINX_URI
