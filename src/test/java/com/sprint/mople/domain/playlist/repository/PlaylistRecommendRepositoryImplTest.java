@@ -3,6 +3,7 @@ package com.sprint.mople.domain.playlist.repository;
 import com.sprint.mople.domain.playlist.dto.RecommendedPlaylistResponse;
 import com.sprint.mople.domain.playlist.entity.Playlist;
 import com.sprint.mople.domain.playlist.entity.PlaylistLike;
+import com.sprint.mople.domain.playlist.entity.PlaylistSortType;
 import com.sprint.mople.domain.playlist.entity.Subscription;
 import com.sprint.mople.domain.user.entity.User;
 import com.sprint.mople.global.config.QueryDSLConfig;
@@ -183,5 +184,105 @@ class PlaylistRecommendRepositoryImplTest {
 
     // then
     assertThat(secondPage).doesNotContain(first);
+  }
+
+  @Test
+  void 검색_쿼리가_제대로_적용되는지_검증() {
+    // given
+    List<String> userCategories = List.of("Pop");
+    int pageSize = 10;
+    String query = "Chill"; // playlist2의 제목
+
+    // when
+    List<RecommendedPlaylistResponse> results =
+        playlistRecommendRepository.findRecommendedByUserCategoriesWithCursor(
+            userCategories,
+            null,
+            null,
+            pageSize,
+            query,
+            null
+        );
+
+    // then
+    assertThat(results).hasSize(1);
+    assertThat(results.get(0).title()).contains("Chill");
+  }
+
+  @Test
+  void 비공개_플레이리스트는_추천에서_제외되어야_함() {
+    // given
+    playlist2.setIsPublic(false);
+    em.merge(playlist2);
+    em.flush();
+    em.clear();
+
+    List<String> userCategories = List.of("Pop");
+    int pageSize = 10;
+
+    // when
+    List<RecommendedPlaylistResponse> results =
+        playlistRecommendRepository.findRecommendedByUserCategoriesWithCursor(
+            userCategories,
+            null,
+            null,
+            pageSize,
+            "Chill", // 비공개 처리된 playlist2
+            null
+        );
+
+    // then
+    assertThat(results).isEmpty();
+  }
+
+
+  @Test
+  void 최근순_정렬이_적용되는지_검증() {
+    // given
+    List<String> userCategories = List.of("Pop");
+    int pageSize = 10;
+
+    // playlist1을 더 늦게 수정
+    playlist1.setUpdatedAt(playlist2.getUpdatedAt().plusSeconds(60));
+    em.merge(playlist1);
+    em.flush();
+    em.clear();
+
+    // when
+    List<RecommendedPlaylistResponse> results =
+        playlistRecommendRepository.findRecommendedByUserCategoriesWithCursor(
+            userCategories,
+            null,
+            null,
+            pageSize,
+            null,
+            PlaylistSortType.RECENT
+        );
+
+    // then
+    assertThat(results).isNotEmpty();
+    assertThat(results.get(0).id()).isEqualTo(playlist1.getId());
+  }
+
+  @Test
+  void 좋아요순_정렬이_적용되는지_검증() {
+    // given
+    List<String> userCategories = List.of("Pop");
+    int pageSize = 10;
+
+    // when
+    List<RecommendedPlaylistResponse> results =
+        playlistRecommendRepository.findRecommendedByUserCategoriesWithCursor(
+            userCategories,
+            null,
+            null,
+            pageSize,
+            null,
+            PlaylistSortType.MOST_LIKED
+        );
+
+    // then
+    assertThat(results).isNotEmpty();
+    assertThat(results.get(0).title()).isEqualTo("Best Songs"); // 좋아요 30개
   }
 }

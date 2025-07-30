@@ -106,7 +106,7 @@ public class PlaylistRecommendRepositoryImpl implements PlaylistRecommendReposit
 // searchType에 따라 정렬 변경
     if (searchType != null) {
       switch (searchType) {
-        case RECENT -> orderSpecifier = playlist.createdAt.desc();
+        case RECENT -> orderSpecifier = playlist.updatedAt.desc();
         case MOST_SUBSCRIBED -> orderSpecifier = subscription
             .countDistinct()
             .desc();
