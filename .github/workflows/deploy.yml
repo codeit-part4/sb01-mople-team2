@@ -11,29 +11,11 @@ jobs:
     strategy:
       matrix:
         service:
-          - name: mople-app
+          - name: mople-app-service
             path: .
             port: 8080
             ecr_var: ECR_REPO_URI
             taskdef: ecs/ecs-app-template.json
-
-          - name: websocket-service
-            path: ./websocket
-            port: 8081
-            ecr_var: ECR_WEBSOCKET_URI
-            taskdef: ecs/ecs-websocket-template.json
-
-          - name: sse-service
-            path: ./sse
-            port: 8082
-            ecr_var: ECR_SSE_URI
-            taskdef: ecs/ecs-sse-template.json
-
-          - name: nginx-gateway
-            path: ./nginx
-            port: 80
-            ecr_var: ECR_NGINX_URI
-            taskdef: ecs/ecs-nginx-template.json
 
     steps:
       - name: Checkout code
@@ -86,3 +68,4 @@ jobs:
           service: ${{ matrix.service.name }}
           cluster: mople-cluster
           wait-for-service-stability: true
+
