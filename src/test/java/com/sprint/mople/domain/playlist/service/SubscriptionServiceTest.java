@@ -59,11 +59,12 @@ class SubscriptionServiceTest {
     user = new User();
     ReflectionTestUtils.setField(user, "id", userId);
 
-    playlist = new Playlist();
+    playlist = new Playlist(user, "title", "descriptoin", true);
     ReflectionTestUtils.setField(playlist, "id", playlistId);
 
     subscription = new Subscription();
     subscription.setPlaylist(playlist);
+    subscription.setUser(user);
   }
 
   @Test
@@ -148,6 +149,24 @@ class SubscriptionServiceTest {
 
     // then
     assertThat(result).isTrue();
+  }
+
+  @Test
+  @DisplayName("사용자의 구독 목록 조회")
+  void getUserSubscriptions() {
+    // given
+    List<Subscription> subscriptions = Arrays.asList(subscription);
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(subscriptionRepository.findAllByUser(user)).thenReturn(subscriptions);
+
+    // when
+    List<SubscriptionResponse> result = subscriptionService.getUserSubscriptions(userId);
+
+    // then
+    assertThat(result).hasSize(1);
+    assertThat(result
+        .get(0)
+        .playlist().id()).isEqualTo(playlist.getId());
   }
 
   @Test
