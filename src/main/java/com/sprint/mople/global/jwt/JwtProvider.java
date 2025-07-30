@@ -18,7 +18,7 @@ public class  JwtProvider {
   private String secret;
 
   private Key key;
-  private final long expirationMillis = 1000 * 60 * 60; // 1시간
+  private final long expirationMillis = 1000 * 60 * 60 * 3; // 3a시간
   private final long refreshExpirationMillis = 1000 * 60 * 60 * 24 * 7; // 7일
 
   @PostConstruct
