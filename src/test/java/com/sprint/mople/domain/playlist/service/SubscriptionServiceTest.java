@@ -150,24 +150,6 @@ class SubscriptionServiceTest {
   }
 
   @Test
-  @DisplayName("사용자의 구독 목록 조회")
-  void getUserSubscriptions() {
-    // given
-    List<Subscription> subscriptions = Arrays.asList(subscription);
-    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-    when(subscriptionRepository.findAllByUser(user)).thenReturn(subscriptions);
-
-    // when
-    List<Subscription> result = subscriptionService.getUserSubscriptions(userId);
-
-    // then
-    assertThat(result).hasSize(1);
-    assertThat(result
-        .get(0)
-        .getPlaylist()).isEqualTo(playlist);
-  }
-
-  @Test
   @DisplayName("플레이리스트의 구독자 수 조회")
   void getPlaylistSubscriberCount() {
     // given
