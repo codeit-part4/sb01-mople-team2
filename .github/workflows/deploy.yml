@@ -16,11 +16,6 @@ jobs:
             port: 8080
             ecr_var: ECR_REPO_URI
             taskdef: ecs/ecs-app-template.json
-          - name: nginx-gateway-service
-            path: ./nginx
-            port: 80
-            ecr_var: ECR_NGINX_URI
-            taskdef: ecs/ecs-nginx-template.json
 
     steps:
       - name: Checkout code
