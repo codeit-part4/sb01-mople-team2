@@ -19,6 +19,7 @@ import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -48,7 +49,12 @@ public class Playlist {
   private final List<PlaylistContent> playlistContents = new ArrayList<>();
   @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
   private final List<PlaylistLike> playlistLikes = new ArrayList<>();
-  @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(
+      mappedBy = "playlist",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
   private final List<PlaylistCategoryMapping> categories = new ArrayList<>();
 
   @Id
@@ -70,7 +76,7 @@ public class Playlist {
   @CreationTimestamp
   @Column(name = "created_at", columnDefinition = "timestamp with time zone", updatable = false)
   private OffsetDateTime createdAt;
-  @UpdateTimestamp
+  @Setter @UpdateTimestamp
   @Column(name = "updated_at", columnDefinition = "timestamp with time zone")
   private OffsetDateTime updatedAt;
 
@@ -100,6 +106,7 @@ public class Playlist {
     if (request.isPublic() != null) {
       this.isPublic = request.isPublic();
     }
+    this.updatedAt = OffsetDateTime.now();
   }
 
   public void setIsPublic(boolean isPublic) {
