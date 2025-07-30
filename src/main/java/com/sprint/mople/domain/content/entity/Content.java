@@ -1,7 +1,7 @@
 package com.sprint.mople.domain.content.entity;
 
 import com.sprint.mople.domain.playlist.entity.PlaylistContent;
-import com.sprint.mople.global.util.StringSetConverter;
+import com.sprint.mople.global.util.JsonbStringSetConverter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -19,6 +19,7 @@ import jakarta.persistence.UniqueConstraint;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -64,8 +65,8 @@ public class Content {
   @Column(name = "poster_url")
   private String posterUrl;
 
-  @Column(name = "genres", columnDefinition = "jsonb")
-  @Convert(converter = StringSetConverter.class)
+  @Column(name = "genres")
+  @Convert(converter = JsonbStringSetConverter.class)
   private Set<String> genres;
 
   @Column(name = "released_at", columnDefinition = "timestamp with time zone")
@@ -98,6 +99,7 @@ public class Content {
       Category category,
       String posterUrl,
       Instant releasedAt,
+      Set<String> genres,
       BigDecimal averageRating,
       Long totalRatingCount
   ) {
@@ -108,6 +110,7 @@ public class Content {
     this.category = category;
     this.posterUrl = posterUrl;
     this.releasedAt = releasedAt;
+    this.genres = genres != null ? genres : new HashSet<>();
     this.averageRating = averageRating != null ? averageRating : BigDecimal.ZERO;
     this.totalRatingCount = totalRatingCount != null ? totalRatingCount : 0L;
   }
