@@ -66,10 +66,15 @@ jobs:
           mkdir -p temp
           envsubst < ${{ matrix.service.taskdef }} > temp/ecs-task-def.json
 
+      - name: Register new ECS Task Definition
+        run: |
+            aws ecs register-task-definition \
+              --cli-input-json file://temp/ecs-task-def.json
+
       - name: Deploy to ECS EC2
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: temp/ecs-task-def.json
-          service: ${{ matrix.service.name }}
-          cluster: mople-cluster
-          wait-for-service-stability: true
+        run: |
+          aws ecs update-service \
+            --cluster mople-cluster \
+            --service ${{ matrix.service.name }} \
+            --force-new-deployment
+
