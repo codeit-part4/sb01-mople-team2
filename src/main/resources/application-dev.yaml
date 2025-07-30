@@ -7,6 +7,8 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
+    hibernate:
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
@@ -25,6 +27,11 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
 
 jwt:
   secret: ${SPRING_JWT_SECRET}

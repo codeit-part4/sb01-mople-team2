@@ -7,7 +7,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
@@ -19,3 +19,8 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.hibernate.tool.hbm2ddl: debug
+tmdb:
+  baseurl: https://api.themoviedb.org/3
+  api_token: ${TMDB_API_TOKEN}
+sports:
+  baseurl: https://www.thesportsdb.com/api/v1/json

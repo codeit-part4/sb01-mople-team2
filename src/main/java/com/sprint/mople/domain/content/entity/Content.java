@@ -95,16 +95,21 @@ public class Content {
       Source source,
       String title,
       String summary,
-      Category category
-      )
-  {
+      Category category,
+      String posterUrl,
+      Instant releasedAt,
+      BigDecimal averageRating,
+      Long totalRatingCount
+  ) {
     this.externalId = externalId;
     this.source = source;
     this.title = title;
     this.summary = summary;
     this.category = category;
-    this.averageRating = BigDecimal.ZERO;
-    this.totalRatingCount = 0L;
+    this.posterUrl = posterUrl;
+    this.releasedAt = releasedAt;
+    this.averageRating = averageRating != null ? averageRating : BigDecimal.ZERO;
+    this.totalRatingCount = totalRatingCount != null ? totalRatingCount : 0L;
   }
 
   public enum Source {
@@ -116,7 +121,6 @@ public class Content {
     MOVIE,
     TV,
     SPORTS,
-    SHOW
   }
 
   @PrePersist
