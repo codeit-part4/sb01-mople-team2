@@ -15,6 +15,8 @@ public interface WatchSessionParticipantRepository extends
 
   boolean existsBySessionIdAndUserId(UUID sessionId, UUID userId);
 
-  void deleteAllBySessionId(UUID sessionId);
+  int countBySessionId(UUID sessionId);
+
+  Optional<WatchSessionParticipant> findByUserId(UUID userId);
 
 }

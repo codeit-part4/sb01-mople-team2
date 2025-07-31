@@ -7,8 +7,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
+  CONTENT_NOT_FOUND(404, "C001", "콘텐츠를 찾을 수 없습니다."),
   CONTENT_ALREADY_LIKED(400, "C005", "이미 좋아요한 컨텐츠입니다."),
   CONTENT_NOT_LIKED(400, "C006", "좋아요하지 않은 컨텐츠입니다."),
+
+  WATCH_SESSION_NOT_FOUND(404, "W001", "시청 세션을 찾을 수 없습니다."),
+  SESSION_ALREADY_JOINED(400, "W002", "이미 해당 시청 세션에 참여했습니다."),
+  PARTICIPANT_NOT_FOUND(404, "W003", "시청 세션 참여자를 찾을 수 없습니다."),
 
   REVIEW_NOT_FOUND(404, "R001", "리뷰를 찾을 수 없습니다."),
 
