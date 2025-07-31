@@ -22,7 +22,7 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint("/ws")
         .setAllowedOriginPatterns("*")
-        .setHandshakeHandler(handshakeHandler) // 👈 this line is key
+        .setHandshakeHandler(handshakeHandler)
         .withSockJS();
   }
 

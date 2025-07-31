@@ -18,9 +18,11 @@ import com.sprint.mople.domain.watchsession.repository.WatchSessionParticipantRe
 import com.sprint.mople.domain.watchsession.repository.WatchSessionRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +35,7 @@ public class WatchSessionServiceImpl implements WatchSessionService {
   private final ContentRepository contentRepository;
   private final WatchSessionParticipantRepository watchSessionParticipantRepository;
   private final UserRepository userRepository;
+  private final SimpMessagingTemplate messagingTemplate;
 
   @Override
   public WatchSessionResponse createWatchSession(WatchSessionCreateRequest request) {
@@ -91,6 +94,15 @@ public class WatchSessionServiceImpl implements WatchSessionService {
         .build();
 
     watchSessionParticipantRepository.save(participant);
+
+    log.info("Broadcasted JOIN for {}", participant.getUser().getUserName());
+    messagingTemplate.convertAndSend(
+        "/sub/watch-session/" + sessionId + "/participants",
+        Map.of(
+            "type", "JOIN",
+            "participant", WatchSessionParticipantResponse.from(participant)
+        )
+    );
   }
 
   @Transactional
@@ -100,6 +112,14 @@ public class WatchSessionServiceImpl implements WatchSessionService {
         .orElseThrow(ParticipantNotFoundException::new);
 
     watchSessionParticipantRepository.delete(participant);
+
+    messagingTemplate.convertAndSend(
+        "/sub/watch-session/" + sessionId + "/participants",
+        Map.of(
+            "type", "LEAVE",
+            "participant", WatchSessionParticipantResponse.from(participant)
+        )
+    );
   }
 
   @Override
