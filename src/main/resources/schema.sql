@@ -66,20 +66,20 @@ CREATE TABLE notifications (
 );
 
 CREATE TABLE contents (
-    content_id         UUID PRIMARY KEY,
-    external_id        VARCHAR(100),
-    source             VARCHAR(25),
-    title              VARCHAR(255),
-    normalized_title   VARCHAR(255),
-    summary            TEXT,
-    category           VARCHAR(25),
-    poster_url         VARCHAR(500),
-    genres             JSONB,
-    released_at        TIMESTAMP WITH TIME ZONE,
-    created_at         TIMESTAMP WITH TIME ZONE,
-    updated_at         TIMESTAMP WITH TIME ZONE,
-    average_rating     NUMERIC(3, 2),
-    total_rating_count BIGINT
+    content_id UUID PRIMARY KEY,
+    external_id VARCHAR,
+    source VARCHAR(25),
+    title VARCHAR,
+    normalized_title VARCHAR NOT NULL,
+    summary TEXT,
+    category VARCHAR(25),
+    poster_url VARCHAR,
+    genres JSONB NOT NULL DEFAULT '[]',
+    released_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ,
+    average_rating NUMERIC(3,2) NOT NULL DEFAULT 0.0,
+    total_rating_count BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE follows (
