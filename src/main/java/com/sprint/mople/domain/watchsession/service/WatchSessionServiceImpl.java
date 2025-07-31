@@ -60,11 +60,12 @@ public class WatchSessionServiceImpl implements WatchSessionService {
 
   @Override
   public WatchSessionResponse getWatchSessionByContentId(UUID contentId) {
-    WatchSession session = watchSessionRepository.findByContentId(contentId)
-        .orElseThrow(WatchSessionNotFoundException::new);
-
-    int participantCount = (int) watchSessionParticipantRepository.countBySessionId(session.getId());
-    return WatchSessionResponse.from(session, participantCount);
+    return watchSessionRepository.findByContentId(contentId)
+        .map(session -> {
+          int participantCount = watchSessionParticipantRepository.countBySessionId(session.getId());
+          return WatchSessionResponse.from(session, participantCount);
+        })
+        .orElseGet(() -> createWatchSession(new WatchSessionCreateRequest(contentId)));
   }
 
   @Transactional
@@ -102,12 +103,14 @@ public class WatchSessionServiceImpl implements WatchSessionService {
   }
 
   @Override
-  public List<WatchSessionParticipantResponse> getParticipants(UUID sessionId) {
-    WatchSession session = watchSessionRepository.findById(sessionId)
+  public List<WatchSessionParticipantResponse> getParticipants(UUID sessionId, String usernameFilter) {
+    watchSessionRepository.findById(sessionId)
         .orElseThrow(WatchSessionNotFoundException::new);
 
     List<WatchSessionParticipant> participants = watchSessionParticipantRepository.findAllBySessionId(sessionId);
+
     return participants.stream()
+        .filter(p -> usernameFilter == null || p.getUser().getUserName().toLowerCase().contains(usernameFilter.toLowerCase()))
         .map(WatchSessionParticipantResponse::from)
         .toList();
   }

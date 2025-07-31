@@ -70,6 +70,7 @@ CREATE TABLE contents (
     external_id        VARCHAR(100),
     source             VARCHAR(25),
     title              VARCHAR(255),
+    normalized_title   VARCHAR(255),
     summary            TEXT,
     category           VARCHAR(25),
     poster_url         VARCHAR(500),

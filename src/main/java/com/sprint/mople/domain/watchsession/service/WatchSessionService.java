@@ -17,5 +17,5 @@ public interface WatchSessionService {
 
   void leaveSession(UUID sessionId, UUID userId);
 
-  List<WatchSessionParticipantResponse> getParticipants(UUID sessionId);
+  List<WatchSessionParticipantResponse> getParticipants(UUID sessionId, String usernameFilter);
 }

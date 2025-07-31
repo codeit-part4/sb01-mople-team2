@@ -44,10 +44,13 @@ public record ContentMetadataResponse(
     Long totalRatingCount,
 
     @Schema(description = "평점")
-    BigDecimal averageRating
+    BigDecimal averageRating,
+
+    @Schema(description = "현재 컨텐츠를 보고 있는 시청자 수")
+    int viewers
 ) {
 
-    public static ContentMetadataResponse from(Content content) {
+    public static ContentMetadataResponse from(Content content, int viewers) {
         return ContentMetadataResponse.builder()
             .id(content.getId())
             .externalId(content.getExternalId())
@@ -60,6 +63,7 @@ public record ContentMetadataResponse(
             .releasedAt(content.getReleasedAt())
             .totalRatingCount(content.getTotalRatingCount())
             .averageRating(content.getAverageRating())
+            .viewers(viewers)
             .build();
     }
 }

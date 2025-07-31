@@ -65,7 +65,7 @@ public class ContentServiceImpl implements ContentService {
     String nextCursor = null;
     if (hasNext) {
       Content last = contents.get(contents.size() - 1);
-      nextCursor = cursorEncoder.encode(last.getTitle(), last.getId());
+      nextCursor = cursorEncoder.encode(last.getNormalizedTitle(), last.getId());
     }
 
     long totalElements = contentRepository.countContentsByTitle(title);

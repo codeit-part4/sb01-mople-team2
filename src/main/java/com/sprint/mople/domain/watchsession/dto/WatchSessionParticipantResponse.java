@@ -14,6 +14,9 @@ public record WatchSessionParticipantResponse(
     @Schema(description = "유저 ID")
     UUID userId,
 
+    @Schema(description = "유저 이름")
+    String userName,
+
     @Schema(description = "세션 참여 시각")
     Instant joinedAt
 ) {
@@ -21,6 +24,7 @@ public record WatchSessionParticipantResponse(
     return WatchSessionParticipantResponse.builder()
         .participantId(participant.getId())
         .userId(participant.getUser().getId())
+        .userName(participant.getUser().getUserName())
         .joinedAt(participant.getJoinedAt())
         .build();
   }

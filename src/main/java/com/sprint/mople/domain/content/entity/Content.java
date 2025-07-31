@@ -1,5 +1,7 @@
 package com.sprint.mople.domain.content.entity;
 
+import static com.sprint.mople.global.util.TitleNormalizer.normalize;
+
 import com.sprint.mople.domain.playlist.entity.PlaylistContent;
 import com.sprint.mople.global.util.JsonbStringSetConverter;
 import jakarta.persistence.CascadeType;
@@ -55,6 +57,9 @@ public class Content {
   @Column
   private String title;
 
+  @Column(name = "normalized_title", nullable = false)
+  private String normalizedTitle;
+
   @Column(columnDefinition = "TEXT")
   private String summary;
 
@@ -95,6 +100,7 @@ public class Content {
       String externalId,
       Source source,
       String title,
+      String normalizedTitle,
       String summary,
       Category category,
       String posterUrl,
@@ -106,6 +112,9 @@ public class Content {
     this.externalId = externalId;
     this.source = source;
     this.title = title;
+    this.normalizedTitle = normalizedTitle != null
+        ? normalizedTitle
+        : title != null ? normalize(title) : null;
     this.summary = summary;
     this.category = category;
     this.posterUrl = posterUrl;
@@ -144,4 +153,5 @@ public class Content {
   public void updateTotalRatingCount(Long totalRatingCount) {
     this.totalRatingCount = totalRatingCount;
   }
+
 }

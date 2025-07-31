@@ -1,26 +1,39 @@
 package com.sprint.mople.global.config;
 
+import com.sprint.mople.global.interceptor.WebSocketAuthChannelInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
-@Configuration
+@RequiredArgsConstructor
 @EnableWebSocketMessageBroker
+@Configuration
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
 
-  @Override
-  public void configureMessageBroker(MessageBrokerRegistry config) {
-    config.enableSimpleBroker("/sub");
-    config.setApplicationDestinationPrefixes("/pub");
-  }
+  private final WebSocketAuthChannelInterceptor webSocketAuthChannelInterceptor;
+  private final DefaultHandshakeHandler handshakeHandler;
 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint("/ws")
         .setAllowedOriginPatterns("*")
+        .setHandshakeHandler(handshakeHandler) // 👈 this line is key
         .withSockJS();
   }
 
+  @Override
+  public void configureMessageBroker(MessageBrokerRegistry registry) {
+    registry.enableSimpleBroker("/sub");
+    registry.setApplicationDestinationPrefixes("/pub");
+  }
+
+  @Override
+  public void configureClientInboundChannel(ChannelRegistration registration) {
+    registration.interceptors(webSocketAuthChannelInterceptor);
+  }
 }

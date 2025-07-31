@@ -1,5 +1,7 @@
 package com.sprint.mople.domain.content.batch.tmdb;
 
+import static com.sprint.mople.domain.content.entity.QContent.content;
+
 import com.sprint.mople.domain.content.entity.Content;
 import com.sprint.mople.domain.content.entity.Content.Category;
 import com.sprint.mople.domain.content.entity.Content.Source;
@@ -90,14 +92,15 @@ public class TmdbApiProcessor implements ItemProcessor<TmdbItemDto, Content> {
           .collect(Collectors.toSet());
     }
 
-    // 4. 정규화
+    // 4. 제목 정규화
     String normalizedTitle = TitleNormalizer.normalize(rawTitle);
 
     // 5. Content 객체 생성
     Content content = Content.builder()
         .externalId(item.getId())
         .source(Source.TMDB)
-        .title(normalizedTitle)
+        .title(rawTitle)
+        .normalizedTitle(normalizedTitle)
         .summary(item.getOverview())
         .category(category)
         .posterUrl(posterUrl)
