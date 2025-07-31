@@ -5,6 +5,11 @@ spring:
     import: optional:file:.env[.properties]
   datasource:
     driver-class-name: org.postgresql.Driver
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: never
   jpa:
     hibernate:
       ddl-auto: validate
