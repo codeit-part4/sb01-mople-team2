@@ -20,12 +20,18 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
   public List<Content> findContentsWithCursor(String title, String cursorValue, UUID cursorId, int size) {
     QContent content = QContent.content;
 
-    BooleanExpression titleFilter = hasText(title) ? content.normalizedTitle.containsIgnoreCase(title) : null;
+    BooleanExpression filter = null;
+    if (hasText(title)) {
+      BooleanExpression titleMatch = content.normalizedTitle.containsIgnoreCase(title);
+      BooleanExpression summaryMatch = content.summary.containsIgnoreCase(title);
+      filter = titleMatch.or(summaryMatch);
+    }
+
     BooleanExpression cursorCondition = buildCursorCondition(content, cursorValue, cursorId);
 
     return queryFactory
         .selectFrom(content)
-        .where(titleFilter, cursorCondition)
+        .where(filter, cursorCondition)
         .orderBy(content.normalizedTitle.asc(), content.id.asc())
         .limit(size)
         .fetch();
@@ -34,12 +40,18 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
   @Override
   public long countContentsByTitle(String title) {
     QContent content = QContent.content;
-    BooleanExpression titleFilter = hasText(title) ? content.normalizedTitle.containsIgnoreCase(title) : null;
+
+    BooleanExpression filter = null;
+    if (hasText(title)) {
+      BooleanExpression titleMatch = content.normalizedTitle.containsIgnoreCase(title);
+      BooleanExpression summaryMatch = content.summary.containsIgnoreCase(title);
+      filter = titleMatch.or(summaryMatch);
+    }
 
     return Optional.ofNullable(queryFactory
         .select(content.count())
         .from(content)
-        .where(titleFilter)
+        .where(filter)
         .fetchOne()).orElse(0L);
   }
 
