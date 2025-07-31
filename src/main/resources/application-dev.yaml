@@ -25,12 +25,6 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
-  batch:
-    job:
-      enabled: false
-    jdbc:
-      initialize-schema: always
-
 jwt:
   secret: ${SPRING_JWT_SECRET}
 
