@@ -1,27 +1,45 @@
 {
-  "family": "mople-app-task",
+  "family": "mople-app",
   "networkMode": "awsvpc",
   "executionRoleArn": "${EXECUTION_ROLE_ARN}",
+  "taskRoleArn": "${EXECUTION_ROLE_ARN}",
   "requiresCompatibilities": ["EC2"],
-  "cpu": "512",
+  "cpu": "1024",
   "memory": "1024",
   "containerDefinitions": [
     {
       "name": "mople-app",
       "image": "${ECR_REPO_URI}:latest",
+      "cpu": 0,
+      "essential": true,
       "portMappings": [
         {
+          "name": "mople-app-8080-tcp",
           "containerPort": 8080,
-          "hostPort": 8080
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "appProtocol": "http"
         }
       ],
       "environment": [
+        { "name": "SPRING_JWT_SECRET", "value": "${SPRING_JWT_SECRET}" },
+        { "name": "SPRING_MAIL_USERNAME", "value": "${SPRING_MAIL_USERNAME}" },
+        { "name": "SPRING_MAIL_PASSWORD", "value": "${SPRING_MAIL_PASSWORD}" },
         { "name": "SPRING_DATASOURCE_URL", "value": "${SPRING_DATASOURCE_URL}" },
         { "name": "SPRING_DATASOURCE_USERNAME", "value": "${SPRING_DATASOURCE_USERNAME}" },
         { "name": "SPRING_DATASOURCE_PASSWORD", "value": "${SPRING_DATASOURCE_PASSWORD}" },
-        { "name": "SPRING_PROFILES_ACTIVE", "value": "prod" }
+        { "name": "SPRING_PROFILES_ACTIVE", "value": "${SPRING_PROFILES_ACTIVE}" },
+        { "name": "SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA", "value": "public" }
       ],
-      "essential": true
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/mople-app",
+          "awslogs-create-group": "true",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
     }
   ]
 }

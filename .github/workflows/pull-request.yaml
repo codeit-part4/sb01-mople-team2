@@ -47,7 +47,6 @@ jobs:
             echo "${{ secrets.ENV_FILE }}" > .env
           fi
           echo ".env 파일 생성 완료"
-          cat .env
 
       - name: Export .env to ENV
         run: |

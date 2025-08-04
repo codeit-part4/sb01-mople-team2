@@ -1,5 +1,8 @@
 server:
   port: 80
+  ssl:
+    enabled: false
+  forward-headers-strategy: framework
 
 spring:
   datasource:
@@ -19,17 +22,22 @@ spring:
     username: ${SPRING_MAIL_USERNAME}
     password: ${SPRING_MAIL_PASSWORD}
     properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-          connectiontimeout: 5000
-          timeout: 3000
-          writetimeout: 5000
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.connectiontimeout: 10000
+      mail.smtp.timeout: 30000
+      mail.smtp.writetimeout: 5000
 jwt:
   secret: ${SPRING_JWT_SECRET}
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
     enabled: true
+management:
+  health:
+    mail:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health

@@ -212,4 +212,15 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
     return playlist;
   }
+
+  @Override
+  public List<PlaylistResponse> getPlaylistsByUserId(UUID userId) {
+    User owner = userRepository
+        .findById(userId)
+        .orElseThrow(UserNotFoundException::new);
+    List<Playlist> playlists = playlistRepository.findAllByUser(owner);
+    return playlists.stream()
+        .map(PlaylistResponse::from)
+        .toList();
+  }
 }
