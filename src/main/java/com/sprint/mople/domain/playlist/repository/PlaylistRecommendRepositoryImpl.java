@@ -1,20 +1,23 @@
 package com.sprint.mople.domain.playlist.repository;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sprint.mople.domain.playlist.dto.RecommendedPlaylistResponse;
 import com.sprint.mople.domain.playlist.entity.Playlist;
+import com.sprint.mople.domain.playlist.entity.PlaylistSortType;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.sprint.mople.domain.content.entity.QContent.content;
 import static com.sprint.mople.domain.playlist.entity.QPlaylist.playlist;
+import static com.sprint.mople.domain.playlist.entity.QPlaylistCategory.playlistCategory;
+import static com.sprint.mople.domain.playlist.entity.QPlaylistCategoryMapping.playlistCategoryMapping;
 import static com.sprint.mople.domain.playlist.entity.QPlaylistContent.playlistContent;
 import static com.sprint.mople.domain.playlist.entity.QPlaylistLike.playlistLike;
 import static com.sprint.mople.domain.playlist.entity.QSubscription.subscription;
@@ -31,7 +34,9 @@ public class PlaylistRecommendRepositoryImpl implements PlaylistRecommendReposit
       List<String> userCategories,
       Double lastScore,
       UUID lastId,
-      int pageSize
+      int pageSize,
+      String query,
+      PlaylistSortType searchType
   )
   {
     double MAX_SUBSCRIPTION_SCORE = 0.3;
@@ -66,15 +71,26 @@ public class PlaylistRecommendRepositoryImpl implements PlaylistRecommendReposit
         .coalesce(0.0)
         .divide(5.0)
         .multiply(MAX_AVG_RATING_SCORE);
-//    NumberExpression<Double> categoryScore = category.name.in(userCategories).countDistinct().multiply(0.2);
+
+    NumberExpression<Double> categoryScore = new CaseBuilder()
+        .when(playlistCategory.name.in(userCategories))
+        .then(MAX_CATEGORY_SCORE)
+        .otherwise(0.0);
 
     NumberExpression<Double> totalScore = subscriptionScore
         .add(likeScore)
         .add(avgRatingScore)
+        .add(categoryScore)
         .coalesce(0.0);
-//        .add(categoryScore);
 
     BooleanExpression baseCondition = playlist.isPublic.isTrue();
+
+    if (query != null && !query.isBlank()) {
+      BooleanExpression queryCondition = playlist.title
+          .containsIgnoreCase(query)
+          .or(user.userName.containsIgnoreCase(query));
+      baseCondition = baseCondition.and(queryCondition);
+    }
 
     BooleanExpression cursorCondition = null;
     if (lastScore != null && lastId != null) {
@@ -84,29 +100,40 @@ public class PlaylistRecommendRepositoryImpl implements PlaylistRecommendReposit
               .eq(lastScore)
               .and(playlist.id.gt(lastId)));
     }
-    NumberExpression<Long> subCount = subscription.countDistinct();
-    NumberExpression<Long> likeCount = playlistLike.countDistinct();
-    NumberExpression<Double> avgRating = content.averageRating.avg().coalesce(0.0);
 
+    OrderSpecifier<?> orderSpecifier = totalScore.desc();
+
+// searchType에 따라 정렬 변경
+    if (searchType != null) {
+      switch (searchType) {
+        case RECENT -> orderSpecifier = playlist.updatedAt.desc();
+        case MOST_SUBSCRIBED -> orderSpecifier = subscription
+            .countDistinct()
+            .desc();
+        case MOST_LIKED -> orderSpecifier = playlistLike
+            .countDistinct()
+            .desc();
+        case HIGHEST_RATED -> orderSpecifier = content.averageRating
+            .avg()
+            .desc();
+        // 기본값은 추천 점수 기반
+      }
+    }
 
     List<Tuple> raw = queryFactory
-        .select(
-            playlist,
-            subCount,
-            likeCount,
-            avgRating
-        )
+        .select(playlist, totalScore)
         .from(playlist)
         .leftJoin(playlist.subscriptions, subscription)
         .leftJoin(playlist.playlistLikes, playlistLike)
         .leftJoin(playlist.playlistContents, playlistContent)
         .leftJoin(playlistContent.content, content)
         .leftJoin(playlist.user, user)
-        .fetchJoin()
+        .leftJoin(playlist.categories, playlistCategoryMapping)
+        .leftJoin(playlistCategoryMapping.category, playlistCategory)
         .where(baseCondition)
-        .groupBy(playlist.id, user.id)
+        .groupBy(playlist.id, user.id, playlistCategory.name)
         .having(cursorCondition)
-        .orderBy(totalScore.desc(), playlist.id.asc())
+        .orderBy(orderSpecifier, playlist.id.asc())
         .limit(pageSize)
         .fetch();
 
@@ -114,18 +141,7 @@ public class PlaylistRecommendRepositoryImpl implements PlaylistRecommendReposit
         .stream()
         .map(tuple -> {
           Playlist p = tuple.get(playlist);
-          long sub = tuple.get(subCount) != null ? tuple.get(subCount) : 0;
-          long like = tuple.get(likeCount) != null ? tuple.get(likeCount) : 0;
-          double rating = tuple.get(avgRating) != null ? tuple.get(avgRating) : 0.0;
-          log.info(
-              "Recommending playlist: {}, subscriptionCount: {}, likeCount: {} ", Objects
-                  .requireNonNull(p)
-                  .getId(), sub, like
-          );
-          double score =
-              Math.min(1.0, sub / 100.0) * MAX_SUBSCRIPTION_SCORE +
-              Math.min(1.0, like / 100.0) * MAX_LIKE_SCORE +
-              (rating / 5.0) * MAX_AVG_RATING_SCORE;
+          double score = tuple.get(totalScore) != null ? tuple.get(totalScore) : 0.0;
 
           return RecommendedPlaylistResponse.from(p, score);
         })
