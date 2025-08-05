@@ -1,6 +1,7 @@
 package com.sprint.mople.domain.playlist.controller;
 
 import com.sprint.mople.domain.playlist.dto.RecommendedPlaylistsPage;
+import com.sprint.mople.domain.playlist.entity.PlaylistSortType;
 import com.sprint.mople.domain.playlist.service.PlaylistRecommendService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.Min;
@@ -24,10 +25,12 @@ public class PlaylistRecommendController {
       @RequestParam List<String> categories,                     // 사용자가 선택한 카테고리
       @RequestParam(required = false) Double lastScore,          // 커서: 마지막 점수
       @RequestParam(required = false) UUID lastId,               // 커서: 마지막 ID
-      @RequestParam(defaultValue = "10") @Min(1) int size        // 페이지 사이즈
+      @RequestParam(defaultValue = "10") @Min(1) int size,        // 페이지 사이즈
+      @RequestParam(required = false) String query,
+      @RequestParam(defaultValue = "RECOMMENDED") PlaylistSortType searchType
   ) {
     RecommendedPlaylistsPage response = playlistRecommendService.getRecommendedPlaylists(
-        categories, lastScore, lastId, size
+        categories, lastScore, lastId, size, query, searchType
     );
     return ResponseEntity.ok(response);
   }
