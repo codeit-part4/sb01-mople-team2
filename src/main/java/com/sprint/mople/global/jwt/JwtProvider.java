@@ -75,5 +75,18 @@ public class  JwtProvider {
     return UUID.fromString(userId);
   }
 
+  public boolean validateToken(String token) {
+    try {
+      Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  public UUID extractUserId(String token) {
+    return getUserId(token);
+  }
+
 }
 
