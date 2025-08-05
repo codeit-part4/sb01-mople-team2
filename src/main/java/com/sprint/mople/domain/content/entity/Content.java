@@ -1,9 +1,7 @@
 package com.sprint.mople.domain.content.entity;
 
-import static com.sprint.mople.global.util.TitleNormalizer.normalize;
-
 import com.sprint.mople.domain.playlist.entity.PlaylistContent;
-import com.sprint.mople.global.util.JsonbStringSetConverter;
+import com.sprint.mople.global.util.StringSetConverter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -28,6 +26,8 @@ import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.sprint.mople.global.util.TitleNormalizer.normalize;
 
 @Entity
 @Table(
@@ -70,8 +70,8 @@ public class Content {
   @Column(name = "poster_url")
   private String posterUrl;
 
-  @Column(name = "genres")
-  @Convert(converter = JsonbStringSetConverter.class)
+  @Column(name = "genres", columnDefinition = "jsonb")
+  @Convert(converter = StringSetConverter.class)
   private Set<String> genres;
 
   @Column(name = "released_at", columnDefinition = "timestamp with time zone")
