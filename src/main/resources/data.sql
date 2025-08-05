@@ -10,23 +10,19 @@ VALUES
 
 -- CONTENTS
 INSERT INTO contents (
-    content_id, external_id, source, title, summary, category,
+    content_id, external_id, source, title, normalized_title, summary, category,
     poster_url, genres, released_at, created_at, updated_at,
     average_rating, total_rating_count
 ) VALUES
-      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'ext1', 'TMDB', 'Content 1', 'Summary 1', 'MOVIE', '', '["Drama"]',
+      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'ext1', 'TMDB', 'Content 1', 'content 1', 'Summary 1', 'MOVIE', '', '["Drama"]',
        '2025-07-09T00:00:00+00:00', '2025-07-09T00:00:00+00:00', '2025-07-09T00:00:00+00:00', 4.5, 100),
-
-      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'ext2', 'TMDB', 'Content 2', 'Summary 2', 'SHOW', '', '["Comedy"]',
+      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'ext2', 'TMDB', 'Content 2', 'content 2', 'Summary 2', 'SHOW', '', '["Comedy"]',
        '2025-07-09T01:00:00+00:00', '2025-07-09T01:00:00+00:00', '2025-07-09T01:00:00+00:00', 3.7, 60),
-
-      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'ext3', 'TMDB', 'Content 3', 'Summary 3', 'MOVIE', '', '["Action"]',
+      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'ext3', 'TMDB', 'Content 3', 'content 3', 'Summary 3', 'MOVIE', '', '["Action"]',
        '2025-07-09T02:00:00+00:00', '2025-07-09T02:00:00+00:00', '2025-07-09T02:00:00+00:00', 4.8, 200),
-
-      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', 'ext4', 'TMDB', 'Content 4', 'Summary 4', 'SHOW', '', '["Horror"]',
+      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', 'ext4', 'TMDB', 'Content 4', 'content 4', 'Summary 4', 'SHOW', '', '["Horror"]',
        '2025-07-09T03:00:00+00:00', '2025-07-09T03:00:00+00:00', '2025-07-09T03:00:00+00:00', 2.9, 30),
-
-      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', 'ext5', 'TMDB', 'Content 5', 'Summary 5', 'MOVIE', '', '["Fantasy"]',
+      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', 'ext5', 'TMDB', 'Content 5', 'content 5', 'Summary 5', 'MOVIE', '', '["Fantasy"]',
        '2025-07-09T04:00:00+00:00', '2025-07-09T04:00:00+00:00', '2025-07-09T04:00:00+00:00', 3.2, 50);
 
 -- REVIEWS
