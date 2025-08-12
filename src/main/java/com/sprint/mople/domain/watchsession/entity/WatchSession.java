@@ -8,11 +8,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +36,7 @@ public class WatchSession {
   private UUID id;
 
   @OneToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "content_id", nullable = false)
+  @JoinColumn(name = "content_id", referencedColumnName = "content_id")
   private Content content;
 
   @Column(name = "created_at", columnDefinition = "timestamp with time zone")
@@ -41,6 +44,9 @@ public class WatchSession {
 
   @Column(name = "updated_at", columnDefinition = "timestamp with time zone")
   private Instant updatedAt;
+
+  @OneToMany(mappedBy = "session")
+  private Set<WatchSessionParticipant> participants = new HashSet<>();
 
   @PrePersist
   protected void onCreate() {
