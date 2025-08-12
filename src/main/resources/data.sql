@@ -38,11 +38,11 @@ INSERT INTO contents (
 -- CONTENT_GENRES
 INSERT INTO content_genres (content_id, genre_id)
 VALUES
-    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', '99999999-9999-9999-9999-999999999901'), -- Content 1 -> Drama
-    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '99999999-9999-9999-9999-999999999902'), -- Content 2 -> Comedy
-    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '99999999-9999-9999-9999-999999999903'), -- Content 3 -> Action
-    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', '99999999-9999-9999-9999-999999999904'), -- Content 4 -> Horror
-    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', '99999999-9999-9999-9999-999999999905'); -- Content 5 -> Fantasy
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', '1'), -- Content 1 -> Drama
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '2'), -- Content 2 -> Comedy
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '3'), -- Content 3 -> Action
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', '4'), -- Content 4 -> Horror
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', '5'); -- Content 5 -> Fantasy
 
 -- REVIEWS
 INSERT INTO reviews (review_id, content_id, user_id, rating, comment, created_at)
