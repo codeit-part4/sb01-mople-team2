@@ -1,11 +1,11 @@
 package com.sprint.mople.domain.content.batch.tmdb;
 
-import static com.sprint.mople.domain.content.entity.QContent.content;
-
 import com.sprint.mople.domain.content.entity.Content;
 import com.sprint.mople.domain.content.entity.Content.Category;
 import com.sprint.mople.domain.content.entity.Content.Source;
+import com.sprint.mople.domain.content.entity.Genre;
 import com.sprint.mople.domain.content.repository.ContentRepository;
+import com.sprint.mople.domain.content.repository.GenreRepository;
 import com.sprint.mople.global.util.TitleNormalizer;
 import jakarta.annotation.PostConstruct;
 import java.net.URI;
@@ -14,8 +14,8 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -36,18 +37,41 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class TmdbApiProcessor implements ItemProcessor<TmdbItemDto, Content> {
 
   private final ContentRepository contentRepository;
+  private final GenreRepository genreRepository;
   private final RestTemplate restTemplate;
   private final String baseUrl;
   private final String apiToken;
 
-  private final Map<Integer, String> genreMap = new HashMap<>();
-
   @PostConstruct
-  public void init() {
-    log.info("📥 TMDB 장르 정보를 불러오는 중...");
-    genreMap.putAll(fetchGenreMap("movie"));
-    genreMap.putAll(fetchGenreMap("tv"));
-    log.info("✅ 장르 매핑 완료 - 총 {}개 장르", genreMap.size());
+  @Transactional
+  public void updateGenres() {
+    log.info("🎬 TMDB 장르 정보 업데이트 배치 시작...");
+
+    Map<Long, String> movieGenres = fetchGenreMap("movie");
+    Map<Long, String> tvGenres = fetchGenreMap("tv");
+
+    Set<String> allGenreNames = new HashSet<>();
+    allGenreNames.addAll(movieGenres.values());
+    allGenreNames.addAll(tvGenres.values());
+
+    List<Genre> existingGenres = genreRepository.findAll();
+    Set<String> existingGenreNames = existingGenres.stream()
+        .map(Genre::getName)
+        .collect(Collectors.toSet());
+
+    Set<String> newGenreNames = allGenreNames.stream()
+        .filter(name -> !existingGenreNames.contains(name))
+        .collect(Collectors.toSet());
+
+    List<Genre> newGenres = newGenreNames.stream()
+        .map(Genre::new)
+        .collect(Collectors.toList());
+
+    if (!newGenres.isEmpty()) {
+      genreRepository.saveAll(newGenres);
+    }
+
+    log.info("✅ TMDB 장르 업데이트 배치 완료 - 총 {}개 장르", genreRepository.count());
   }
 
   @Override
@@ -84,12 +108,10 @@ public class TmdbApiProcessor implements ItemProcessor<TmdbItemDto, Content> {
       posterUrl = "https://image.tmdb.org/t/p/original" + item.getPosterUrl();
     }
 
-    Set<String> genres = new HashSet<>();
-    if (item.getGenreIds() != null) {
-      genres = item.getGenreIds().stream()
-          .map(genreMap::get)
-          .filter(Objects::nonNull)
-          .collect(Collectors.toSet());
+    Set<Genre> genres = new HashSet<>();
+
+    if (item.getGenreIds() != null && !item.getGenreIds().isEmpty()) {
+      genres = new HashSet<>(genreRepository.findAllById(item.getGenreIds()));
     }
 
     // 4. 제목 정규화
@@ -112,8 +134,8 @@ public class TmdbApiProcessor implements ItemProcessor<TmdbItemDto, Content> {
     return content;
   }
 
-  private Map<Integer, String> fetchGenreMap(String type) {
-    Map<Integer, String> map = new HashMap<>();
+  private Map<Long, String> fetchGenreMap(String type) {
+    Map<Long, String> map = new HashMap<>();
 
     URI uri = UriComponentsBuilder
         .fromUriString(baseUrl)
@@ -135,7 +157,7 @@ public class TmdbApiProcessor implements ItemProcessor<TmdbItemDto, Content> {
 
       if (response.getBody() != null) {
         for (TmdbGenreDto genre : response.getBody().getGenres()) {
-          map.put(genre.getId(), genre.getName());
+          map.put(Long.valueOf(genre.getId()), genre.getName());
         }
       }
     } catch (Exception e) {

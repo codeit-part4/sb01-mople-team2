@@ -29,5 +29,5 @@ public class TmdbItemDto {
   private String posterUrl;
 
   @JsonProperty("genre_ids")
-  private List<Integer> genreIds;
+  private List<Long> genreIds;
 }
