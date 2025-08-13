@@ -36,12 +36,12 @@ public class ContentServiceImpl implements ContentService {
   @Transactional(readOnly = true)
   public ContentMetadataResponse getContentDetail(UUID contentId) {
     Content content = contentRepository
-        .findById(contentId)
+        .findContentWithAllRelationsById(contentId)
         .orElseThrow(ContentNotFoundException::new);
 
-    Optional<WatchSession> sessionOpt = watchSessionRepository.findByContentId(contentId);
-    int viewerCount = sessionOpt
-        .map(session -> watchSessionParticipantRepository.countBySessionId(session.getId()))
+    int viewerCount = Optional.ofNullable(content.getWatchSession())
+        .map(WatchSession::getParticipants)
+        .map(Set::size)
         .orElse(0);
 
     return ContentMetadataResponse.from(content, viewerCount);

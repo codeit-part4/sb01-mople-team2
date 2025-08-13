@@ -27,7 +27,7 @@ public record ContentMetadataResponse(
     String title,
 
     @Schema(description = "콘텐츠 요약 설명")
-    String summary,
+    String description,
 
     @Schema(description = "카테고리", example = "MOVIE")
     Category category,
@@ -57,7 +57,7 @@ public record ContentMetadataResponse(
             .externalId(content.getExternalId())
             .source(content.getSource())
             .title(content.getTitle())
-            .summary(content.getSummary())
+            .description(content.getSummary())
             .category(content.getCategory())
             .posterUrl(content.getPosterUrl())
             .genres(content.getGenres())
