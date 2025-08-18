@@ -1,17 +1,20 @@
 package com.sprint.mople.domain.content.entity;
 
 import com.sprint.mople.domain.playlist.entity.PlaylistContent;
-import com.sprint.mople.global.util.StringSetConverter;
+import com.sprint.mople.domain.watchsession.entity.WatchSession;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -70,9 +73,13 @@ public class Content {
   @Column(name = "poster_url")
   private String posterUrl;
 
-  @Column(name = "genres", columnDefinition = "jsonb")
-  @Convert(converter = StringSetConverter.class)
-  private Set<String> genres;
+  @ManyToMany
+  @JoinTable(
+      name = "content_genres",
+      joinColumns = @JoinColumn(name = "content_id"),
+      inverseJoinColumns = @JoinColumn(name = "genre_id")
+  )
+  private Set<Genre> genres = new HashSet<>();
 
   @Column(name = "released_at", columnDefinition = "timestamp with time zone")
   private Instant releasedAt;
@@ -95,6 +102,9 @@ public class Content {
   @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
   private final List<ContentLike> contentLikes = new ArrayList<>();
 
+  @OneToOne(mappedBy = "content")
+  private WatchSession watchSession;
+
   @Builder
   public Content(
       String externalId,
@@ -105,7 +115,7 @@ public class Content {
       Category category,
       String posterUrl,
       Instant releasedAt,
-      Set<String> genres,
+      Set<Genre> genres,
       BigDecimal averageRating,
       Long totalRatingCount
   ) {

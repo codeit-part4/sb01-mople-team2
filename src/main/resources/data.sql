@@ -8,22 +8,41 @@ VALUES
     ('44444444-4444-4444-4444-444444444444', 'Dave', 'dave@example.com', 'pass', 'USER', 'LOCAL', FALSE, FALSE, NOW(), NOW()),
     ('55555555-5555-5555-5555-555555555555', 'Eve', 'eve@example.com', 'pass', 'USER', 'LOCAL', FALSE, FALSE, NOW(), NOW());
 
+-- GENRES
+INSERT INTO genres (id, name)
+VALUES
+    ('1', 'Drama'),
+    ('2', 'Comedy'),
+    ('3', 'Action'),
+    ('4', 'Horror'),
+    ('5', 'Fantasy');
+
+-- CONTENTS
 -- CONTENTS
 INSERT INTO contents (
     content_id, external_id, source, title, normalized_title, summary, category,
-    poster_url, genres, released_at, created_at, updated_at,
+    poster_url, released_at, created_at, updated_at,
     average_rating, total_rating_count
 ) VALUES
-      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'ext1', 'TMDB', 'Content 1', 'content 1', 'Summary 1', 'MOVIE', '', '["Drama"]',
+      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', 'ext1', 'TMDB', 'Content 1', 'content 1', 'Summary 1', 'MOVIE', '',
        '2025-07-09T00:00:00+00:00', '2025-07-09T00:00:00+00:00', '2025-07-09T00:00:00+00:00', 4.5, 100),
-      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'ext2', 'TMDB', 'Content 2', 'content 2', 'Summary 2', 'SHOW', '', '["Comedy"]',
+      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', 'ext2', 'TMDB', 'Content 2', 'content 2', 'Summary 2', 'TV', '',
        '2025-07-09T01:00:00+00:00', '2025-07-09T01:00:00+00:00', '2025-07-09T01:00:00+00:00', 3.7, 60),
-      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'ext3', 'TMDB', 'Content 3', 'content 3', 'Summary 3', 'MOVIE', '', '["Action"]',
+      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', 'ext3', 'TMDB', 'Content 3', 'content 3', 'Summary 3', 'MOVIE', '',
        '2025-07-09T02:00:00+00:00', '2025-07-09T02:00:00+00:00', '2025-07-09T02:00:00+00:00', 4.8, 200),
-      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', 'ext4', 'TMDB', 'Content 4', 'content 4', 'Summary 4', 'SHOW', '', '["Horror"]',
+      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', 'ext4', 'TMDB', 'Content 4', 'content 4', 'Summary 4', 'TV', '',
        '2025-07-09T03:00:00+00:00', '2025-07-09T03:00:00+00:00', '2025-07-09T03:00:00+00:00', 2.9, 30),
-      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', 'ext5', 'TMDB', 'Content 5', 'content 5', 'Summary 5', 'MOVIE', '', '["Fantasy"]',
+      ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', 'ext5', 'TMDB', 'Content 5', 'content 5', 'Summary 5', 'MOVIE', '',
        '2025-07-09T04:00:00+00:00', '2025-07-09T04:00:00+00:00', '2025-07-09T04:00:00+00:00', 3.2, 50);
+
+-- CONTENT_GENRES
+INSERT INTO content_genres (content_id, genre_id)
+VALUES
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1', '1'), -- Content 1 -> Drama
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa2', '2'), -- Content 2 -> Comedy
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa3', '3'), -- Content 3 -> Action
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa4', '4'), -- Content 4 -> Horror
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5', '5'); -- Content 5 -> Fantasy
 
 -- REVIEWS
 INSERT INTO reviews (review_id, content_id, user_id, rating, comment, created_at)

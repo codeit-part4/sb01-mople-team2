@@ -2,6 +2,7 @@ package com.sprint.mople.domain.content.batch.tmdb;
 
 import com.sprint.mople.domain.content.entity.Content;
 import com.sprint.mople.domain.content.repository.ContentRepository;
+import com.sprint.mople.domain.content.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -20,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 public class TmdbBatchConfig {
 
   private final ContentRepository contentRepository;
+  private final GenreRepository genreRepository;
   private final RestTemplate restTemplate;
   private final JobRepository jobRepository;
   private final PlatformTransactionManager transactionManager;
@@ -48,6 +50,6 @@ public class TmdbBatchConfig {
 
   @Bean
   public ItemProcessor<TmdbItemDto, Content> tmdbProcessor() {
-    return new TmdbApiProcessor(contentRepository, restTemplate, baseUrl, apiToken);
+    return new TmdbApiProcessor(contentRepository, genreRepository, restTemplate, baseUrl, apiToken);
   }
 }

@@ -3,6 +3,7 @@ package com.sprint.mople.domain.content.dto;
 import com.sprint.mople.domain.content.entity.Content;
 import com.sprint.mople.domain.content.entity.Content.Category;
 import com.sprint.mople.domain.content.entity.Content.Source;
+import com.sprint.mople.domain.content.entity.Genre;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -26,7 +27,7 @@ public record ContentMetadataResponse(
     String title,
 
     @Schema(description = "콘텐츠 요약 설명")
-    String summary,
+    String description,
 
     @Schema(description = "카테고리", example = "MOVIE")
     Category category,
@@ -35,16 +36,16 @@ public record ContentMetadataResponse(
     String posterUrl,
 
     @Schema(description = "장르 리스트", example = "[\"SF\", \"Drama\"]")
-    Set<String> genres,
+    Set<Genre> genres,
 
     @Schema(description = "개봉일")
     Instant releasedAt,
 
     @Schema(description = "콘텐츠 리뷰 개수")
-    Long totalRatingCount,
+    Long reviews,
 
     @Schema(description = "평점")
-    BigDecimal averageRating,
+    BigDecimal rating,
 
     @Schema(description = "현재 컨텐츠를 보고 있는 시청자 수")
     int viewers
@@ -56,13 +57,13 @@ public record ContentMetadataResponse(
             .externalId(content.getExternalId())
             .source(content.getSource())
             .title(content.getTitle())
-            .summary(content.getSummary())
+            .description(content.getSummary())
             .category(content.getCategory())
             .posterUrl(content.getPosterUrl())
             .genres(content.getGenres())
             .releasedAt(content.getReleasedAt())
-            .totalRatingCount(content.getTotalRatingCount())
-            .averageRating(content.getAverageRating())
+            .reviews(content.getTotalRatingCount())
+            .rating(content.getAverageRating())
             .viewers(viewers)
             .build();
     }
